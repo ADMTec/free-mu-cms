@@ -3,13 +3,13 @@
 ?>
     <div id="wrapper">
     <div id="sidebar-wrapper">
+        <div style="text-align:center;margin-top:10px;">
+            <img src="<?php echo $this->config->base_url; ?>../assets/default_assets/images/cms_logo.png" style="width:100px;" />
+        </div>
         <ul class="sidebar-nav">
-            <li class="sidebar-brand">DmN MuCMS Setup</li>
+            <li class="sidebar-brand">Setup</li>
             <li>
                 <a href="<?php echo $this->config->base_url; ?>index.php">Requirements</a>
-            </li>
-            <li class="active">
-                <a href="#">License Key</a>
             </li>
             <li>
                 <a href="#">SQL Configuration</a>

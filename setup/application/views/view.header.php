@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>DmN MuCMS Setup</title>
+    <title>Free MuCMS Setup</title>
     <link href="<?php echo $this->config->base_url; ?>assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo $this->config->base_url; ?>assets/css/setup.css" rel="stylesheet">
     <!--[if lt IE 9]>

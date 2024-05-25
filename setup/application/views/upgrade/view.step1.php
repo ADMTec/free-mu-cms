@@ -3,8 +3,11 @@
 ?>
     <div id="wrapper">
     <div id="sidebar-wrapper">
+        <div style="text-align:center;margin-top:10px;">
+            <img src="<?php echo $this->config->base_url; ?>../assets/default_assets/images/cms_logo.png" style="width:100px;" />
+        </div>
         <ul class="sidebar-nav">
-            <li class="sidebar-brand">DmN MuCMS Uprade</li>
+            <li class="sidebar-brand">Uprade</li>
             <li>
                 <a href="<?php echo $this->config->base_url; ?>index.php?action=upgrade">Check Credentials</a>
             </li>

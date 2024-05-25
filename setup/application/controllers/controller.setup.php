@@ -26,14 +26,8 @@
         
         
         public function step2(){
-            if(isset($_SESSION['allow_step_2']) && $_SESSION['allow_step_2'] == false){
-                $this->vars['errors'][] = 'Please complete step 1 before continue.';
-            } else{
-                $_SESSION['allow_step_3'] = true;
-                $_SESSION['step2_skipped'] = true;
-                header('Location: ' . $this->config->base_url . 'index.php?action=setup/step3');
-            }
-            $this->load->view('setup' . DS . 'application' . DS . 'views' . DS . 'setup' . DS . 'view.step2', $this->vars);
+            $_SESSION['allow_step_3'] = true;
+            header('Location: ' . $this->config->base_url . 'index.php?action=setup/step3');
         }
         
         
@@ -50,9 +44,6 @@
             }
             if(!isset($_SESSION['allow_step_3']) || $_SESSION['allow_step_3'] == false){
                 $this->vars['errors'][] = 'Please complete step 2 before continue.';
-            }
-            if(isset($_SESSION['step2_skipped']) && $_SESSION['step2_skipped'] == true){
-                $this->vars['info'][] = 'License active step 2 skipped.';
             }
             if(count($_POST) > 0){
                 $this->vars['sql_host'] = isset($_POST['sql_host']) ? $_POST['sql_host'] : '';
