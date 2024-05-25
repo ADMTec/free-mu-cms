@@ -739,7 +739,7 @@
                 $this->pluginaizer->add_sql_scheme('mercadopago_orders');
                 $this->pluginaizer->add_sql_scheme('mercadopago_transactions');
 				
-				$this->pluginaizer->database->query('ALTER TABLE DmN_Donate_MercadoPago_Transactions ADD  CONSTRAINT [u_order_hash_'.time().'] UNIQUE NONCLUSTERED  (
+				$this->pluginaizer->website->db('web')->query('ALTER TABLE DmN_Donate_MercadoPago_Transactions ADD  CONSTRAINT [u_order_hash_'.time().'] UNIQUE NONCLUSTERED  (
 					[order_hash] ASC
 				)
 				WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]');
