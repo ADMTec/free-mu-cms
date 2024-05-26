@@ -32,21 +32,21 @@
             return ($this->gm_info = $stmt->fetch()) ? true : false;
         }
 
-        public function login_gm(){
+        public function login_gm($server){
             if(MD5 == 1){
-                $stmt = $this->account_db->prepare('EXEC DmN_Check_Acc_MD5 :user, :pass');
+                $stmt = $this->website->db('account', $server)->prepare('EXEC DmN_Check_Acc_MD5 :user, :pass');
                 $stmt->execute([':user' => $this->vars['username'], ':pass' => $this->vars['password']]);
                 $check = $stmt->fetch();
                 $stmt->close_cursor();
                 if($check['result'] == 'found'){
-                    $stmt = $this->account_db->prepare('SELECT memb___id FROM MEMB_INFO WHERE (memb___id Collate Database_Default = :user Collate Database_Default)');
+                    $stmt = $this->website->db('account', $server)->prepare('SELECT memb___id FROM MEMB_INFO WHERE (memb___id Collate Database_Default = :user Collate Database_Default)');
                     $stmt->execute([':user' => $this->vars['username']]);
                     $info = $stmt->fetch();
                 } else{
                     $info = false;
                 }
             } else{
-                $stmt = $this->account_db->prepare('SELECT memb___id FROM MEMB_INFO WHERE (memb___id Collate Database_Default = :user Collate Database_Default) AND memb__pwd = :pass');
+                $stmt = $this->website->db('account', $server)->prepare('SELECT memb___id FROM MEMB_INFO WHERE (memb___id Collate Database_Default = :user Collate Database_Default) AND memb__pwd = :pass');
                 $stmt->execute([':user' => $this->vars['username'], ':pass' => (MD5 == 2) ? md5($this->vars['password']) : $this->vars['password']]);
                 $info = $stmt->fetch();
             }
@@ -57,25 +57,25 @@
             return false;
         }
 
-        public function search_acc(){
-            $stmt = $this->game_db->prepare('SELECT AccountId, Name FROM Character WHERE AccountId = :name');
+        public function search_acc($server){
+            $stmt = $this->website->db('game', $server)->prepare('SELECT AccountId, Name FROM Character WHERE AccountId = :name');
             $stmt->execute([':name' => $this->vars['name']]);
             return $stmt->fetch();
         }
 
-        public function search_char(){
-            $stmt = $this->game_db->prepare('SELECT AccountId, Name FROM Character WHERE Name = :name');
+        public function search_char($server){
+            $stmt = $this->website->db('game', $server)->prepare('SELECT AccountId, Name FROM Character WHERE Name = :name');
             $stmt->execute([':name' => $this->vars['name']]);
             return $stmt->fetch();
         }
 
-        public function find_ip($acc){
-            $stmt = $this->account_db->prepare('SELECT last_login_ip FROM MEMB_INFO WHERE memb___id = :name');
+        public function find_ip($acc, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT last_login_ip FROM MEMB_INFO WHERE memb___id = :name');
             $stmt->execute([':name' => $acc]);
             $ip = $stmt->fetch();
             if($ip['last_login_ip'] != null)
                 return $ip['last_login_ip']; else{
-                $stmt = $this->account_db->prepare('SELECT IP FROM MEMB_STAT WHERE memb___id = :name');
+                $stmt = $this->website->db('account', $server)->prepare('SELECT IP FROM MEMB_STAT WHERE memb___id = :name');
                 $stmt->execute([':name' => $acc]);
                 $ip = $stmt->fetch();
                 if($ip['IP'] != null)
@@ -85,37 +85,37 @@
             }
         }
 
-        public function check_account(){
-            $stmt = $this->account_db->prepare('SELECT bloc_code FROM MEMB_INFO WHERE memb___id = :account');
+        public function check_account($server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT bloc_code FROM MEMB_INFO WHERE memb___id = :account');
             $stmt->execute([':account' => $this->vars['name']]);
             return ($info = $stmt->fetch()) ? $info : false;
         }
 
-        public function check_char(){
-            $stmt = $this->game_db->prepare('SELECT AccountId, CtlCode FROM Character WHERE Name = :name');
+        public function check_char($server){
+            $stmt = $this->website->db('game', $server)->prepare('SELECT AccountId, CtlCode FROM Character WHERE Name = :name');
             $stmt->execute([':name' => $this->vars['name']]);
             $info = $stmt->fetch();
             if($info != false){
-                $guid = $this->get_guid($info['AccountId']);
+                $guid = $this->get_guid($info['AccountId'], $server);
                 $info['memb_guid'] = $guid['memb_guid'];
                 return $info;
             }
             return false;
         }
 
-        private function get_guid($acc){
-            $stmt = $this->account_db->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :acc');
+        private function get_guid($acc, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :acc');
             $stmt->execute([':acc' => $acc]);
             return $stmt->fetch();
         }
 
-        public function ban_account(){
-            $stmt = $this->account_db->prepare('UPDATE MEMB_INFO SET bloc_code = 1 WHERE memb___id = :account');
+        public function ban_account($server){
+            $stmt = $this->website->db('account', $server)->prepare('UPDATE MEMB_INFO SET bloc_code = 1 WHERE memb___id = :account');
             $stmt->execute([':account' => $this->vars['name']]);
         }
 
-        public function ban_char(){
-            $stmt = $this->game_db->prepare('UPDATE Character SET CtlCode = 1 WHERE Name = :name');
+        public function ban_char($server){
+            $stmt = $this->website->db('game', $server)->prepare('UPDATE Character SET CtlCode = 1 WHERE Name = :name');
             $stmt->execute([':name' => $this->vars['name']]);
         }
 
@@ -133,13 +133,13 @@
             return $this->bans;
         }
 
-        public function unban_account($name){
-            $stmt = $this->account_db->prepare('UPDATE MEMB_INFO SET bloc_code = 0 WHERE memb___id = :account');
+        public function unban_account($name, $server){
+            $stmt = $this->website->db('account', $server)->prepare('UPDATE MEMB_INFO SET bloc_code = 0 WHERE memb___id = :account');
             $stmt->execute([':account' => $name]);
         }
 
-        public function unban_character($name){
-            $stmt = $this->game_db->prepare('UPDATE Character SET CtlCode = 0 WHERE Name = :name');
+        public function unban_character($name, $server){
+            $stmt = $this->website->db('game', $server)->prepare('UPDATE Character SET CtlCode = 0 WHERE Name = :name');
             $stmt->execute([':name' => $name]);
         }
 

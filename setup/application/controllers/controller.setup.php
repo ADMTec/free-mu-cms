@@ -78,19 +78,22 @@
                     $this->vars['sql_errors'][] = 'You are missing ' . $this->vars['sql_driver'] . ' extension. Please select different or enable this in your php settings.';
                 }
                 if(!isset($this->vars['sql_errors']) || count($this->vars['sql_errors']) <= 0){
-                    $this->load->lib(['master_db', 'db'], [$this->vars['sql_host'], $this->vars['sql_user'], $this->vars['sql_pass'], 'master', $this->vars['sql_driver']], $this->vars['sql_driver']);
+                    $this->load->lib('DBEngines/' . $this->vars['sql_driver'], [$this->vars['sql_host'], $this->vars['sql_user'], $this->vars['sql_pass'], 'master'], 'master_db');
                     if(!empty($this->master_db->error)){
                         $this->vars['sql_errors'][] = $this->master_db->error;
-                    } else{
+                    } 
+                    else{
                         $_SESSION['db'] = ['host' => $this->vars['sql_host'], 'user' => $this->vars['sql_user'], 'pass' => $this->vars['sql_pass'], 'web_db' => $this->vars['sql_web_db'], 'driver' => $this->vars['sql_driver']];
                         $_SESSION['allow_step_4'] = true;
                         if(!$this->Msetup->db_exists($this->vars['sql_web_db'])){
                             if($this->Msetup->create_database($this->vars['sql_web_db'], $this->vars['sql_user'])){
                                 header('Location: ' . $this->config->base_url . 'index.php?action=setup/step4');
-                            } else{
+                            } 
+                            else{
                                 $this->vars['sql_errors'][] = 'Unable to create database ' . htmlspecialchars($this->vars['sql_web_db']) . ', please create it manually & refresh page.';
                             }
-                        } else{
+                        } 
+                        else{
                             header('Location: ' . $this->config->base_url . 'index.php?action=setup/step4');
                         }
                     }
@@ -109,13 +112,13 @@
             if(!isset($_SESSION['allow_step_4']) || $_SESSION['allow_step_4'] == false){
                 $this->vars['errors'][] = 'Please complete step 3 before continue.';
             }
-            $this->load->lib(['web_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
+            $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db']], 'web_db');
             $this->vars['dbs'] = $this->Msetup->list_databases();
             if(count($_POST) > 0){
                 $this->vars['acc_db'] = isset($_POST['acc_db']) ? $_POST['acc_db'] : '';
                 $this->vars['char_db'] = isset($_POST['char_db']) ? $_POST['char_db'] : '';
-                $this->load->lib(['account_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $this->vars['acc_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
-                $this->load->lib(['game_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $this->vars['char_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
+                $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $this->vars['acc_db']], 'account_db');
+                $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $this->vars['char_db']], 'game_db');
                 if(!$this->Msetup->check_memb_info()){
                     $this->vars['error'] = 'Please select different database for accounts.';
                 } else{
@@ -253,9 +256,10 @@
         
         private function add_sql_tables($tables_info, $overwrite_old_tables){
             if(is_array($tables_info) && count($tables_info) > 0){
-                $this->load->lib(['web_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
-                $this->load->lib(['account_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['acc_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
-                $this->load->lib(['game_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['char_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
+                $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db']], 'web_db');
+                $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['acc_db']], 'account_db');
+                $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['char_db']], 'game_db');
+                
                 foreach($tables_info AS $key => $table){
                     if($overwrite_old_tables == 0){
                         if($this->Msetup->check_if_table_exists($key, $table['db']) == false){
@@ -345,9 +349,10 @@
         private function add_sql_columns($columns_info){
             if(is_array($columns_info) && count($columns_info) > 0){
 				set_time_limit(0);				  
-                $this->load->lib(['web_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
-                $this->load->lib(['account_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['acc_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
-                $this->load->lib(['game_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['char_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
+                $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db']], 'web_db');
+                $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['acc_db']], 'account_db');
+                $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['char_db']], 'game_db');
+               
                 foreach($columns_info AS $db => $table_data){
                     if(array_key_exists('web', $columns_info)){
                         foreach($columns_info['web'] AS $table => $columns){
@@ -389,7 +394,8 @@
         public function step8(){
             $this->check_steps_ajax();
             set_time_limit(0);
-            $this->load->lib(['web_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
+            $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db']], 'web_db');   
+            
             $sql_data = json_decode(file_get_contents(INSTALL_DIR . 'data' . DS . 'inserts' . DS . 'required_sql_data[20.05.2015].json'), true);
             if($_SESSION['insert_sql_data'] == 1){
                 if(is_array($sql_data['DmN_Shopp'])){
@@ -410,8 +416,9 @@
         public function step9(){
 			$this->check_steps_ajax();						  
             set_time_limit(0);
-            $this->load->lib(['web_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
-            $this->load->lib(['account_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['acc_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
+            $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db']], 'web_db');
+            $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['acc_db']], 'account_db');    
+            
             $procedures_info = json_decode(file_get_contents(INSTALL_DIR . 'data' . DS . 'procedures' . DS . 'required_stored_procedures[20.05.2015].json'), true);
             if(is_array($procedures_info) && !empty($procedures_info)){
                 if($this->Msetup->check_procedure('Add_Credits', 'web') != false){
@@ -464,9 +471,10 @@
             if(!isset($_SESSION['allow_step_9']) || $_SESSION['allow_step_9'] == false){
                 $this->vars['errors'][] = 'Please complete step 5 before continue.';
             }
-            $this->load->lib(['web_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
-            $this->load->lib(['account_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['acc_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
-            $this->load->lib(['game_db', 'db'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['char_db'], $_SESSION['db']['driver']], $_SESSION['db']['driver']);
+            $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['web_db']], 'web_db');
+            $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['acc_db']], 'account_db');
+            $this->load->lib('DBEngines/' .  $_SESSION['db']['driver'], [$_SESSION['db']['host'], $_SESSION['db']['user'], $_SESSION['db']['pass'], $_SESSION['db']['char_db']], 'game_db');    
+            
             if(count($_POST) > 0){
                 $this->vars['admin_user'] = isset($_POST['username']) ? $_POST['username'] : '';
                 $this->vars['admin_pass'] = isset($_POST['password']) ? $_POST['password'] : '';
@@ -504,7 +512,6 @@
                                     $this->create_social_list();
                                     $this->create_meta_list();
 									$this->create_cms_config();
-                                    //$this->check_license();
                                     header('Location: ' . $this->config->base_url . 'index.php?action=setup/completed');
                                 } else{
                                     $this->vars['error'] = 'Unable to write configuration file.';
@@ -693,7 +700,7 @@
         }
 
         private function create_meta_list(){
-            $new_data = ['en' => ['default' => ['title' => '%server_title%', 'keywords' => '%server_title%, DmNMu CMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline'], 'home' => ['title' => '%server_title% Home', 'keywords' => '%server_title%, DmN MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline'], 'registration' => ['title' => '%server_title% Registration', 'keywords' => '%server_title%, DmN MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline']]];
+            $new_data = ['en' => ['default' => ['title' => '%server_title%', 'keywords' => '%server_title%, Free MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline'], 'home' => ['title' => '%server_title% Home', 'keywords' => '%server_title%, Free MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline'], 'registration' => ['title' => '%server_title% Registration', 'keywords' => '%server_title%, Free MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline']]];
             $data = json_encode($new_data, JSON_PRETTY_PRINT);
             if(is_writable(BASEDIR . 'application' . DS . 'config')){
                 $fp = @fopen(BASEDIR . 'application' . DS . 'config' . DS . 'meta_config.json', 'w');
@@ -704,7 +711,7 @@
         }
 		
 		private function create_cms_config(){
-			$new_data = ['package' => 'DmN MuCMS', "version" => $this->Msetup->get_cms_version()];
+			$new_data = ['package' => 'Free MuCMS', "version" => $this->Msetup->get_cms_version()];
 			$data = json_encode($new_data, JSON_PRETTY_PRINT);
             if(is_writable(BASEDIR . 'application' . DS . 'config')){
                 $fp = @fopen(BASEDIR . 'application' . DS . 'config' . DS . 'cms_config.json', 'w');

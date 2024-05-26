@@ -116,7 +116,7 @@
 
         private function create_file($file){
             if($file == 'application' . DS . 'data' . DS . 'dmn_news.json'){
-                $data = [1 => ['title' => 'DmN MuCMS ' . $this->get_cms_version() . '', 'news_content' => 'DmN MuCMS ' . $this->get_cms_version() . ' has been successfully installed.', 'news_content_full' => 'DmN MuCMS ' . $this->get_cms_version() . ' has been successfully installed.', 'time' => time(), 'icon' => 'http://', 'author' => 'System', 'lang' => 'en_GB']];
+                $data = [1 => ['title' => 'Free MuCMS ' . $this->get_cms_version() . '', 'news_content' => 'Free MuCMS ' . $this->get_cms_version() . ' has been successfully installed.', 'news_content_full' => 'Free MuCMS ' . $this->get_cms_version() . ' has been successfully installed.', 'time' => time(), 'icon' => 'http://', 'author' => 'System', 'lang' => 'en']];
                 if(@file_put_contents(BASEDIR . $file, json_encode($data)) != false){
                     return true;
                 } else{

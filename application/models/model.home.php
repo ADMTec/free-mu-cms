@@ -118,7 +118,7 @@
             $this->website->check_cache('news#' . (int)$page, 'news', $this->config->config_entry('news|cache_time'));
             if(!$this->website->cached){
                 if(trim($this->config->config_entry('news|ipb_host')) != ''){
-                    $this->load->lib(['mysql', 'db'], [$this->config->config_entry('news|ipb_host'), $this->config->config_entry('news|ipb_user'), $this->config->config_entry('news|ipb_pass'), $this->config->config_entry('news|ipb_db'), 'pdo_mysql'], 'pdo_mysql');
+                    $this->load->lib('DBEngines/pdo_mysql', [$this->config->config_entry('news|ipb_host'), $this->config->config_entry('news|ipb_user'), $this->config->config_entry('news|ipb_pass'), $this->config->config_entry('news|ipb_db'), 'pdo_mysql']);
                 }
                 if(strpos(trim($this->config->config_entry('news|ipb_forum_ids')), ',') !== false){
                     $ids = explode(',', trim($this->config->config_entry('news|ipb_forum_ids')));
@@ -141,14 +141,14 @@
                 $this->website->set_cache('news#' . (int)$page, $this->news, $this->config->config_entry('news|cache_time'));
                 return $this->news;
             }
-            return isset($this->website->news) ? $this->website->news : false;
+            return $this->website->news ?? false;
         }
 
         protected function load_from_ipb4($page = 1){
             $this->website->check_cache('news#' . (int)$page, 'news', $this->config->config_entry('news|cache_time'));
             if(!$this->website->cached){
                 if(trim($this->config->config_entry('news|ipb_host')) != ''){
-                    $this->load->lib(['mysql', 'db'], [$this->config->config_entry('news|ipb_host'), $this->config->config_entry('news|ipb_user'), $this->config->config_entry('news|ipb_pass'), $this->config->config_entry('news|ipb_db'), 'pdo_mysql'], 'pdo_mysql');
+                    $this->load->lib('DBEngines/pdo_mysql', [$this->config->config_entry('news|ipb_host'), $this->config->config_entry('news|ipb_user'), $this->config->config_entry('news|ipb_pass'), $this->config->config_entry('news|ipb_db'), 'pdo_mysql']);
                 }
                 if(strpos(trim($this->config->config_entry('news|ipb_forum_ids')), ',') !== false){
                     $ids = explode(',', trim($this->config->config_entry('news|ipb_forum_ids')));
@@ -171,7 +171,7 @@
                 $this->website->set_cache('news#' . (int)$page, $this->news, $this->config->config_entry('news|cache_time'));
                 return $this->news;
             }
-            return isset($this->website->news) ? $this->website->news : false;
+            return $this->website->news ?? false;
         }
 
         private function load_from_rss($page = 1){
@@ -196,7 +196,7 @@
                     return false;
                 }
             }
-            return isset($this->website->news) ? $this->website->news : false;
+            return $this->website->news ?? false;
         }
 
         private function xml2array($xml){
@@ -220,7 +220,7 @@
         public function count_total_news(){
             if($this->config->config_entry('news|storage') == 'ipb'){
                 if(trim($this->config->config_entry('news|ipb_host')) != ''){
-                    $this->load->lib(['mysql', 'db'], [$this->config->config_entry('news|ipb_host'), $this->config->config_entry('news|ipb_user'), $this->config->config_entry('news|ipb_pass'), $this->config->config_entry('news|ipb_db'), 'pdo_mysql'], 'pdo_mysql');
+                    $this->load->lib('DBEngines/pdo_mysql', [$this->config->config_entry('news|ipb_host'), $this->config->config_entry('news|ipb_user'), $this->config->config_entry('news|ipb_pass'), $this->config->config_entry('news|ipb_db'), 'pdo_mysql']);
                 }
                 if(strpos(trim($this->config->config_entry('news|ipb_forum_ids')), ',') !== false){
                     $ids = explode(',', trim($this->config->config_entry('news|ipb_forum_ids')));

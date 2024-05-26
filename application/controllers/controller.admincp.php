@@ -56,17 +56,23 @@
                     $this->Madmin->$key = $value;
                 }
                 if(!isset($this->Madmin->vars['username']))
-                    $this->vars['error'] = 'Please enter username.'; else{
+                    $this->vars['error'] = 'Please enter username.'; 
+                else{
                     if($this->Madmin->vars['username'] == '')
-                        $this->vars['error'] = 'Please enter username.'; else{
+                        $this->vars['error'] = 'Please enter username.'; 
+                    else{
                         if(!isset($this->Madmin->vars['password']))
-                            $this->vars['error'] = 'Please enter password.'; else{
+                            $this->vars['error'] = 'Please enter password.'; 
+                        else{
                             if($this->Madmin->vars['password'] == '')
-                                $this->vars['error'] = 'Please enter password.'; else{
+                                $this->vars['error'] = 'Please enter password.'; 
+                            else{
                                 if(!$this->Madmin->valid_username($this->Madmin->vars['username']))
-                                    $this->vars['error'] = 'Invalid Username.'; else{
+                                    $this->vars['error'] = 'Invalid Username.'; 
+                                else{
                                     if(!$this->Madmin->valid_username($this->Madmin->vars['password']))
-                                        $this->vars['error'] = 'Invalid Password.'; else{
+                                        $this->vars['error'] = 'Invalid Password.'; 
+                                    else{
                                         if(defined('PINCODE') && PINCODE != ''){
                                             $pincode = str_split(PINCODE);
                                             if(!isset($this->Madmin->vars['first']) || !is_numeric($this->Madmin->vars['first']) || strlen($this->Madmin->vars['first']) > 1)
@@ -131,7 +137,7 @@
                         if(isset($_POST['switch_server_file'])){
                             $_SESSION['default_key'] = [0 => $_POST['switch_server_file']];
                         }
-                        $default_key = isset($_SESSION['default_key']) ? $_SESSION['default_key'] : array_keys(array_slice($this->vars['servers'], 0, 1));
+                        $default_key = isset($_SESSION['default_key']) ? $_SESSION['default_key'] : array_key_first($this->vars['servers']);
                         $this->vars['default'] = $default_key[0];
                     }
                     $file = isset($this->vars['default']) ? '_' . $this->vars['default'] : '';
@@ -142,7 +148,7 @@
                     $this->config->config_file($type . $file);
                 } else{
                     $this->vars['server_list'] = $this->website->server_list();
-                    $this->vars['default_server'] = array_keys($this->vars['server_list']) [0];
+                    $this->vars['default_server'] = array_key_first($this->vars['server_list']);
                     switch($type){
                         default:
                         case 'reset':
@@ -2332,15 +2338,18 @@
                         $this->Madmin->$key = trim($value);
                     }
                     if(!isset($_POST['name']))
-                        $this->vars['error'] = 'Please enter gamemaster name.'; else{
+                        $this->vars['error'] = 'Please enter gamemaster name.'; 
+                    else{
                         if(!$this->Madmin->valid_username($_POST['name']))
-                            $this->vars['error'] = 'Invalid character name.'; else{
+                            $this->vars['error'] = 'Invalid character name.'; 
+                        else{
                             if(!isset($_POST['server']))
-                                $this->vars['error'] = 'Please select server.'; else{
-                                $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($_POST['server'])]);
-                                if(!$this->Madmin->check_gm_char())
-                                    $this->vars['error'] = 'Character not found on selected server.'; else{
-                                    $this->Madmin->set_ctlcode(32);
+                                $this->vars['error'] = 'Please select server.'; 
+                            else{
+                                if(!$this->Madmin->check_gm_char($_POST['name'], $_POST['server']))
+                                    $this->vars['error'] = 'Character not found on selected server.'; 
+                                else{
+                                    $this->Madmin->set_ctlcode(32, $_POST['name'], $_POST['server']);
                                     $this->Madmin->add_to_gmlist();
                                     if($_POST['system_type'] == 2){
                                         $autorityMask = 0;
@@ -2368,12 +2377,13 @@
                                             $autorityMask += $_POST['gm_shop'];
                                         if(isset($_POST['invisible_to_monsters']))
                                             $autorityMask += $_POST['invisible_to_monsters'];
-                                        if(!$this->Madmin->add_igcn_autority($autorityMask, $_POST['valid_until'])){
+                                        if(!$this->Madmin->add_igcn_autority($autorityMask, $_POST['valid_until'], $_POST['name'], $_POST['server'])){
                                             $this->vars['error'] = 'Unable to insert GM into Gm System Table.';
                                         }
                                     }
                                     if(!$this->Madmin->error)
-                                        $this->vars['success'] = 'Character sucessfully added to gm list.'; else $this->vars['error'] = $this->Madmin->error;
+                                        $this->vars['success'] = 'Character sucessfully added to gm list.'; 
+                                    else $this->vars['error'] = $this->Madmin->error;
                                 }
                             }
                         }
@@ -2395,14 +2405,17 @@
             if($this->session->userdata(['admin' => 'is_admin'])){
                 $this->load_header();
                 if($name == '')
-                    $this->vars['error'] = 'Invalid character.'; else{
+                    $this->vars['error'] = 'Invalid character.'; 
+                else{
                     if($server == '')
-                        $this->vars['error'] = 'Invalid server.'; else{
-                        $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server)]);
-                        if(!$this->Madmin->check_gm_char($name))
-                            $this->vars['error'] = 'Character not found on selected server.'; else{
+                        $this->vars['error'] = 'Invalid server.'; 
+                    else{
+                        if(!$this->Madmin->check_gm_char($name, $server))
+                            $this->vars['error'] = 'Character not found on selected server.'; 
+                        else{
                             if($this->Madmin->gm_info['CtlCode'] != 32)
-                                $this->vars['error'] = 'Character is not gamemaster.'; else{
+                                $this->vars['error'] = 'Character is not gamemaster.'; 
+                            else{
                                 if(count($_POST) > 0){
                                     foreach($_POST as $key => $value){
                                         $this->Madmin->$key = trim($value);
@@ -2434,17 +2447,18 @@
                                             $autorityMask += $_POST['gm_shop'];
                                         if(isset($_POST['invisible_to_monsters']))
                                             $autorityMask += $_POST['invisible_to_monsters'];
-                                        if(!$this->Madmin->add_igcn_autority($autorityMask, $_POST['valid_until'])){
+                                        if(!$this->Madmin->add_igcn_autority($autorityMask, $_POST['valid_until'], $name, $server)){
                                             $this->vars['error'] = 'Unable to insert GM into Gm System Table.';
                                         }
                                     }
                                     if(!$this->Madmin->error)
-                                        $this->vars['success'] = 'Character sucessfully edited.'; else $this->vars['error'] = $this->Madmin->error;
+                                        $this->vars['success'] = 'Character sucessfully edited.'; 
+                                    else $this->vars['error'] = $this->Madmin->error;
                                 }
                                 $this->vars['gm_info'] = $this->Madmin->load_gm_info($name, $server);
                                 if($this->vars['gm_info']['system_type'] == 2){
                                     $this->vars['igcn_diplay'] = 'block';
-                                    $authorityMask = $this->Madmin->get_gm_authority_mask($name);
+                                    $authorityMask = $this->Madmin->get_gm_authority_mask($name, $server);
                                     if($authorityMask != false){
                                         if($authorityMask['AuthorityMask'] >= 2048){
                                             $this->vars['invisible_to_monsters'] = true;
@@ -2519,17 +2533,19 @@
             if($this->session->userdata(['admin' => 'is_admin'])){
                 $this->load_header();
                 if($name == '')
-                    $this->vars['error'] = 'Invalid character.'; else{
+                    $this->vars['error'] = 'Invalid character.'; 
+                else{
                     if($server == '')
-                        $this->vars['error'] = 'Invalid server.'; else{
-                        $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server)]);
-                        if(!$this->Madmin->check_gm_char($name))
-                            $this->vars['error'] = 'Character not found on selected server.'; else{
+                        $this->vars['error'] = 'Invalid server.'; 
+                    else{
+                        if(!$this->Madmin->check_gm_char($name, $server))
+                            $this->vars['error'] = 'Character not found on selected server.'; 
+                        else{
                             $this->Madmin->check_gm_type($name, $server);
-                            $this->Madmin->set_ctlcode(0, $name);
+                            $this->Madmin->set_ctlcode(0, $name, $server);
                             $this->Madmin->remove_gm_from_list($name, $server);
                             if($this->Madmin->gm_system_type == 2){
-                                $this->Madmin->remove_from_igcn_gm_system($name);
+                                $this->Madmin->remove_from_igcn_gm_system($name, $server);
                             }
                             $this->vars['success'] = 'Character removed from gm list.';
                         }
@@ -3062,11 +3078,10 @@
                 if($server != '' && $serial != ''){
                     if(preg_match('/^[0-9A-F]{8}$/i', $serial)){
                         if(array_key_exists($server, $this->website->server_list())){
-                            $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server)]);
-                            if($this->vars['search'] = $this->Madmin->search_char_inventory($serial)){
+                            if($this->vars['search'] = $this->Madmin->search_char_inventory($serial, $server)){
                                 $this->vars['success'] = 'Item found in character ' . $this->vars['search']['Name'] . ' inventory. Want To <a href="javascript:void(0);" onclick="return App.confirmLink(\'Are you sure you want to remove item?\', \'' . $this->config->base_url . ACPURL . '/remove-item-inventory/' . $this->vars['search']['Name'] . '/' . $serial . '/' . $server . '\', \'self\')">Delete</a> Item?';
                             } else{
-                                if($this->vars['search'] = $this->Madmin->search_warehouse($serial)){
+                                if($this->vars['search'] = $this->Madmin->search_warehouse($serial, $server)){
                                     $this->vars['success'] = 'Item found in account ' . $this->vars['search']['AccountId'] . ' warehouse. Want To <a href="javascript:void(0);" onclick="return App.confirmLink(\'Are you sure you want to remove item?\', \'' . $this->config->base_url . ACPURL . '/remove-item-warehouse/' . $this->vars['search']['AccountId'] . '/' . $serial . '/' . $server . '\', \'self\')">Delete</a> Item?';
                                 } else{
                                     $this->vars['error'] = 'Item not found.';
@@ -3087,11 +3102,10 @@
                             if($server == '')
                                 $this->vars['error'] = 'Invalid server'; else{
                                 if(array_key_exists($server, $this->website->server_list())){
-                                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server)]);
-                                    if($this->vars['search'] = $this->Madmin->search_char_inventory($serial)){
+                                    if($this->vars['search'] = $this->Madmin->search_char_inventory($serial, $server)){
                                         $this->vars['success'] = 'Item found in character ' . $this->vars['search']['Name'] . ' inventory. Want To <a href="javascript:void(0);" onclick="return App.confirmLink(\'Are you sure you want to remove item?\', \'' . $this->config->base_url . ACPURL . '/remove-item-inventory/' . $this->vars['search']['Name'] . '/' . $serial . '/' . $server . '\', \'self\')">Delete</a> Item?';
                                     } else{
-                                        if($this->vars['search'] = $this->Madmin->search_warehouse($serial)){
+                                        if($this->vars['search'] = $this->Madmin->search_warehouse($serial, $server)){
                                             $this->vars['success'] = 'Item found in account ' . $this->vars['search']['AccountId'] . ' warehouse. Want To <a href="javascript:void(0);" onclick="return App.confirmLink(\'Are you sure you want to remove item?\', \'' . $this->config->base_url . ACPURL . '/remove-item-warehouse/' . $this->vars['search']['AccountId'] . '/' . $serial . '/' . $server . '\', \'self\')">Delete</a> Item?';
                                         } else{
                                             $this->vars['error'] = 'Item not found.';
@@ -3116,13 +3130,7 @@
                 $this->load_header();
                 if(array_key_exists($server, $this->website->server_list())){
                     if(preg_match('/^[0-9A-F]{8}$/i', $serial)){
-                        if($this->website->is_multiple_accounts() == true){
-                            $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server, true)]);
-                        } else{
-                            $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                        }
-                        $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server)]);
-                        if($this->Madmin->check_status($name, true)){
+                        if($this->Madmin->check_status($name, true, $server)){
                             $this->Madmin->get_inventory_content($name, $server);
                             if($this->Madmin->remove_inventory_item_by_serial($name, $serial, $server)){
                                 $this->vars['success'] = 'Inventory item successfully removed.';
@@ -3150,9 +3158,7 @@
                 $this->load_header();
                 if(array_key_exists($server, $this->website->server_list())){
                     if(preg_match('/^[0-9A-F]{8}$/i', $serial)){
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                        $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server)]);
-                        if($this->Madmin->check_status($name)){
+                        if($this->Madmin->check_status($name, false, $server)){
                             $this->Madmin->get_vault_content($name, $server);
                             if($this->Madmin->remove_vault_item_by_serial($name, $serial, $server)){
                                 $this->vars['success'] = 'Warehouse item successfully removed.';
@@ -3196,11 +3202,11 @@
                     if(!empty($image['tmp_name'])){
                         $file_name = $image['name'];
                         $ext = strtolower(substr(strrchr($file_name, "."), 1));
-                        //list($imageWidth, $imageHeight, $imageType, $imageAttr) = @getimagesize($image['tmp_name']);
                         $mime = @getimagesize($image['tmp_name']);
                         if($mime){
                             if(!in_array($ext, ['jpg', 'jpeg', 'png', 'gif']))
-                                $this->errors[] = ['You must upload a file with one of the following extensions: ' . implode(', ', ['jpg', 'jpeg', 'png', 'gif'])]; else{
+                                $this->errors[] = ['You must upload a file with one of the following extensions: ' . implode(', ', ['jpg', 'jpeg', 'png', 'gif'])]; 
+                            else{
                                 if(!in_array($mime['mime'], ['image/jpeg', 'image/png', 'image/gif']))
                                     $this->errors[] = ['You must upload a file with one of the following extensions: ' . implode(', ', ['jpg', 'jpeg', 'png', 'gif'])];
                             }
@@ -3404,7 +3410,7 @@
                 $this->load_header();
                 $this->load->lib('iteminfo');
                 if($server == ''){
-                    $server = array_keys(array_slice($this->website->server_list(), 0, 1))[0];
+                    $server = array_key_first($this->website->server_list());
                 }
                 $this->iteminfo->setItemData(false, (int)$cat, $this->website->get_value_from_server($server, 'item_size'));
 				if(isset($_POST['import_items'])){
@@ -4427,11 +4433,6 @@
                     $amount = trim(isset($_POST['amount']) ? ctype_digit($_POST['amount']) ? (int)$_POST['amount'] : '' : '');
                     $type = trim(isset($_POST['c_type']) ? ctype_digit($_POST['c_type']) ? (int)$_POST['c_type'] : '' : '');
                     $act = trim(isset($_POST['act']) ? ctype_digit($_POST['act']) ? (int)$_POST['act'] : '' : '');
-                    if($this->website->is_multiple_accounts() == true){
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server, true)]);
-                    } else{
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                    }
                     $this->load->model('account');
                     if($this->vars['acc'] == '')
                         $this->vars['error'] = 'Please enter usename.'; 
@@ -4448,26 +4449,26 @@
                                     if($act == '')
                                         $this->vars['error'] = 'Please select action.'; 
 									else{
-                                        if($acc_info = $this->Madmin->acc_exists($this->vars['acc'])){
+                                        if($acc_info = $this->Madmin->acc_exists($this->vars['acc'], $server)){
 											$plugins = $this->config->plugins();
 											
                                             if($_POST['act'] == 1){
-                                                $this->website->add_credits($this->vars['acc'], $_POST['server'], $_POST['amount'], $_POST['c_type'], false, $acc_info['memb_guid']);
-                                                $this->Madmin->add_account_log('Added ' . $this->website->translate_credits($_POST['c_type'], $_POST['server']) . ' by system', $_POST['amount'], $this->vars['acc'], $_POST['server']);
+                                                $this->website->add_credits($this->vars['acc'], $server, $amount, $type, false, $acc_info['memb_guid']);
+                                                $this->Madmin->add_account_log('Added ' . $this->website->translate_credits($type, $server) . ' by system', $amount, $this->vars['acc'], $server);
 												if(array_key_exists('accumulated_donation_rewards', $plugins)){
-													if($this->config->values('accumulated_donation_rewards', [$_POST['server'], 'active']) == 1){
-														$this->Madmin->add_total_recharge($this->vars['acc'], $_POST['server'], $_POST['amount']);
+													if($this->config->values('accumulated_donation_rewards', [$server, 'active']) == 1){
+														$this->Madmin->add_total_recharge($this->vars['acc'], $server, $amount);
 													}
 												}
 											} 
 											else{
-                                                $this->website->charge_credits($this->vars['acc'], $_POST['server'], $_POST['amount'], $_POST['c_type'], $acc_info['memb_guid']);
-                                                $this->Madmin->add_account_log('Removed ' . $this->website->translate_credits($_POST['c_type'], $_POST['server']) . ' by system', -$_POST['amount'], $this->vars['acc'], $_POST['server']);
+                                                $this->website->charge_credits($this->vars['acc'], $server, $amount, $type, $acc_info['memb_guid']);
+                                                $this->Madmin->add_account_log('Removed ' . $this->website->translate_credits($type, $server) . ' by system', -$amount, $this->vars['acc'], $server);
                                             }
                                             $this->vars['success'] = 'Credits successfully edited.';
                                         } 
 										else{
-                                            $this->vars['similar_accounts'] = $this->Madmin->search_similar_accounts($this->vars['acc']);
+                                            $this->vars['similar_accounts'] = $this->Madmin->search_similar_accounts($this->vars['acc'], $server);
                                             if(count($this->vars['similar_accounts']) > 0){
                                                 $this->vars['found'] = true;
                                             } 
@@ -4489,8 +4490,7 @@
                         $this->vars['error2'] = 'Please enter usename.'; else{
                         if($this->vars['server'] == '')
                             $this->vars['error2'] = 'Please select server.'; else{
-                            $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->vars['server'], true)]);
-                            if($acc_info = $this->Madmin->acc_exists($this->vars['user'])){
+                            if($acc_info = $this->Madmin->acc_exists($this->vars['user'], $this->vars['server'])){
                                 $this->vars['credits_info']['server'] = $this->vars['server'];
                                 $this->vars['credits_info']['credits'] = $this->website->get_user_credits_balance($this->vars['user'], $this->vars['server'], 1, $acc_info['memb_guid']);
                                 $this->vars['credits_info']['credits2'] = $this->website->get_user_credits_balance($this->vars['user'], $this->vars['server'], 2, $acc_info['memb_guid']);
@@ -4520,15 +4520,20 @@
                         $this->Madmin->$key = trim($value);
                     }
                     if($_POST['votelink'] == '')
-                        $this->vars['error'] = 'Please enter valid voting url'; else{
+                        $this->vars['error'] = 'Please enter valid voting url'; 
+                    else{
                         if($_POST['name'] == '')
-                            $this->vars['error'] = 'Please enter voting site name'; else{
+                            $this->vars['error'] = 'Please enter voting site name'; 
+                        else{
                             if($_POST['img_url'] == '')
-                                $this->vars['error'] = 'Please enter voting button image url'; else{
+                                $this->vars['error'] = 'Please enter voting button image url'; 
+                            else{
                                 if($_POST['reward'] == '' || !ctype_digit($_POST['reward']))
-                                    $this->vars['error'] = 'Please enter valid reward amount.'; else{
+                                    $this->vars['error'] = 'Please enter valid reward amount.'; 
+                                else{
                                     if($_POST['voting_api'] == 2 && $_POST['mmotop_stats_url'] == '')
-                                        $this->vars['error'] = 'Please enter valid mmotop stats api url.'; else{
+                                        $this->vars['error'] = 'Please enter valid mmotop stats api url.'; 
+                                    else{
                                         if($_POST['voting_api'] == 2 && ($_POST['mmotop_reward_sms'] == '' || !ctype_digit($_POST['mmotop_reward_sms'])))
                                             $this->vars['error'] = 'Please enter valid mmotop sms reward amount.'; else{
                                             if($_POST['server'] == '')
@@ -5025,25 +5030,19 @@
                 if(count($_POST) > 0){
                     $acc = isset($_POST['account']) ? htmlspecialchars($_POST['account']) : '';
                     $server = isset($_POST['server']) ? htmlspecialchars($_POST['server']) : '';
-                    if($this->website->is_multiple_accounts() == true){
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server, true)]);
-                    } else{
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                    }
                     $this->load->model('account');
                     if($acc == '')
                         $this->vars['error'] = 'Please enter username'; 
                     else{
-                        if(!$this->Madmin->acc_exists($acc))
+                        if(!$this->Madmin->acc_exists($acc, $server))
                             $this->vars['error'] = 'Account not found'; 
                         else{
-                            if(!$this->Madmin->check_status($acc))
+                            if(!$this->Madmin->check_status($acc, false, $server))
                                 $this->vars['error'] = 'Account is online'; 
                             else{
                                 if($server == '')
                                     $this->vars['error'] = 'Please select server'; 
                                 else{
-                                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server)]);
                                     $this->load->model('warehouse');
                                     $this->load->lib('iteminfo');
                                     $this->load->lib("itemimage");
@@ -5074,21 +5073,19 @@
                     $slot = (isset($_POST['slot']) ? ctype_digit($_POST['slot']) ? $_POST['slot'] : '' : '');
                     $acc = isset($_SESSION['vault_user']) ? htmlspecialchars($_SESSION['vault_user']) : '';
                     $server = isset($_SESSION['vault_server']) ? htmlspecialchars($_SESSION['vault_server']) : '';
-                    if($this->website->is_multiple_accounts() == true){
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server, true)]);
-                    } else{
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                    }
                     $this->load->model('account');
                     if($slot == '')
-                        json(['error' => 'Invalid item_slot']); else{
+                        json(['error' => 'Invalid item_slot']); 
+                    else{
                         if($acc == '')
-                            json(['error' => 'Invalid account.']); else{
+                            json(['error' => 'Invalid account.']); 
+                        else{
                             if($server == '')
-                                json(['error' => 'Invalid server.']); else{
-                                if(!$this->Madmin->check_status($acc))
-                                    json(['error' => 'Account is online']); else{
-                                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server)]);
+                                json(['error' => 'Invalid server.']); 
+                            else{
+                                if(!$this->Madmin->check_status($acc, false, $server))
+                                    json(['error' => 'Account is online']); 
+                                else{
                                     if($this->Madmin->get_vault_content($acc, $server)){
                                         if($this->Madmin->find_item_by_slot($slot, $server)){
                                             $this->Madmin->log_deleted_item($acc, $server, 1);
@@ -5160,12 +5157,6 @@
 		public function add_wh_item(){
             if(is_ajax()){
                 if($this->session->userdata(['admin' => 'is_admin'])){
-                    if($this->website->is_multiple_accounts() == true){
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($_SESSION['vault_server'], true)]);
-                    } else{
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                    }
-                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($_SESSION['vault_server'])]);
                     $this->load->lib('iteminfo');
                     $this->load->lib('createitem', [MU_VERSION, SOCKET_LIBRARY, $this->website->get_value_from_server($_SESSION['vault_server'], 'item_size')]);	
                     $this->load->lib('itemimage');
@@ -5214,7 +5205,7 @@
 							else 
 								json(['error' => $errors]);
                         } else{
-                            if(!$this->Madmin->check_status($_SESSION['vault_user'])){
+                            if(!$this->Madmin->check_status($_SESSION['vault_user'], false, $_SESSION['vault_server'])){
                                 json(['error' => 'Account is online']);
                             } else{
                                 $this->generate_item();
@@ -5331,13 +5322,12 @@
                 } else{
                     unset($_SESSION['account_server']);
                     if(!isset($_SESSION['account_server'])){
-                        $_SESSION['account_server'] = array_keys($this->vars['servers'])[0];
+                        $_SESSION['account_server'] = array_key_first($this->vars['servers']);
                     }
                 }
-                $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($_SESSION['account_server'], true)]);
                 $this->vars['account_list'] = $this->Madmin->load_account_list($this->vars['start'], $this->vars['per_page'], $_SESSION['account_server'], $this->vars['order_column'], $this->vars['order_dir']);
-                $this->vars['total_records'] = $this->Madmin->count_total_accounts();
-                $this->vars['total_filtered_records'] = $this->Madmin->count_total_accounts(true);
+                $this->vars['total_records'] = $this->Madmin->count_total_accounts(false, $_SESSION['account_server']);
+                $this->vars['total_filtered_records'] = $this->Madmin->count_total_accounts(true, $_SESSION['account_server']);
                 if($this->vars['account_list'] != false){
                     foreach($this->vars['account_list'] AS $info){
 						
@@ -5456,11 +5446,6 @@
 					else{
 						$this->vars['firstKey'] = array_key_exists($server, $this->vars['servers']) ? $server : array_key_first($this->vars['servers']);
 					}
-					if($this->website->is_multiple_accounts() == true){
-						$this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->vars['firstKey'], true)]);
-					} else{
-						$this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-					}
 					
 					$this->load->model('account');
 					
@@ -5483,12 +5468,12 @@
 							 $this->vars['error'] = 'Please enter share slug';
 						 
 						 if(!isset($this->vars['error'])){
-							 $this->Madmin->update_partner_data($account, $partner, $twitch, $ttags, $youtube, $daily_coins, $daily_coins_type, $purchase_share, $share_url);
+							 $this->Madmin->update_partner_data($account, $partner, $twitch, $ttags, $youtube, $daily_coins, $daily_coins_type, $purchase_share, $share_url, $server);
 							 $this->vars['success'] = 'Partner updated successfully';
 						 }
 					}
 					
-					$this->vars['account_data'] = $this->Madmin->get_account_data_for_partner($account);
+					$this->vars['account_data'] = $this->Madmin->get_account_data_for_partner($account, $server);
 					$this->vars['purchasesReffered'] = $this->Madmin->countPurchasesReffered($account, $server);
 					$this->vars['totalAmount'] = $this->Madmin->totalAmountShares($account, $server);
 					if($this->vars['totalAmount'] == NULL)
@@ -5522,11 +5507,6 @@
 					}
 					else{
 						$this->vars['firstKey'] = array_key_exists($server, $this->vars['servers']) ? $server : array_key_first($this->vars['servers']);
-					}
-					if($this->website->is_multiple_accounts() == true){
-						$this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->vars['firstKey'], true)]);
-					} else{
-						$this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
 					}
 					$this->vars['vip_config'] = $this->config->values('vip_config');
 					$this->vars['vip_query_config'] = $this->config->values('vip_query_config');
@@ -5581,11 +5561,6 @@
                 if(isset($_POST['character'])){
                     $char = isset($_POST['character']) ? $_POST['character'] : '';
                     $sserver = isset($_POST['server']) ? $_POST['server'] : '';
-                    if($sserver == ''){
-                        $this->vars['error'] = 'Please select server';
-                    } else{
-                        $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($sserver, false)]);
-                    }
                     if($char == ''){
                         $this->vars['error'] = 'Please enter character name';
                     }
@@ -5598,15 +5573,13 @@
                 } else{
                     $this->vars['servers'] = $this->website->server_list();
                     if($server == ''){
-                        $server_for_db = array_keys($this->vars['servers']);
-                        $server_for_db = $server_for_db[0];
+                        $server_for_db = array_key_first($this->vars['servers']);
                     } else{
                         $server_for_db = $server;
                     }
-                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, false)]);
                     $this->vars['serv'] = $server;
                     $this->vars['char_list'] = $this->Madmin->load_char_list($page, 25, $server_for_db);
-                    $this->pagination->initialize($page, 25, $this->Madmin->count_total_chars(), $this->config->base_url . ACPURL . '/character-manager/%s/' . $server . '');
+                    $this->pagination->initialize($page, 25, $this->Madmin->count_total_chars($server_for_db), $this->config->base_url . ACPURL . '/character-manager/%s/' . $server . '');
                     $this->vars['pagination'] = $this->pagination->create_links();
                 }
                 $this->load->view('admincp' . DS . 'server_manager' . DS . 'view.character_manager', $this->vars);
@@ -5621,22 +5594,16 @@
                 $this->load_header();
                 $this->vars['servers'] = $this->website->server_list();
                 if($server == ''){
-                    $server_for_db = array_keys($this->vars['servers']);
-                    $server_for_db = $server_for_db[0];
+                    $server_for_db = array_key_first($this->vars['servers']);
                 } else{
                     $server_for_db = $server;
                 }
-                if($this->website->is_multiple_accounts() == true){
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, true)]);
-                } else{
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                }
-                $this->vars['account_data'] = $this->Madmin->get_account_data($id);
+                $this->vars['account_data'] = $this->Madmin->get_account_data($id, $server_for_db);
                 if($this->vars['account_data'] != false){
                     if($this->vars['account_data']['activated'] == 1){
                         $this->vars['error'] = 'Account is already activated';
                     } else{
-                        $this->Madmin->activate_account($id);
+                        $this->Madmin->activate_account($id, $server_for_db);
                         $this->vars['success'] = 'Account activated successfully';
                     }
                 }
@@ -5652,17 +5619,10 @@
                 $this->load_header();
                 $this->vars['servers'] = $this->website->server_list();
                 if($server == ''){
-                    $server_for_db = array_keys($this->vars['servers']);
-                    $server_for_db = $server_for_db[0];
+                    $server_for_db = array_key_first($this->vars['servers']);
                 } else{
                     $server_for_db = $server;
                 }
-                if($this->website->is_multiple_accounts() == true){
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, true)]);
-                } else{
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                }
-                $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, false)]);
                 if(isset($_POST['password'])){
                     $pass = isset($_POST['password']) ? $_POST['password'] : '';
                     $email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -5676,7 +5636,7 @@
                             if($sno_numb == '' || !is_numeric($sno_numb)){
                                 $this->vars['error'] = 'Personal ID can not be empty';
                             } else{
-                                if($this->Madmin->update_account_info($id, $pass, $email, $sno_numb)){
+                                if($this->Madmin->update_account_info($id, $pass, $email, $sno_numb, $server_for_db)){
                                     $this->vars['success'] = 'Account info updated.';
                                 } else{
                                     $this->vars['error'] = 'Unable to update account information.';
@@ -5685,7 +5645,7 @@
                         }
                     }
                 }
-                $this->vars['account_data'] = $this->Madmin->get_account_data($id);
+                $this->vars['account_data'] = $this->Madmin->get_account_data($id, $server_for_db);
                 if($this->vars['account_data'] != false){
                     $this->vars['ip_logs'] = $this->Madmin->get_ip_logs($this->vars['account_data']['memb___id']);
                     $this->vars['char_list'] = $this->Madmin->get_char_list($this->vars['account_data']['memb___id'], -1, $server_for_db);
@@ -5702,12 +5662,10 @@
                 $this->load_header();
                 $this->vars['servers'] = $this->website->server_list();
                 if($server == ''){
-                    $this->vars['server'] = array_keys($this->vars['servers']);
-                    $this->vars['server'] = $this->vars['server'][0];
+                    $this->vars['server'] = array_key_first($this->vars['servers']);
                 } else{
                     $this->vars['server'] = $server;
                 }
-                $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->vars['server'], false)]);
                 if(isset($_POST['edit_character'])){
                     foreach($_POST as $key => $value){
                         $this->Madmin->$key = $value;
@@ -5763,17 +5721,11 @@
                 $this->load_header();
                 $this->vars['servers'] = $this->website->server_list();
                 if($server == ''){
-                    $server_for_db = array_keys($this->vars['servers']);
-                    $server_for_db = $server_for_db[0];
+                    $server_for_db = array_key_first($this->vars['servers']);
                 } else{
                     $server_for_db = $server;
                 }
-                if($this->website->is_multiple_accounts() == true){
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, true)]);
-                } else{
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                }
-                if($acc = $this->Madmin->check_account($id)){
+                if($acc = $this->Madmin->check_account($id, $server_for_db)){
                     $this->vars['name'] = $acc['memb___id'];
                     if(isset($_POST['ban'])){
                         foreach($_POST as $key => $value){
@@ -5783,7 +5735,7 @@
                             $this->vars['error'] = 'Wrong ban time.';
                         } else{
                             if($acc['bloc_code'] != 1){
-                                $this->Madmin->ban_account();
+                                $this->Madmin->ban_account($server_for_db);
                                 $this->Madmin->add_to_banlist(1, $server_for_db);
                                 $this->vars['success'] = 'Account successfully banned.';
                             } else{
@@ -5808,12 +5760,10 @@
                 $this->load_header();
                 $this->vars['servers'] = $this->website->server_list();
                 if($server == ''){
-                    $server_for_db = array_keys($this->vars['servers']);
-                    $server_for_db = $server_for_db[0];
+                    $server_for_db = array_key_first($this->vars['servers']);
                 } else{
                     $server_for_db = $server;
                 }
-                $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, false)]);
                 if($char = $this->Madmin->check_char($id, $server_for_db)){
                     $this->vars['name'] = $char['Name'];
                     if(isset($_POST['ban'])){
@@ -5824,7 +5774,7 @@
                             $this->vars['error'] = 'Wrong ban time.';
                         } else{
                             if($char['CtlCode'] != 1){
-                                $this->Madmin->ban_char();
+                                $this->Madmin->ban_char($server_for_db);
                                 $this->Madmin->add_to_banlist(2, $server_for_db);
                                 $this->vars['success'] = 'Character successfully banned.';
                             } else{
@@ -5849,20 +5799,14 @@
                 $this->load_header();
                 $this->vars['servers'] = $this->website->server_list();
                 if($server == ''){
-                    $server_for_db = array_keys($this->vars['servers']);
-                    $server_for_db = $server_for_db[0];
+                    $server_for_db = array_key_first($this->vars['servers']);;
                 } else{
                     $server_for_db = $server;
                 }
                 switch($type){
                     default:
                     case 'account':
-                        if($this->website->is_multiple_accounts() == true){
-                            $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, true)]);
-                        } else{
-                            $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                        }
-                        if($this->Madmin->check_banned_account($name)){
+                        if($this->Madmin->check_banned_account($server_for_db)){
                             $this->Madmin->unban($name, 1, $server_for_db);
                             $this->vars['success'] = 'Account successfully unbanned.';
                         } else{
@@ -5870,8 +5814,7 @@
                         }
                         break;
                     case 'character':
-                        $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, false)]);
-                        if($this->Madmin->check_banned_char($name)){
+                        if($this->Madmin->check_banned_char($name, $server_for_db)){
                             $this->Madmin->unban($name, 2, $server_for_db);
                             $this->vars['success'] = 'Character successfully unbanned.';
                         } else{
@@ -5891,23 +5834,16 @@
                 $this->load_header();
                 $this->vars['servers'] = $this->website->server_list();
                 if($server == ''){
-                    $server_for_db = array_keys($this->vars['servers']);
-                    $server_for_db = $server_for_db[0];
+                    $server_for_db = array_key_first($this->vars['servers']);
                 } else{
                     $server_for_db = $server;
                 }
-                if($this->website->is_multiple_accounts() == true){
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, true)]);
-                } else{
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                }
-                $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($server_for_db, false)]);
-                if($acc = $this->Madmin->check_account($id)){
-                    $this->Madmin->delete_account($acc['memb___id']);
-                    $char_list = $this->Madmin->get_character_list($acc['memb___id']);
-                    $this->Madmin->delete_account_character($acc['memb___id']);
+                if($acc = $this->Madmin->check_account($id, $server_for_db)){
+                    $this->Madmin->delete_account($acc['memb___id'], $server_for_db);
+                    $char_list = $this->Madmin->get_character_list($acc['memb___id'], $server_for_db);
+                    $this->Madmin->delete_account_character($acc['memb___id'], $server_for_db);
                     if(!empty($char_list)){
-                        $this->Madmin->delete_characters($acc['memb___id'], $char_list);
+                        $this->Madmin->delete_characters($acc['memb___id'], $char_list, $server_for_db);
                     }
                     $this->Madmin->delete_account_log($acc['memb___id'], $server_for_db);
                     $this->Madmin->delete_account_credits($acc['memb___id'], $server_for_db);
@@ -6109,12 +6045,7 @@
                                     }
                                     $this->Madmin->log_reply_time($id);
 									if($this->config->values('email_config', 'support_email_user') == 1){
-										if($this->website->is_multiple_accounts() == true){
-											$this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->vars['ticket_data']['server'], true)]);
-										} else{
-											$this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-										}
-										$user = $this->Madmin->get_account_data_by_username($this->vars['ticket_data']['creator_account']);
+										$user = $this->Madmin->get_account_data_by_username($this->vars['ticket_data']['creator_account'], $this->vars['ticket_data']['server']);
 										$this->Madmin->sent_ticket_reply_email_user($this->vars['ticket_data']['creator_account'], $this->vars['ticket_data']['server'], $user['mail_addr'], $this->vars['ticket_data']['subject'], $id);
 									}
                                     $this->vars['reply_success'] = 'You have successfully replied to ticket.';
@@ -7409,14 +7340,14 @@
                                         if($char_db == '')
                                             $this->vars['error'] = 'Please select character database'; 
                                         else{
-                                            $this->load->lib([$char_db, 'db'], [HOST, USER, PASS, $char_db]);
+                                            $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $char_db], $char_db);
                                             if(!$this->Madmin->check_character($char_db))
                                                 $this->vars['error'] = 'Char database does not contain any character table.'; 
                                             else{
                                                 if($account_db == '')
                                                     $this->vars['error'] = 'Please select account database'; 
                                                 else{
-                                                    $this->load->lib([$account_db, 'db'], [HOST, USER, PASS, $account_db]);
+                                                    $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $account_db], $account_db);
                                                     if(!$this->Madmin->check_memb_info($account_db))
                                                         $this->vars['error'] = 'Account database does not contain any account table.'; 
                                                     else{
@@ -7633,14 +7564,14 @@
                                 if($char_db == '')
                                     $this->vars['error'] = 'Please select character database'; 
 								else{
-                                    $this->load->lib([$char_db, 'db'], [HOST, USER, PASS, $char_db]);
+                                    $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $char_db], $char_db);
                                     if(!$this->Madmin->check_character($char_db))
                                         $this->vars['error'] = 'Char database does not contain any character table.'; 
 									else{
                                         if($account_db == '')
                                             $this->vars['error'] = 'Please select account database'; 
 										else{
-                                            $this->load->lib([$account_db, 'db'], [HOST, USER, PASS, $account_db]);
+                                            $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $account_db], $account_db);
                                             if(!$this->Madmin->check_memb_info($account_db))
                                                 $this->vars['error'] = 'Account database does not contain any account table.'; 
 											else{

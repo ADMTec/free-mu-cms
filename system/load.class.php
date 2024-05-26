@@ -17,7 +17,8 @@
                 $model_name = array_pop($this->elements);
                 $model_class = 'M' . $model_name;
                 $this->full_path = BASEDIR . implode(DS, $this->elements) . DS . 'model.' . $model_name . '.php';
-            } else{
+            } 
+            else{
                 $model_class = 'M' . $name;
                 $this->full_path = APP_PATH . DS . 'models' . DS . 'model.' . $name . '.php';
             }
@@ -65,59 +66,51 @@
                 ob_end_flush();
             }
         }
-
-		public function lib($class_name, $params = [], $type = ''){
-            if(is_array($class_name)){
-                $this->lib_name = $class_name[0];
-                $this->original_lib_name = $class_name[1];
-            } else{
-                $this->lib_name = $class_name;
-                $this->original_lib_name = $class_name;
+        
+        public function lib($name, $params = [], $registry_name = null){
+            $this->registry = controller::get_instance();
+            if(preg_match('/[\/]/', $name)){
+                $this->elements = explode("/", $name);
+                $lib_name = array_pop($this->elements);
+                $this->full_path = APP_PATH . DS . 'libraries' . DS . implode(DS, $this->elements) . DS . $lib_name . '.php';
+            } 
+            else{
+                $lib_name = $name;
+                $this->full_path = APP_PATH . DS . 'libraries' . DS . 'lib.' . $name . '.php';
             }
-            $db_type = ($type != '') ? $type : (defined('DRIVER') ? DRIVER : 'unknown');
-            if($db_type === 'sqlsrv' && $this->original_lib_name == 'db'){
-                $this->load_sqlsrv($this->original_lib_name, $this->lib_name, $db_type, $params);
-            } else{
-                $this->lib_path = APP_PATH . DS . 'libraries' . DS . 'lib.' . $this->original_lib_name . '.php';
-                if(is_readable($this->lib_path)){
-                    if(!is_object($this->original_lib_name)){
-                        if(!class_exists('library'))
-                            load_class('library');
-                        require_once($this->lib_path);
-                        if(class_exists($this->original_lib_name)){
-                            $this->registry = controller::get_instance();
-                            if(!empty($params)){
-                                $this->registry->{$this->lib_name} = (new ReflectionClass($this->original_lib_name))->newInstanceArgs($params);
-                            } else{
-                                $this->registry->{$this->lib_name} = new $this->original_lib_name;
-                            }
-                            return true;
+
+            if(is_readable($this->full_path)){
+                if(!class_exists('library')){
+                    load_class('library');
+                }
+                
+                require_once($this->full_path);
+                
+                if(class_exists($lib_name)){
+                    if(!empty($params)){
+                        if($registry_name != null){
+                            $this->registry->{$registry_name} = (new ReflectionClass($lib_name))->newInstanceArgs($params);
+                        }
+                        else{
+                            $this->registry->{$lib_name} = (new ReflectionClass($lib_name))->newInstanceArgs($params);
+                        }
+                    } 
+                    else{
+                        if($registry_name != null){
+                            $this->registry->{$registry_name} = new $lib_name;
+                        }
+                        else{
+                            $this->registry->{$lib_name} = new $lib_name;
                         }
                     }
+                } 
+                else{
+                    throw new Exception('Class ' . $lib_name . ' not found.');
                 }
-                throw new Exception('Library file lib.' . $this->original_lib_name . '.php not found.');
+            } 
+            else{
+                throw new Exception('Library file ' . $this->full_path . ' not found.');
             }
-        }
-
-        private function load_sqlsrv($original_lib, $lib_name, $driver, $params){
-            $this->lib_path = APP_PATH . DS . 'libraries' . DS . 'lib.' . $original_lib . '.php';
-            if(is_readable($this->lib_path)){
-                if(!is_object($lib_name)){
-                    if(!class_exists('library'))
-                        load_class('library');
-                    require_once($this->lib_path);
-                    if(class_exists($driver)){
-                        $this->registry = controller::get_instance();
-                        if(!empty($params)){
-                            $this->registry->$lib_name = (new ReflectionClass($driver))->newInstanceArgs($params);
-                        } else{
-                            $this->registry->$lib_name = new $driver;
-                        }
-                        return true;
-                    }
-                }
-            }
-            throw new Exception('Library file lib.' . $original_lib . '.php not found.');
         }
 
         public function helper($name, $params = []){
@@ -125,9 +118,10 @@
                 require_once($helperpath);
                 if(class_exists($name)){
                     $this->registry = controller::get_instance();
-                    if(count($params) > 0){
+                    if(!empty($params)){
                         $this->registry->$name = (new ReflectionClass($name))->newInstanceArgs($params);
-                    } else{
+                    } 
+                    else{
                         $this->registry->$name = new $name;
                     }
                     return true;

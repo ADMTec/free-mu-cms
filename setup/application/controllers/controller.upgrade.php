@@ -17,7 +17,7 @@
             $this->is_multi_server = $this->server_list('', true);
             $first = reset($this->server_list);
             $this->account_database = $first['db_acc'];
-            $this->load->lib(['web_db', 'db'], [HOST, USER, PASS, WEB_DB, DRIVER]);
+            $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, WEB_DB], 'web_db');
             $this->vars['current_version'] = $this->Msetup->get_current_version();
             $this->website->check_cache('available_upgrades', 'available_upgrades', 3600 * 24);
             $this->vars['available_upgrades'] = $this->website->cached ? $this->website->available_upgrades : false;
@@ -355,7 +355,7 @@
                         }
                         if(array_key_exists('account', $columns_info)){
                             if($this->is_multi_server == false){
-                                $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->account_database, DRIVER]);
+								$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $this->account_database], 'account_db');
                                 if(array_key_exists('account', $columns_info)){
                                     foreach($columns_info['account'] AS $table => $columns){
                                         foreach($columns AS $col => $info){
@@ -377,7 +377,7 @@
                             } else{
                                 foreach($this->server_list AS $server){
                                     if(array_key_exists('account', $columns_info)){
-                                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $server['db_acc'], DRIVER]);
+										$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $server['db_acc']], 'account_db');
                                         foreach($columns_info['account'] AS $table => $columns){
                                             foreach($columns AS $col => $info){
                                                 if($this->Msetup->check_column_count($col, $table, 'account') != 1){
@@ -400,7 +400,7 @@
                         }
                         if(array_key_exists('game', $columns_info)){
                             foreach($this->server_list AS $server){
-                                $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $server['db'], DRIVER]);
+								$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $server['db']], 'game_db');
                                 foreach($columns_info['game'] AS $table => $columns){
                                     foreach($columns AS $col => $info){
                                         if($this->Msetup->check_column_count($col, $table, 'game') != 1){
@@ -437,7 +437,7 @@
                         }
                         $this->Msetup->insert_sql_data($procedures_info['web']['Add_Credits'], 'web');
                         if($this->is_multi_server == false){
-                            $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->account_database, DRIVER]);
+							$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $this->account_database], 'account_db');
                             if($this->Msetup->check_procedure('WZ_CONNECT_MEMB', 'account') != false){
                                 $this->Msetup->drop_procedure('WZ_CONNECT_MEMB', 'account');
                             }
@@ -464,7 +464,7 @@
                         } 
 						else{
                             foreach($this->server_list AS $server){
-                                $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $server['db_acc'], DRIVER]);
+								$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $server['db_acc']], 'account_db');
                                 if($this->Msetup->check_procedure('WZ_CONNECT_MEMB', 'account') != false){
                                     $this->Msetup->drop_procedure('WZ_CONNECT_MEMB', 'account');
                                 }
@@ -520,7 +520,6 @@
 								$this->upgrade_news();
 								$this->upgrade_server_data();
 								$this->parse_server_files();
-                                //$this->check_license();
                                 $redirect = isset($_SESSION['return_to']) ? $this->config->base_url . 'index.php?action=' . $_SESSION['return_to'] : $this->config->base_url . 'index.php?action=upgrade/completed';
                                 echo json_encode(['step7' => 1, 'progress' => '90%', 'message' => 'Configuration Upgrade Completed. Redirecting...', 'redirect' => $redirect]);
                             } else{
@@ -597,9 +596,6 @@
 			}
 			if(defined('RES_DECREASE_STATS_PERC')){
 				$data .= "\tdefine('RES_DECREASE_STATS_PERC',	" . RES_DECREASE_STATS_PERC . ");\r\n";
-			}
-			if(defined('GOOGLE_2FA')){
-				$data .= "\tdefine('GOOGLE_2FA',	" . var_export(GOOGLE_2FA, true) . ");\r\n";
 			}
 			if(defined('BPASS_PURCHASE')){
 				$data .= "\tdefine('BPASS_PURCHASE',	" . var_export(BPASS_PURCHASE, true) . ");\r\n";
@@ -740,7 +736,7 @@
 		
 		
         private function upgrade_version(){
-			$new_data = ['package' => 'DmN MuCMS', "version" => $this->Msetup->get_cms_version()];
+			$new_data = ['package' => 'Free MuCMS', "version" => $this->Msetup->get_cms_version()];
 			$data = json_encode($new_data, JSON_PRETTY_PRINT);
 			if(is_writable(BASEDIR . 'application' . DS . 'config')){
                 $fp = @fopen(BASEDIR . 'application' . DS . 'config' . DS . 'cms_config.json', 'w');
@@ -872,7 +868,7 @@
 		}
 		
 		private function create_meta_list(){
-            $new_data = ['en' => ['default' => ['title' => '%server_title%', 'keywords' => '%server_title%, DmNMu CMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline'], 'home' => ['title' => '%server_title% Home', 'keywords' => '%server_title%, DmN MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline'], 'registration' => ['title' => '%server_title% Registration', 'keywords' => '%server_title%, DmN MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline']]];
+            $new_data = ['en' => ['default' => ['title' => '%server_title%', 'keywords' => '%server_title%, Free MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline'], 'home' => ['title' => '%server_title% Home', 'keywords' => '%server_title%, Free MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline'], 'registration' => ['title' => '%server_title% Registration', 'keywords' => '%server_title%, Free MuCMS ' . $this->Msetup->get_cms_version() . ', MuOnline, Website', 'description' => 'Content Management System For MuOnline']]];
             $data = json_encode($new_data, JSON_PRETTY_PRINT);
             if(is_writable(BASEDIR . 'application' . DS . 'config')){
                 $fp = @fopen(BASEDIR . 'application' . DS . 'config' . DS . 'meta_config.json', 'w');

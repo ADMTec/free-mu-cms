@@ -28,31 +28,32 @@
 
         public function login(){
             if(count($_POST) > 0){
-                if($this->website->is_multiple_accounts() == true){
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($_POST['server'], true)]);
-                } else{
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                }
-                $this->load->model('account');
                 foreach($_POST as $key => $value){
                     $this->Mgm->$key = trim($value);
                 }
                 if(!isset($this->Mgm->vars['username']))
-                    $this->vars['error'] = 'Please enter username1.'; else{
+                    $this->vars['error'] = 'Please enter username1.'; 
+                else{
                     if($this->Mgm->vars['username'] == '')
-                        $this->vars['error'] = 'Please enter username.'; else{
+                        $this->vars['error'] = 'Please enter username.'; 
+                    else{
                         if(!isset($this->Mgm->vars['password']))
-                            $this->vars['error'] = 'Please enter password.'; else{
+                            $this->vars['error'] = 'Please enter password.'; 
+                        else{
                             if($this->Mgm->vars['password'] == '')
-                                $this->vars['error'] = 'Please enter password.'; else{
+                                $this->vars['error'] = 'Please enter password.'; 
+                            else{
                                 if(!$this->Mgm->valid_username($this->Mgm->vars['username']))
-                                    $this->vars['error'] = 'Invalid Username.'; else{
+                                    $this->vars['error'] = 'Invalid Username.'; 
+                                else{
                                     if(!$this->Mgm->valid_username($this->Mgm->vars['password']))
-                                        $this->vars['error'] = 'Invalid Password.'; else{
+                                        $this->vars['error'] = 'Invalid Password.'; 
+                                    else{
                                         if(!isset($this->Mgm->vars['server']))
-                                            $this->vars['error'] = 'Please select server.'; else{
+                                            $this->vars['error'] = 'Please select server.'; 
+                                        else{
                                             if($this->Mgm->check_gm_in_list()){
-                                                if($this->Mgm->login_gm()){
+                                                if($this->Mgm->login_gm($this->Mgm->vars['server'])){
                                                     header('Location: ' . $this->config->base_url . 'gmcp');
                                                 } else{
                                                     $this->vars['error'] = 'Wrong username and/or password.';
@@ -81,32 +82,30 @@
                 $this->load->view('gmcp' . DS . 'view.header');
                 $this->load->view('gmcp' . DS . 'view.sidebar');
                 if($this->session->userdata(['user' => 'can_search_acc']) == 1){
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']), true)]);
-                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']))]);
                     if(isset($_POST['search_acc'])){
                         foreach($_POST as $key => $value){
                             $this->Mgm->$key = trim($value);
                         }
                         switch($this->Mgm->vars['type']){
                             case 1:
-                                $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']), true)]);
                                 if(!$this->Mgm->valid_username($this->Mgm->vars['name']))
-                                    $this->vars['error'] = 'Invalid account name.'; else{
-                                    if(!$this->vars['account'] = $this->Mgm->search_acc()){
+                                    $this->vars['error'] = 'Invalid account name.'; 
+                                else{
+                                    if(!$this->vars['account'] = $this->Mgm->search_acc($this->session->userdata(['user' => 'server']))){
                                         $this->vars['acc_not_found'] = 'Account not found';
                                     } else{
-                                        $this->vars['ip'] = $this->Mgm->find_ip($this->vars['account']['AccountId']);
+                                        $this->vars['ip'] = $this->Mgm->find_ip($this->vars['account']['AccountId'], $this->session->userdata(['user' => 'server']));
                                     }
                                 }
                                 break;
                             case 2:
-                                $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']))]);
                                 if(!$this->Mgm->valid_username($this->Mgm->vars['name']))
-                                    $this->vars['error'] = 'Invalid char name.'; else{
-                                    if(!$this->vars['account'] = $this->Mgm->search_char()){
+                                    $this->vars['error'] = 'Invalid char name.'; 
+                                else{
+                                    if(!$this->vars['account'] = $this->Mgm->search_char($this->session->userdata(['user' => 'server']))){
                                         $this->vars['acc_not_found'] = 'Character not found';
                                     } else{
-                                        $this->vars['ip'] = $this->Mgm->find_ip($this->vars['account']['AccountId']);
+                                        $this->vars['ip'] = $this->Mgm->find_ip($this->vars['account']['AccountId'], $this->session->userdata(['user' => 'server']));
                                     }
                                 }
                                 break;
@@ -133,15 +132,15 @@
                         }
                         switch($this->Mgm->vars['type']){
                             case 1:
-                                $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']), true)]);
                                 if(!$this->Mgm->valid_username($this->Mgm->vars['name']))
-                                    $this->vars['error'] = 'Invalid account name.'; else{
+                                    $this->vars['error'] = 'Invalid account name.'; 
+                                else{
                                     if(strtotime($this->Mgm->vars['time']) < time() && !isset($this->Mgm->vars['permanent_ban'])){
                                         $this->vars['error'] = 'Wrong ban time.';
                                     } else{
-                                        if($check = $this->Mgm->check_account()){
+                                        if($check = $this->Mgm->check_account($this->session->userdata(['user' => 'server']))){
                                             if($check['bloc_code'] != 1){
-                                                $this->Mgm->ban_account();
+                                                $this->Mgm->ban_account($this->session->userdata(['user' => 'server']));
                                                 $this->Mgm->add_to_banlist();
                                                 $this->Mgm->add_gm_log('Blocked account: ' . $this->Mgm->vars['name'], $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
                                                 $this->vars['success'] = 'Account successfully banned.';
@@ -155,16 +154,15 @@
                                 }
                                 break;
                             case 2:
-                                $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']), true)]);
-                                $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']))]);
                                 if(!$this->Mgm->valid_username($this->Mgm->vars['name']))
-                                    $this->vars['error'] = 'Invalid char name.'; else{
+                                    $this->vars['error'] = 'Invalid char name.'; 
+                                else{
                                     if(strtotime($this->Mgm->vars['time']) < time() && !isset($this->Mgm->vars['permanent_ban'])){
                                         $this->vars['error'] = 'Wrong ban time.';
                                     } else{
-                                        if($check = $this->Mgm->check_char()){
+                                        if($check = $this->Mgm->check_char($this->session->userdata(['user' => 'server']))){
                                             if($check['CtlCode'] != 1){
-                                                $this->Mgm->ban_char();
+                                                $this->Mgm->ban_char($this->session->userdata(['user' => 'server']));
                                                 $this->Mgm->add_to_banlist();
                                                 $this->Mgm->add_gm_log('Blocked character: ' . $this->Mgm->vars['name'], $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
                                                 $this->vars['success'] = 'Character banned.';
@@ -196,20 +194,20 @@
                 $this->load->view('gmcp' . DS . 'view.sidebar');
                 if($this->session->userdata(['user' => 'can_ban_acc']) == 1){
                     if($type == '')
-                        $this->vars['errors'] = 'Invalid ban type.'; else{
+                        $this->vars['errors'] = 'Invalid ban type.'; 
+                    else{
                         if($name == '')
-                            $this->vars['errors'] = 'Invalid name.'; else{
+                            $this->vars['errors'] = 'Invalid name.'; 
+                        else{
                             switch($type){
                                 case 'account':
-                                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']), true)]);
-                                    $this->Mgm->unban_account($name);
+                                    $this->Mgm->unban_account($name, $this->session->userdata(['user' => 'server']));
                                     $this->Mgm->remove_ban_list_account($name);
                                     $this->Mgm->add_gm_log('Unblocked account: ' . $name, $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
                                     $this->vars['success'] = 'Account unbanned.';
                                     break;
                                 case 'character':
-                                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']))]);
-                                    $this->Mgm->unban_character($name);
+                                    $this->Mgm->unban_character($name, $this->session->userdata(['user' => 'server']));
                                     $this->Mgm->remove_ban_list_character($name);
                                     $this->Mgm->add_gm_log('Unblocked character: ' . $name, $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
                                     $this->vars['success'] = 'Character unbanned.';
@@ -233,12 +231,6 @@
                 $this->load->view('gmcp' . DS . 'view.sidebar');
                 $this->vars['credits_limit'] = $this->Mgm->get_gm_credits_limit($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $this->session->userdata(['user' => 'credits_limit']));
                 if($this->session->userdata(['user' => 'credits_limit']) > 0){
-                    if($this->website->is_multiple_accounts() == true){
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']), true)]);
-                    } else{
-                        $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-                    }
-                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->session->userdata(['user' => 'server']))]);
                     if(isset($_POST['add_credits'])){
                         foreach($_POST as $key => $value){
                             $this->Mgm->$key = trim($value);
@@ -246,7 +238,7 @@
                         if(!isset($this->Mgm->name)){
                             $this->vars['error'] = 'Please enter character name.';
                         } else{
-                            if($this->vars['account_info'] = $this->Mgm->check_char()){
+                            if($this->vars['account_info'] = $this->Mgm->check_char($this->session->userdata(['user' => 'server']))){
                                 if(!isset($_POST['c_type']) || $_POST['c_type'] == ''){
                                     $this->vars['error'] = 'Please select credits type.';
                                 } else{
@@ -356,12 +348,7 @@
                                     }
                                     $this->Madmin->log_reply_time($id);
 									if($this->config->values('email_config', 'support_email_user') == 1){
-										if($this->website->is_multiple_accounts() == true){
-											$this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_db_from_server($this->vars['ticket_data']['server'], true)]);
-										} else{
-											$this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $this->website->get_default_account_database()]);
-										}
-										$user = $this->Madmin->get_account_data_by_username($this->vars['ticket_data']['creator_account']);
+										$user = $this->Madmin->get_account_data_by_username($this->vars['ticket_data']['creator_account'], $this->vars['ticket_data']['server']);
 										$this->Madmin->sent_ticket_reply_email_user($this->vars['ticket_data']['creator_account'], $this->vars['ticket_data']['server'], $user['mail_addr'], $this->vars['ticket_data']['subject'], $id);
 									}
                                     $this->vars['reply_success'] = 'You have successfully replied to ticket.';

@@ -480,38 +480,35 @@
             }
         }
 
-        public function check_gm_char($name = ''){
-            $name = ($name != '') ? $name : $this->vars['name'];
-            $stmt = $this->game_db->prepare('SELECT AccountId, CtlCode FROM Character WHERE Name = :name');
+        public function check_gm_char($name, $server){
+            $stmt = $this->website->db('game', $server)->prepare('SELECT AccountId, CtlCode FROM Character WHERE Name = :name');
             $stmt->execute([':name' => $name]);
             return ($this->gm_info = $stmt->fetch()) ? true : false;
         }
 
-        public function set_ctlcode($code = 32, $name = ''){
-            $name = ($name != '') ? $name : $this->vars['name'];
-            $stmt = $this->game_db->prepare('UPDATE Character SET CtlCode = :code WHERE Name = :name');
+        public function set_ctlcode($code, $name, $server){
+            $stmt = $this->website->db('game', $server)->prepare('UPDATE Character SET CtlCode = :code WHERE Name = :name');
             $stmt->execute([':code' => $code, ':name' => $name]);
         }
 
-        public function add_igcn_autority($authorityMask = 0, $valid_until = '', $name = ''){
-            $name = ($name != '') ? $name : $this->vars['name'];
-            $stmt = $this->game_db->prepare('SELECT Name FROM T_GMSystem WHERE Name = :name');
+        public function add_igcn_autority($authorityMask, $valid_until, $name, $server){
+            $stmt = $this->website->db('game', $server)->prepare('SELECT Name FROM T_GMSystem WHERE Name = :name');
             $stmt->execute([':name' => $name]);
             if($stmt->fetch()){
-                return $this->update_icgn_authority($name, $authorityMask, $valid_until);
+                return $this->update_icgn_authority($name, $authorityMask, $valid_until, $server);
             } else{
-                return $this->insert_icgn_authority($name, $authorityMask, $valid_until);
+                return $this->insert_icgn_authority($name, $authorityMask, $valid_until, $server);
             }
         }
 
-        private function update_icgn_authority($name, $authorityMask, $valid_until){
-            $stmt = $this->game_db->prepare('UPDATE T_GMSystem SET AuthorityMask = :authmask, Expiry = :expiry WHERE Name = :name');
-            return $stmt->execute([':authmask' => $authorityMask, ':expiry' => date(DATETIME_FORMAT, strtotime($valid_until)), ':name' => $name]);
+        private function update_icgn_authority($name, $authorityMask, $valid_until, $server){
+            $stmt = $this->website->db('game', $server)->prepare('UPDATE T_GMSystem SET AuthorityMask = :authmask, Expiry = :expiry WHERE Name = :name');
+            return $stmt->execute([':authmask' => $authorityMask, ':expiry' => date('Y-m-d', strtotime($valid_until)), ':name' => $name]);
         }
 
-        private function insert_icgn_authority($name, $authorityMask, $valid_until){
-            $stmt = $this->game_db->prepare('INSERT INTO T_GMSystem (Name, AuthorityMask, Expiry) VALUES(:name, :authmask, :expiry)');
-            return $stmt->execute([':name' => $name, ':authmask' => $authorityMask, ':expiry' => date(DATETIME_FORMAT, strtotime($valid_until))]);
+        private function insert_icgn_authority($name, $authorityMask, $valid_until, $server){
+            $stmt = $this->website->db('game', $server)->prepare('INSERT INTO T_GMSystem (Name, AuthorityMask, Expiry) VALUES(:name, :authmask, :expiry)');
+            return $stmt->execute([':name' => $name, ':authmask' => $authorityMask, ':expiry' => date('Y-m-d', strtotime($valid_until))]);
         }
 
         public function add_to_gmlist(){
@@ -523,7 +520,8 @@
             if(!$this->check_gm_list()){
                 $stmt = $this->website->db('web')->prepare('INSERT INTO DmN_Gm_List (account, character, server, can_ban_acc, can_ban_char, can_search_acc, can_view_acc_details, limit_reward_credits, system_type, contact) VALUES (:account, :character, :server, :can_ban_acc, :can_ban_char, :can_search_acc, :can_view_acc_details, :limit_reward_credits, :system_type, :contact)');
                 $stmt->execute([':account' => $this->gm_info['AccountId'], ':character' => $this->vars['name'], ':server' => $this->vars['server'], ':can_ban_acc' => $this->vars['ban_acc'], ':can_ban_char' => $this->vars['ban_char'], ':can_search_acc' => $this->vars['search_acc'], ':can_view_acc_details' => $this->vars['acc_details'], ':limit_reward_credits' => (int)$this->vars['credits_limit'], ':system_type' => (int)$this->vars['system_type'], ':contact' => $this->vars['contact']]);
-            } else{
+            } 
+            else{
                 $this->error = 'This character already is in gamemaster list';
             }
         }
@@ -554,8 +552,8 @@
             $stmt->execute([':character' => $name, ':server' => $server]);
         }
 
-        public function remove_from_igcn_gm_system($name){
-            $stmt = $this->game_db->prepare('DELETE FROM T_GMSystem WHERE Name = :character');
+        public function remove_from_igcn_gm_system($name, $server){
+            $stmt = $this->website->db('game', $server)->prepare('DELETE FROM T_GMSystem WHERE Name = :character');
             $stmt->execute([':character' => $name]);
         }
 
@@ -580,8 +578,8 @@
             return $stmt->fetch();
         }
 
-        public function get_gm_authority_mask($name){
-            $stmt = $this->game_db->prepare('SELECT AuthorityMask, Expiry FROM T_GMSystem WHERE Name = :character');
+        public function get_gm_authority_mask($name, $server){
+            $stmt = $this->website->db('game', $server)->prepare('SELECT AuthorityMask, Expiry FROM T_GMSystem WHERE Name = :character');
             $stmt->execute([':character' => $name]);
             return $stmt->fetch();
         }
@@ -1030,12 +1028,12 @@
             return $count;
         }
 
-        public function search_char_inventory($serial){
-            return $this->game_db->query('SELECT Name FROM Character WHERE (charindex (0x' . $this->game_db->escape($serial) . ', Inventory) %16=4)')->fetch();
+        public function search_char_inventory($serial, $server){
+            return $this->website->db('game', $server)->query('SELECT Name FROM Character WHERE (charindex (0x' . $this->website->db('game', $server)->escape($serial) . ', Inventory) %16=4)')->fetch();
         }
 
         public function search_warehouse($serial){
-            return $this->game_db->query('SELECT AccountId FROM Warehouse WHERE (charindex (0x' . $this->game_db->escape($serial) . ', Items) %16=4)')->fetch();
+            return $this->website->db('game', $server)->query('SELECT AccountId FROM Warehouse WHERE (charindex (0x' . $this->website->db('game', $server)->escape($serial) . ', Items) %16=4)')->fetch();
         }
 
         public function get_vault_content($user, $server){
@@ -1610,9 +1608,9 @@
             return substr($links, 1);
         }
 
-        public function check_status($acc, $search_acc = false){
+        public function check_status($acc, $search_acc, $server){
             if($search_acc){
-                $stmt = $this->game_db->prepare('SELECT AccountId FROM Character WHERE Name = :name');
+                $stmt = $this->website->db('game', $server)->prepare('SELECT AccountId FROM Character WHERE Name = :name');
                 $stmt->execute([':name' => $acc]);
                 if($char_acc = $stmt->fetch()){
                     $acc = $char_acc['AccountId'];
@@ -1621,7 +1619,7 @@
                 }
             }
             if($acc != false){
-                $stmt = $this->account_db->prepare('SELECT ConnectStat FROM MEMB_STAT WHERE memb___id = :user');
+                $stmt = $this->website->db('account', $server)->prepare('SELECT ConnectStat FROM MEMB_STAT WHERE memb___id = :user');
                 $stmt->execute([':user' => $acc]);
                 if($status = $stmt->fetch()){
                     return ($status['ConnectStat'] == 0);
@@ -2002,8 +2000,8 @@
             return $stmt->fetch();
         }
 
-        public function acc_exists($user = ''){
-            $stmt = $this->account_db->prepare('SELECT memb_guid, memb___id FROM MEMB_INFO WHERE memb___id = :user');
+        public function acc_exists($user, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid, memb___id FROM MEMB_INFO WHERE memb___id = :user');
             $stmt->execute([':user' => $user]);
             return $stmt->fetch();
         }
@@ -2028,8 +2026,8 @@
             $stmt->execute([':account' => $account, ':server' => $server, ':points' => $credits]);
         }
 		
-        public function search_similar_accounts($user = ''){
-            $stmt = $this->account_db->prepare('SELECT memb___id FROM MEMB_INFO WHERE memb___id LIKE :user');
+        public function search_similar_accounts($user, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT memb___id FROM MEMB_INFO WHERE memb___id LIKE :user');
             $stmt->execute([':user' => '%' . $user . '%']);
             return $stmt->fetch_all();
         }
@@ -2183,13 +2181,16 @@
             switch($order_column){
                 case 0:
                     $column = 'm.memb___id';
+                    $column2 = 'memb___id';
                     break;
                 case 1:
                     $column = 'm.appl_days';
+                    $column2 = 'appl_days';
                     break;
                 default:
                 case 2:
                     $column = 'm.dmn_country';
+                    $column2 = 'dmn_country';
                     break;
             }
             $condition2 = '';
@@ -2213,7 +2214,7 @@
 					}
 				}
 			}		
-            $accounts = $this->account_db->query('SELECT TOP ' . (int)$per_page . ' m.memb_guid, m.memb___id, m.appl_days, m.dmn_country, m.activated, '.$partner.' d.viptime FROM MEMB_INFO AS m LEFT JOIN ['.WEB_DB.'].dbo.DmN_Vip_Users AS d ON(m.memb___id Collate Database_Default = d.memb___id Collate Database_Default) WHERE memb_guid NOT IN (SELECT Top ' . $this->website->db('web')->escape((int)$page) . ' memb_guid FROM MEMB_INFO ' . $condition2 . ' ORDER BY ' . $column . ' ' . $dir . ') ' . $this->sql_condition . ' ORDER BY ' . $column . ' ' . $dir . '');
+            $accounts = $this->website->db('account', $server)->query('SELECT TOP ' . (int)$per_page . ' m.memb_guid, m.memb___id, m.appl_days, m.dmn_country, m.activated, '.$partner.' d.viptime FROM MEMB_INFO AS m LEFT JOIN ['.WEB_DB.'].dbo.DmN_Vip_Users AS d ON(m.memb___id Collate Database_Default = d.memb___id Collate Database_Default) WHERE m.memb_guid NOT IN (SELECT Top ' . $this->website->db('web')->escape((int)$page) . ' m.memb_guid FROM MEMB_INFO AS m ' . $condition2 . ' ORDER BY ' . $column . ' ' . $dir . ') ' . $this->sql_condition . ' ORDER BY ' . $column . ' ' . $dir . '');
             foreach($accounts->fetch_all() as $row){
                 $this->accounts[] = ['id' => $row['memb_guid'], 'memb___id' => htmlspecialchars($row['memb___id']), 'reg_date' => $row['appl_days'], 'country' => $this->website->codeToCountryName($row['dmn_country']), 'server' => $server, 'activated' => $row['activated']];
             }
@@ -2223,7 +2224,7 @@
         public function load_char_list($page, $per_page, $server){
 																			 
             $pos = ($page == 1) ? 1 : (int)(($page - 1) * $per_page) + 1;
-            $accounts = $this->game_db->query('SELECT TOP ' . $per_page . ' AccountId, Name, '.$this->website->get_char_id_col($server).' FROM Character WHERE '.$this->website->get_char_id_col($server).' NOT IN (SELECT Top ' . $this->website->db('web')->escape($pos) . ' '.$this->website->get_char_id_col($server).' FROM Character ORDER BY Name ASC)  ORDER BY Name ASC');
+            $accounts = $this->website->db('game', $server)->query('SELECT TOP ' . $per_page . ' AccountId, Name, '.$this->website->get_char_id_col($server).' FROM Character WHERE '.$this->website->get_char_id_col($server).' NOT IN (SELECT Top ' . $this->website->db('web')->escape($pos) . ' '.$this->website->get_char_id_col($server).' FROM Character ORDER BY Name ASC)  ORDER BY Name ASC');
             foreach($accounts->fetch_all() as $row){
                 $this->chars[] = ['id' => $row[$this->website->get_char_id_col($server)], 'name' => htmlspecialchars($row['Name']), 'account' => htmlspecialchars($row['AccountId'])];
                 $pos++;
@@ -2231,8 +2232,8 @@
             return $this->chars;
         }
 
-        public function search_account_list($account){
-            $stmt = $this->account_db->query('SELECT memb_guid, memb___id, appl_days FROM MEMB_INFO WHERE memb___id LIKE \'' . $this->account_db->escape($account) . '%\' ORDER BY appl_days DESC');
+        public function search_account_list($account, $server){
+            $stmt = $this->website->db('account', $server)->query('SELECT memb_guid, memb___id, appl_days FROM MEMB_INFO WHERE memb___id LIKE \'' . $this->website->db('account', $server)->escape($account) . '%\' ORDER BY appl_days DESC');
             foreach($stmt->fetch_all() as $row){
                 $this->accounts[] = ['id' => (int)$row['memb_guid'], 'memb___id' => htmlspecialchars($row['memb___id']), 'reg_date' => $row['appl_days']];
             }
@@ -2240,7 +2241,7 @@
         }
 
 		public function search_char_list($name, $server){
-            $stmt = $this->game_db->prepare('SELECT AccountId, Name, '.$this->website->get_char_id_col($server).' AS id FROM Character WHERE Name LIKE :name ORDER BY Name ASC');
+            $stmt = $this->website->db('game', $server)->prepare('SELECT AccountId, Name, '.$this->website->get_char_id_col($server).' AS id FROM Character WHERE Name LIKE :name ORDER BY Name ASC');
             $stmt->execute([':name' => $name . '%']);
             foreach($stmt->fetch_all() as $row){
 				$status = $this->checkStatus($row['AccountId'], $server);
@@ -2275,28 +2276,28 @@
 			return false;
         }
 
-        public function count_total_accounts($filtered = false){
+        public function count_total_accounts($filtered, $server){
             $condition = '';
             if($this->sql_condition != '' && $filtered == true){
                 $condition = 'WHERE ' . substr($this->sql_condition, 4);
             }
-            $count = $this->account_db->snumrows('SELECT COUNT(m.memb___id) AS count FROM MEMB_INFO AS m LEFT JOIN ['.WEB_DB.'].dbo.DmN_Vip_Users AS d ON(m.memb___id Collate Database_Default = d.memb___id Collate Database_Default) ' . $condition . '');
+            $count = $this->website->db('account', $server)->snumrows('SELECT COUNT(m.memb___id) AS count FROM MEMB_INFO AS m LEFT JOIN ['.WEB_DB.'].dbo.DmN_Vip_Users AS d ON(m.memb___id Collate Database_Default = d.memb___id Collate Database_Default) ' . $condition . '');
             return $count;
         }
 
-        public function count_total_chars(){
-            $count = $this->game_db->snumrows('SELECT COUNT(Name) AS count FROM Character');
+        public function count_total_chars($server){
+            $count = $this->website->db('game', $server)->snumrows('SELECT COUNT(Name) AS count FROM Character');
             return $count;
         }
 
-        public function get_account_data($id){
-            $stmt = $this->account_db->prepare('SELECT memb___id, memb__pwd, sno__numb, mail_addr, bloc_code, activated FROM MEMB_INFO WHERE memb_guid = :id');
+        public function get_account_data($id, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT memb___id, memb__pwd, sno__numb, mail_addr, bloc_code, activated FROM MEMB_INFO WHERE memb_guid = :id');
             $stmt->execute([':id' => $id]);
             return $stmt->fetch();
         }
 		
-		public function get_account_data_by_username($acc){
-            $stmt = $this->account_db->prepare('SELECT memb___id, memb__pwd, sno__numb, mail_addr, bloc_code, activated FROM MEMB_INFO WHERE memb___id = :acc');
+		public function get_account_data_by_username($acc, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT memb___id, memb__pwd, sno__numb, mail_addr, bloc_code, activated FROM MEMB_INFO WHERE memb___id = :acc');
             $stmt->execute([':acc' => $acc]);
             return $stmt->fetch();
         }
@@ -2321,15 +2322,15 @@
 			return $this->website->db('web')->query('SELECT TOP 10 SUM(stream_time) AS time, day FROM DmN_Partner_Stream_Log  WHERE username = '.$this->website->db('web')->escape($account).' GROUP BY [day] ORDER By day DESC')->fetch_all();
 		}
 		
-		public function get_account_data_for_partner($acc){
-            $stmt = $this->account_db->prepare('SELECT dmn_partner, dmn_twitch_link, dmn_twitch_tags, dmn_youtube_link, dmn_daily_coins, dmn_daily_coins_type, dmn_purchases_share, dmn_share_url, dmn_current_share FROM MEMB_INFO WHERE memb___id = :acc');
+		public function get_account_data_for_partner($acc, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT dmn_partner, dmn_twitch_link, dmn_twitch_tags, dmn_youtube_link, dmn_daily_coins, dmn_daily_coins_type, dmn_purchases_share, dmn_share_url, dmn_current_share FROM MEMB_INFO WHERE memb___id = :acc');
             $stmt->execute([':acc' => $acc]);
             return $stmt->fetch();
         }
 
 				
-		public function update_partner_data($account, $partner, $twitch, $ttags, $youtube, $daily_coins, $daily_coins_type, $purchase_share, $share_url){
-			$stmt = $this->account_db->prepare('UPDATE MEMB_INFO SET dmn_partner = :partner, dmn_twitch_link = :twitch, dmn_twitch_tags = :ttags, dmn_youtube_link = :youtube, dmn_daily_coins = :daily_coins, dmn_daily_coins_type = :coins_type, dmn_purchases_share = :purchase_share, dmn_share_url = :share_url WHERE memb___id = :acc');
+		public function update_partner_data($account, $partner, $twitch, $ttags, $youtube, $daily_coins, $daily_coins_type, $purchase_share, $share_url, $server){
+			$stmt = $this->website->db('account', $server)->prepare('UPDATE MEMB_INFO SET dmn_partner = :partner, dmn_twitch_link = :twitch, dmn_twitch_tags = :ttags, dmn_youtube_link = :youtube, dmn_daily_coins = :daily_coins, dmn_daily_coins_type = :coins_type, dmn_purchases_share = :purchase_share, dmn_share_url = :share_url WHERE memb___id = :acc');
 			$stmt->execute([
 				':partner' => $partner,
 				':twitch' => $twitch,
@@ -2343,8 +2344,8 @@
 			]);
 		}
 
-        public function activate_account($id){
-            $stmt = $this->account_db->prepare('UPDATE MEMB_INFO SET activated = 1  WHERE memb_guid = :id');
+        public function activate_account($id, $server){
+            $stmt = $this->website->db('account', $server)->prepare('UPDATE MEMB_INFO SET activated = 1  WHERE memb_guid = :id');
             return $stmt->execute([':id' => $id]);
         }
 
@@ -2352,7 +2353,7 @@
             $res = ', ' . $this->config->values('table_config', [$server, 'resets', 'column']);
             $gr = ', ' . $this->config->values('table_config', [$server, 'grand_resets', 'column']);
             $leadership = (MU_VERSION < 1) ? '0 AS Leadership' : 'Leadership';
-            $stmt = $this->game_db->prepare('SELECT AccountId, Name, cLevel, LevelUpPoint, Class, Experience, Strength, Dexterity, Vitality, Energy, Money, MapNumber, MapPosX, MapPosY, PkCount, PkLevel, PkTime, CtlCode, ' . $this->reset_column($server) . $this->greset_column($server) . ' '.$leadership.' FROM Character WHERE '.$this->website->get_char_id_col($server).' = :id');
+            $stmt = $this->website->db('game', $server)->prepare('SELECT AccountId, Name, cLevel, LevelUpPoint, Class, Experience, Strength, Dexterity, Vitality, Energy, Money, MapNumber, MapPosX, MapPosY, PkCount, PkLevel, PkTime, CtlCode, ' . $this->reset_column($server) . $this->greset_column($server) . ' '.$leadership.' FROM Character WHERE '.$this->website->get_char_id_col($server).' = :id');
             $stmt->execute([':id' => $id]);
             return $stmt->fetch();
         }
@@ -2391,7 +2392,7 @@
         public function update_character($id, $server){
             $res = $this->reset_column($server, true);
             $gres = $this->greset_column($server, true);
-            $stmt = $this->game_db->prepare('UPDATE Character SET cLevel = :clevel, LevelUpPoint = :leveluppoint, Class = :class, Experience = :experience, Strength = :strength, Dexterity = :dexterity, Vitality = :vitality, Energy = :energy, Money = :money,  MapNumber = :mapnumber, MapPosX = :mapposx, MapPosY = :mapposy, PkCount = :pkcount, PkLevel = :pklevel, PkTime = :pktime, CtlCode = :ctlcode, Leadership = :leadership' . $res . $gres . ' WHERE '.$this->website->get_char_id_col($server).' = :id');
+            $stmt = $this->website->db('game', $server)->prepare('UPDATE Character SET cLevel = :clevel, LevelUpPoint = :leveluppoint, Class = :class, Experience = :experience, Strength = :strength, Dexterity = :dexterity, Vitality = :vitality, Energy = :energy, Money = :money,  MapNumber = :mapnumber, MapPosX = :mapposx, MapPosY = :mapposy, PkCount = :pkcount, PkLevel = :pklevel, PkTime = :pktime, CtlCode = :ctlcode, Leadership = :leadership' . $res . $gres . ' WHERE '.$this->website->get_char_id_col($server).' = :id');
             $data = [':clevel' => $this->vars['cLevel'], ':leveluppoint' => $this->vars['LevelUpPoint'], ':class' => $this->vars['Class'], ':experience' => $this->vars['Experience'], ':strength' => $this->vars['Strength'], ':dexterity' => $this->vars['Dexterity'], ':vitality' => $this->vars['Vitality'], ':energy' => $this->vars['Energy'], ':money' => $this->vars['Money'], ':mapnumber' => $this->vars['MapNumber'], ':mapposx' => $this->vars['MapPosX'], ':mapposy' => $this->vars['MapPosY'], ':pkcount' => $this->vars['PkCount'], ':pklevel' => $this->vars['PkLevel'], ':pktime' => $this->vars['PkTime'], ':ctlcode' => $this->vars['CtlCode'], ':leadership' => isset($this->vars['Leadership']) ? $this->vars['Leadership'] : 0];
             if($res != '')
                 $data[':resets'] = $this->vars['resets'];
@@ -2409,17 +2410,17 @@
 
         public function get_char_list($account, $id = -1, $server = null){
             $sql = ($id != -1) ? [' AND '.$this->website->get_char_id_col($server).' != :id', [':account' => $account, ':id' => $id]] : ['', [':account' => $account]];
-            $stmt = $this->game_db->prepare('SELECT '.$this->website->get_char_id_col($server).' AS id, Name FROM Character WHERE AccountId = :account' . $sql[0] . '');
+            $stmt = $this->website->db('game', $server)->prepare('SELECT '.$this->website->get_char_id_col($server).' AS id, Name FROM Character WHERE AccountId = :account' . $sql[0] . '');
             $stmt->execute($sql[1]);
             return $stmt->fetch_all();
         }
 
-		public function update_account_info($id, $pass, $email, $sno_numb){
+		public function update_account_info($id, $pass, $email, $sno_numb, $server){
             $update_pw = true;
             if(MD5 == 1){
                 if($pass != ''){
-                    $user = $this->get_account_username($id);
-                    $prepare = $this->account_db->prepare('SET NOCOUNT ON;EXEC DmN_Check_Acc_MD5 :user, :pass');
+                    $user = $this->get_account_username($id, $server);
+                    $prepare = $this->website->db('account', $server)->prepare('SET NOCOUNT ON;EXEC DmN_Check_Acc_MD5 :user, :pass');
                     $prepare->execute([':user' => $user, ':pass' => $pass]);
                     $pw = $prepare->fetch();
                     if($pw['result'] == 'found'){
@@ -2442,15 +2443,15 @@
                 $pwd = '';
             }
             if($update_pw){
-                $stmt = $this->account_db->prepare('UPDATE MEMB_INFO SET ' . $pwd . 'mail_addr = :mail, sno__numb = :numb WHERE memb_guid = :id');
+                $stmt = $this->website->db('account', $server)->prepare('UPDATE MEMB_INFO SET ' . $pwd . 'mail_addr = :mail, sno__numb = :numb WHERE memb_guid = :id');
             } else{
-                $stmt = $this->account_db->prepare('UPDATE MEMB_INFO SET mail_addr = :mail, sno__numb = :numb WHERE memb_guid = :id');
+                $stmt = $this->website->db('account', $server)->prepare('UPDATE MEMB_INFO SET mail_addr = :mail, sno__numb = :numb WHERE memb_guid = :id');
             }
             return $stmt->execute([':mail' => $email, ':numb' => $sno_numb, ':id' => $id]);
         }
 
-        private function get_account_username($id){
-            $stmt = $this->account_db->prepare('SELECT memb___id FROM MEMB_INFO WHERE memb_guid = :id');
+        private function get_account_username($id, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT memb___id FROM MEMB_INFO WHERE memb_guid = :id');
             $stmt->execute([':id' => $id]);
             $user = $stmt->fetch();
             return $user['memb___id'];
@@ -2462,42 +2463,42 @@
             return $stmt->fetch_all();
         }
 
-        public function check_account($id){
-            $stmt = $this->account_db->prepare('SELECT memb___id, bloc_code FROM MEMB_INFO WHERE memb_guid = :id');
+        public function check_account($id, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT memb___id, bloc_code FROM MEMB_INFO WHERE memb_guid = :id');
             $stmt->execute([':id' => $id]);
             return $stmt->fetch();
         }
 
         public function check_char($id, $server){
-            $stmt = $this->game_db->prepare('SELECT Name, CtlCode FROM Character WHERE '.$this->website->get_char_id_col($server).' = :id');
+            $stmt = $this->website->db('game', $server)->prepare('SELECT Name, CtlCode FROM Character WHERE '.$this->website->get_char_id_col($server).' = :id');
             $stmt->execute([':id' => $id]);
             return $stmt->fetch();
         }
 
-        public function check_banned_account($account){
-            $stmt = $this->account_db->prepare('SELECT memb___id FROM MEMB_INFO WHERE memb___id = :account AND bloc_code = 1');
+        public function check_banned_account($account, $server){
+            $stmt = $this->website->db('account', $server)->prepare('SELECT memb___id FROM MEMB_INFO WHERE memb___id = :account AND bloc_code = 1');
             $stmt->execute([':account' => $account]);
             return $stmt->fetch();
         }
 
-        public function check_banned_char($char){
-            $stmt = $this->game_db->prepare('SELECT Name FROM Character WHERE name = :char AND CtlCode = 1');
+        public function check_banned_char($char, $server){
+            $stmt = $this->website->db('game', $server)->prepare('SELECT Name FROM Character WHERE name = :char AND CtlCode = 1');
             $stmt->execute([':char' => $char]);
             return $stmt->fetch();
         }
 
         public function unban($name, $type, $server){
             if($type == 1){
-                $this->set_bloc_code($name, 0);
+                $this->set_bloc_code($name, 0, $server);
                 $this->remove_from_ban_list($name, 1, $server);
             } else{
-                $this->set_ctl_code($name, 0);
+                $this->set_ctl_code($name, 0, $server);
                 $this->remove_from_ban_list($name, 2, $server);
             }
         }
 
-        private function set_bloc_code($name, $code){
-            $stmt = $this->account_db->prepare('UPDATE MEMB_INFO SET bloc_code = :code WHERE memb___id = :account');
+        private function set_bloc_code($name, $code, $server){
+            $stmt = $this->website->db('account', $server)->prepare('UPDATE MEMB_INFO SET bloc_code = :code WHERE memb___id = :account');
             return $stmt->execute([':code' => $code, ':account' => $name]);
         }
 
@@ -2506,33 +2507,33 @@
             return $stmt->execute([':name' => $name, ':type' => $type, ':server' => $server]);
         }
 
-        private function set_ctl_code($name, $code){
-            $stmt = $this->game_db->prepare('UPDATE Character SET CtlCode = :code WHERE Name = :name');
+        private function set_ctl_code($name, $code, $server){
+            $stmt = $this->website->db('game', $server)->prepare('UPDATE Character SET CtlCode = :code WHERE Name = :name');
             return $stmt->execute([':code' => $code, ':name' => $name]);
         }
 
-        public function delete_account($account){
-            $stmt = $this->account_db->prepare('DELETE FROM MEMB_INFO WHERE memb___id = :account');
+        public function delete_account($account, $server){
+            $stmt = $this->website->db('account', $server)->prepare('DELETE FROM MEMB_INFO WHERE memb___id = :account');
             return $stmt->execute([':account' => $account]);
         }
 
-        public function get_character_list($account){
-            $stmt = $this->game_db->prepare('SELECT Name FROM Character WHERE AccountId = :account');
+        public function get_character_list($account, $server){
+            $stmt = $this->website->db('game', $server)->prepare('SELECT Name FROM Character WHERE AccountId = :account');
             $stmt->execute([':account' => $account]);
             return $stmt->fetch_all();
         }
 
-        public function delete_account_character($account){
-            $stmt = $this->game_db->prepare('DELETE FROM AccountCharacter WHERE Id = :account');
+        public function delete_account_character($account, $server){
+            $stmt = $this->website->db('game', $server)->prepare('DELETE FROM AccountCharacter WHERE Id = :account');
             return $stmt->execute([':account' => $account]);
         }
 
-        public function delete_characters($account, $chars){
+        public function delete_characters($account, $chars, $server){
             $c = '';
             foreach($chars as $char){
                 $c .= ',\'' . $char['Name'] . '\'';
             }
-            return $stmt = $this->game_db->query('DELETE FROM Character WHERE AccountId = \'' . $this->game_db->escape($account) . '\' AND Name IN (' . substr($c, 1, strlen($c)) . ')');
+            return $stmt = $this->website->db('game', $server)->query('DELETE FROM Character WHERE AccountId = ' . $this->website->db('game', $server)->escape($account) . ' AND Name IN (' . substr($c, 1, strlen($c)) . ')');
         }
 
         public function delete_account_log($account, $server){
@@ -2550,13 +2551,13 @@
             return $stmt->execute([':account' => $account, ':server' => $server]);
         }
 
-        public function ban_account(){
-            $stmt = $this->account_db->prepare('UPDATE MEMB_INFO SET bloc_code = 1 WHERE memb___id = :account');
+        public function ban_account($server){
+            $stmt = $this->website->db('account', $server)->prepare('UPDATE MEMB_INFO SET bloc_code = 1 WHERE memb___id = :account');
             $stmt->execute([':account' => $this->vars['name']]);
         }
 
-        public function ban_char(){
-            $stmt = $this->game_db->prepare('UPDATE Character SET CtlCode = 1 WHERE Name = :name');
+        public function ban_char($server){
+            $stmt = $this->website->db('game', $server)->prepare('UPDATE Character SET CtlCode = 1 WHERE Name = :name');
             $stmt->execute([':name' => $this->vars['name']]);
         }
 

@@ -797,13 +797,9 @@
         public function db($db, $server = ''){
             switch($db){
                 case 'web':
-                    if(isset($this->registry->web_db))
-                        return $this->registry->web_db; 
-					else{
-                        $this->load->lib(['web_db', 'db'], [HOST, USER, PASS, WEB_DB], DRIVER);
-                        return $this->registry->web_db;
-                    }
-                    break;
+					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, WEB_DB]);
+					return $this->registry->{DRIVER};
+                   break;
                 case 'account':
 					if($this->is_multiple_accounts() == true){
 						$db = $this->get_db_from_server($server, true);
@@ -811,23 +807,19 @@
 					else{
 						$db = $this->get_default_account_database();
 					}
-
-                    $this->load->lib(['account_db', 'db'], [HOST, USER, PASS, $db], DRIVER);
-                    return $this->registry->account_db;
-                    break;
+					
+					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
+					return $this->registry->{DRIVER};
+                   break;
                 case 'game':
 					$db = $this->get_db_from_server($server);
-                    $this->load->lib(['game_db', 'db'], [HOST, USER, PASS, $db], DRIVER);
-                    return $this->registry->game_db;
-                    break;
+					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
+					return $this->registry->{DRIVER};
+                   break;
                 default:
-                    if(isset($this->registry->$db))
-                        return $this->registry->$db; 
-					else{
-                        $this->load->lib([$db, 'db'], [HOST, USER, PASS, $db], DRIVER);
-                        return $this->registry->$db;
-                    }
-                    break;
+					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
+					return $this->registry->{DRIVER};
+                break;
             }
         }
         
