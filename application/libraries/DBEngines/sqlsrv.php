@@ -231,10 +231,6 @@
             return (!preg_match('/^\-?\d+(\.\d+)?$/D', $var) || preg_match('/^0\d+$/D', $var)) ? preg_replace('/[\000\010\011\012\015\032\047\134]/', '', $var) : $var;
         }
 
-        public function close_cursor(){
-            return;
-        }
-
         public function bind_parameters($parameter = '', $variable = '', $data_type = '', $length = null){
             return;
         }

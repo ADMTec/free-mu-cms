@@ -246,7 +246,7 @@
 
 		public function load_market_chars($page, $per_page = 25, $server, $tax = 0){
             $this->per_page = ($page <= 1) ? 0 : $per_page * ($page - 1);
-           	$this->chars = $this->website->db('web')->query('SELECT Top ' . $this->web_db->escape((int)$per_page) . ' id, mu_id, start_date, end_date, price, price_type, seller, class FROM DmN_CharacterMarket WHERE end_date > ' . time() . ' AND is_sold != 1  AND removed != 1 AND server = '.$this->website->db('web')->escape($server).' AND id Not IN (SELECT Top ' . $this->web_db->escape((int)$this->per_page) . ' id FROM DmN_CharacterMarket WHERE end_date > ' . time() . ' AND is_sold != 1  AND removed != 1 AND server = '.$this->website->db('web')->escape($server).' ORDER BY id DESC) ORDER BY id DESC');
+           	$this->chars = $this->website->db('web')->query('SELECT Top ' . $this->website->db('web')->escape((int)$per_page) . ' id, mu_id, start_date, end_date, price, price_type, seller, class FROM DmN_CharacterMarket WHERE end_date > ' . time() . ' AND is_sold != 1  AND removed != 1 AND server = '.$this->website->db('web')->escape($server).' AND id Not IN (SELECT Top ' . $this->website->db('web')->escape((int)$this->per_page) . ' id FROM DmN_CharacterMarket WHERE end_date > ' . time() . ' AND is_sold != 1  AND removed != 1 AND server = '.$this->website->db('web')->escape($server).' ORDER BY id DESC) ORDER BY id DESC');
             $this->pos = ($page == 1) ? 1 : (int)(($page - 1) * $per_page) + 1;
             foreach($this->chars->fetch_all() as $value){
 				$info = $this->get_char_name_by_id($value['mu_id'], $server);
