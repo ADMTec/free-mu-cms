@@ -135,10 +135,10 @@
                     if(preg_match('/\bcharacter\w*\b/', $type) || preg_match('/\bshop\w*\b/', $type) || preg_match('/\bcredits\w*\b/', $type)){
                         $this->vars['servers'] = $this->website->server_list();
                         if(isset($_POST['switch_server_file'])){
-                            $_SESSION['default_key'] = [0 => $_POST['switch_server_file']];
+                            $_SESSION['default_key'] = $_POST['switch_server_file'];
                         }
                         $default_key = isset($_SESSION['default_key']) ? $_SESSION['default_key'] : array_key_first($this->vars['servers']);
-                        $this->vars['default'] = $default_key[0];
+                        $this->vars['default'] = $default_key;
                     }
                     $file = isset($this->vars['default']) ? '_' . $this->vars['default'] : '';
                     if(isset($_POST['edit_config'])){
