@@ -4,7 +4,7 @@ From v1.2.4 minimum php version has been changed to 8.1 upto php 8.2
 
 For php 7 use v1.2.3.9 [No updates for this version]
 
-Discord channel: [https://discord.gg/rgqy7AjM](https://discord.gg/ttWvabj9TN)
+Discord channel: https://discord.gg/mTXUFx4hnZ
 
 I have enought knowledge to try to maintain this and even add new stuff for free as much as my time allows me.
 
