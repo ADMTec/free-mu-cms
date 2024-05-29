@@ -109,28 +109,30 @@
             return $this->servers;
         }
 
-		public function total_online($cached_query = 60)
-        {
+		public function total_online($cached_query = 60){
             $serverlist = $this->server_list();
 			$gsList = $this->config->values('gameserver_config');
             $max_online = 0;
             $online = 0;
-            if($this->is_multiple_accounts()){
-                foreach($gsList as $servers){
-                    $max_online += (int)$servers['max_online'];
-                    $server_load = $this->db($serverlist[$servers['bound_to']]['db_acc'])->cached_query('total_online_' . $serverlist[$servers['bound_to']]['db_acc'], 'SELECT COUNT(memb___id) as count FROM MEMB_STAT WHERE ConnectStat = 1', [], $cached_query);
+            if($gsList != false){
+                if($this->is_multiple_accounts()){
+                    foreach($gsList as $servers){
+                        $max_online += (int)$servers['max_online'];
+                        $server_load = $this->db($serverlist[$servers['bound_to']]['db_acc'])->cached_query('total_online_' . $serverlist[$servers['bound_to']]['db_acc'], 'SELECT COUNT(memb___id) as count FROM MEMB_STAT WHERE ConnectStat = 1', [], $cached_query);
+                        $online += $server_load[0]['count'];
+                    }
+                } 
+    			else{
+                    foreach($gsList as $servers){
+                        $max_online += (int)$servers['max_online'];
+                    }
+    				$db = $this->get_default_account_database();
+                    $server_load = $this->db($db)->cached_query('total_online_' . $db, 'SELECT COUNT(memb___id) as count FROM MEMB_STAT WHERE ConnectStat = 1', [], $cached_query);
                     $online += $server_load[0]['count'];
                 }
-            } 
-			else{
-                foreach($gsList as $servers){
-                    $max_online += (int)$servers['max_online'];
-                }
-				$db = $this->get_default_account_database();
-                $server_load = $this->db($db)->cached_query('total_online_' . $db, 'SELECT COUNT(memb___id) as count FROM MEMB_STAT WHERE ConnectStat = 1', [], $cached_query);
-                $online += $server_load[0]['count'];
+                return ['online' => $online, 'percentage' => floor(100 * $online / $max_online)];
             }
-            return ['online' => $online, 'percentage' => floor(100 * $online / $max_online)];
+             return ['online' =>0, 'percentage' => 0];
         }
 
 		public function online_by_server($server, $cached_query = 60){
