@@ -16,7 +16,12 @@
         public function execute(){
 			
             $this->load->helper('website');
-            $this->load->lib('cache', ['File', ['cache_dir' => APP_PATH . DS . 'data' . DS . 'cache']]);
+            if($this->config->config_entry('main|cache_type') == 'file'){
+                $this->load->lib('Cache/File as cache', [APP_PATH . DS . 'data' . DS . 'cache']);
+            } 
+			else{
+                $this->load->lib('Cache/MemCached as cache',[$this->config->config_entry('main|mem_cached_ip'), $this->config->config_entry('main|mem_cached_port')]);
+            }
 
 			$streamingPartners = [];
 			$streamingBox = [];

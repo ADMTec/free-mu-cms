@@ -692,87 +692,60 @@
             }
         }
 
-		public function sendmail($recipients, $subject, $message){
-            $this->vars['email_config'] = $this->config->values('email_config');
-			$failures = [];			   
-            if(!$this->vars['email_config'])
-                throw new Exception('Email settings not configured.');
-            if(!isset($this->vars['email_config']['server_email']) || $this->vars['email_config']['server_email'] == '')
-                throw new Exception('Server email is not set.');
-            switch($this->vars['email_config']['mail_mode']){
-                case 0:
-                    try{
-                        if(!isset($this->vars['email_config']['smtp_server']) || $this->vars['email_config']['smtp_server'] == '')
-                            throw new Exception('SMTP Server is not set.');
-                        if(!isset($this->vars['email_config']['smtp_port']) || $this->vars['email_config']['smtp_port'] == '' || !is_numeric($this->vars['email_config']['smtp_port']))
-                            throw new Exception('SMTP Port is not set.');
-                        $transport = new \Swift_SmtpTransport($this->vars['email_config']['smtp_server'], (int)$this->vars['email_config']['smtp_port']);
-                        if($this->vars['email_config']['smtp_use_ssl'] == 1){
-                            $transport->setEncryption('ssl');
+		public function sendmail($recipients, $subject, $message){  
+            try{
+                $this->vars['config'] = $this->config->values('email_config');
+                
+                if($this->vars['config'] == false){
+                    throw new Exception('Email settings not configured.');
+                }
+                if(!isset($this->vars['config']['server_email']) || $this->vars['config']['server_email'] == ''){
+                    throw new Exception('Website email is not specified');
+                }
+                
+                switch($this->vars['config']['mail_mode']){
+                    case 0:
+                        if(!isset($this->vars['config']['smtp_server']) || $this->vars['config']['smtp_server'] == ''){
+                            throw new Exception('SMTP Server is not specified.');
                         }
-                        if($this->vars['email_config']['smtp_use_ssl'] == 2){
-                            $transport->setEncryption('tls');
-                            $transport->setStreamOptions(['ssl' => ['allow_self_signed' => true, 'verify_peer_name' => false, 'verify_peer' => false, 'tlsv1.2' => true]]);
+                        if(!isset($this->vars['config']['smtp_port']) || $this->vars['config']['smtp_port'] == '' || !is_numeric($this->vars['config']['smtp_port'])){
+                            throw new Exception('SMTP Port is not specified');
                         }
-                        if($this->vars['email_config']['smtp_username'] != ''){
-                            $transport->setUsername($this->vars['email_config']['smtp_username']);
+                        if($this->vars['config']['smtp_username'] == ''){
+                            throw new Exception('SMTP Username is not specified');
                         }
-                        if($this->vars['email_config']['smtp_password'] != ''){
-                            $transport->setPassword($this->vars['email_config']['smtp_password']);
+                        
+                        $password = '';
+                        
+                        if($this->vars['config']['smtp_password'] != ''){
+                            if(str_contains($this->vars['config']['smtp_server'], 'gmail')){
+                                $this->vars['config']['smtp_password'] = preg_replace('/\s+/', '', $this->vars['config']['smtp_password']);
+                            }
+                            $password = ':'.urlencode($this->vars['config']['smtp_password']);
                         }
-                        $mailer = new \Swift_Mailer($transport);
-                        $message = (new \Swift_Message)->setSubject($subject)->setFrom([$this->vars['email_config']['server_email'] => $this->config->config_entry('main|servername')])->setTo([$recipients])->setBody($message)->setContentType('text/html');
-                        if(!$mailer->send($message, $failures)){
-                            $this->error = 'Failed sending email to ' . print_r($failures, 1);
-                            return false;
-                        }
-                        return true;
-                    } catch(\Exception $e){
-                        $this->error = $e->getMessage();
-                    } catch(\Swift_ConnectionException $e){
-                        $this->error = 'There was a problem communicating with the SMTP-Server. Error-Text: ' . $e->getMessage();
-                    } catch(\Swift_Message_MimeException $e){
-                        $this->error = 'There was an unexpected problem building the email. Error-Text: ' . $e->getMessage();
-                    } catch(\Swift_TransportException $e){
-                        $this->error = $e->getMessage();
-                    }
-                break;
-                case 1:
-                    try{
-                        $transport = \Swift_MailTransport::newInstance();
-                        $mailer = new \Swift_Mailer($transport);
-                        $message = (new \Swift_Message)->setSubject($subject)->setFrom([$this->vars['email_config']['server_email'] => $this->config->config_entry('main|servername')])->setTo([$recipients])->setBody($message)->setContentType('text/html');
-                        if(!$mailer->send($message, $failures)){
-                            $this->error = 'Failed sending email to ' . print_r($failures, 1);
-                            return false;
-                        }
-                        return true;
-                    } catch(\Swift_ConnectionException $e){
-                        $this->error = 'There was a problem communicating with the SMTP-Server. Error-Text: ' . $e->getMessage();
-                    } catch(\Swift_Message_MimeException $e){
-                        $this->error = 'There was an unexpected problem building the email. Error-Text: ' . $e->getMessage();
-                    } catch(\Swift_TransportException $e){
-                        $this->error = $e->getMessage();
-                    }
-                break;
-                case 2:
-                    try{
-                        $transport = new \Swift_SendmailTransport('/usr/sbin/sendmail -bs');
-                        $mailer = new \Swift_Mailer($transport);
-                        $message = (new \Swift_Message)->setSubject($subject)->setFrom([$this->vars['email_config']['server_email'] => $this->config->config_entry('main|servername')])->setTo([$recipients])->setBody($message)->setContentType('text/html');
-                        if(!$mailer->send($message, $failures)){
-                            $this->error = 'Failed sending email to ' . print_r($failures, 1);
-                            return false;
-                        }
-                        return true;
-                    } catch(\Swift_ConnectionException $e){
-                        $this->error = 'There was a problem communicating with the SMTP-Server. Error-Text: ' . $e->getMessage();
-                    } catch(\Swift_Message_MimeException $e){
-                        $this->error = 'There was an unexpected problem building the email. Error-Text: ' . $e->getMessage();
-                    } catch(\Swift_TransportException $e){
-                        $this->error = $e->getMessage();
-                    }
-                break;
+                        
+                        $transport = Symfony\Component\Mailer\Transport::fromDsn('smtp://'.urlencode($this->vars['config']['smtp_username']).$password.'@'.$this->vars['config']['smtp_server'].':'.$this->vars['config']['smtp_port'].''); 
+                    break;
+                    default:
+                    case 1:
+                        $transport = Symfony\Component\Mailer\Transport::fromDsn('native://default'); 
+                    break;
+                    case 2:
+                        $transport = Symfony\Component\Mailer\Transport::fromDsn('sendmail://default'); 
+                    break;
+                }
+                
+                $mailer = new Symfony\Component\Mailer\Mailer($transport);
+                $from = new  Symfony\Component\Mime\Address($this->vars['config']['server_email'], $this->config->config_entry('main|servername'));                
+                $email = (new Symfony\Component\Mime\Email())->from($from)->to(...[$recipients])->subject($subject)->html($message);
+                $mailer->send($email); 
+                return true;
+            } catch (TransportExceptionInterface $e){
+                $this->error = $e->getMessage();	
+                return false;
+            } catch(\Exception $e){
+                $this->error = $e->getMessage();
+                return false;
             }
         }
 

@@ -1080,8 +1080,6 @@
 						'smtp_port' => (int)$_POST['smtp_port'], 
 						'smtp_username' => $_POST['smtp_username'], 
 						'smtp_password' => $_POST['smtp_password'], 
-						'smtp_auth' => (int)$_POST['smtp_auth'], 
-						'smtp_use_ssl' => (int)$_POST['smtp_use_ssl'], 
 						'welcome_email' => isset($_POST['welcome_email']) ? 1 : 0, 
 						'vip_purchase_email' => isset($_POST['vip_purchase_email']) ? 1 : 0, 
 						'donate_email_user' => isset($_POST['donate_email_user']) ? 1 : 0, 

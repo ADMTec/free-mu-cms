@@ -143,7 +143,7 @@
         }
 
         private function by_email(){
-            $data = $this->Maccount->load_account_by_name($this->Maccount->vars['lost_info']);
+            $data = $this->Maccount->load_account_by_name($this->Maccount->vars['lost_info'], $this->session->userdata(['lost_password' => 'server']));
             if($data){
                 $reminder = $this->Maccount->load_reminder_by_name($data['memb___id'], $this->session->userdata(['lost_password' => 'server']));
                 if($reminder){

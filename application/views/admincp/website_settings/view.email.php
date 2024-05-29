@@ -85,43 +85,6 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="smtp_auth">SMTP Authentification </label>
-
-                            <div class="controls">
-                                <select id="smtp_auth" name="smtp_auth">
-                                    <option value="0" <?php if(isset($email_config['smtp_auth']) && $email_config['smtp_auth'] == 0){
-                                        echo 'selected="selected"';
-                                    } ?>>No
-                                    </option>
-                                    <option value="1" <?php if(isset($email_config['smtp_auth']) && $email_config['smtp_auth'] == 1){
-                                        echo 'selected="selected"';
-                                    } ?>>Yes
-                                    </option>
-                                </select>
-                                <p class="help-block">Is user and password required for authentification.</p>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="smtp_use_ssl">SMTP Protocol </label>
-                            <div class="controls">
-                                <select id="smtp_use_ssl" name="smtp_use_ssl">
-                                    <option value="0" <?php if(isset($email_config['smtp_use_ssl']) && $email_config['smtp_use_ssl'] == 0){
-                                        echo 'selected="selected"';
-                                    } ?>>Standard / Plain Text
-                                    </option>
-                                    <option value="1" <?php if(isset($email_config['smtp_use_ssl']) && $email_config['smtp_use_ssl'] == 1){
-                                        echo 'selected="selected"';
-                                    } ?>>SSL
-                                    </option>
-                                    <option value="2" <?php if(isset($email_config['smtp_use_ssl']) && $email_config['smtp_use_ssl'] == 2){
-                                        echo 'selected="selected"';
-                                    } ?>>TLS
-                                    </option>
-                                </select>
-                                <p class="help-block">Is your smtp server protocol.</p>
-                            </div>
-                        </div>
-                        <div class="control-group">
                             <label class="control-label">Welcome Email</label>
                             <div class="controls">
                                 <label class="radio">
