@@ -1,14 +1,14 @@
 <?php
     in_file();
 
-    class FileCache
+    class File
     {
         /**
          * The root cache directory.
          * @var string
          */
         private $cache_dir = '/tmp/cache';
-        private $extension = '.dmn';
+        private $extension = '';
         private $file_name;
         private $lifetime;
         private $cache_time = [];
@@ -19,13 +19,11 @@
          *
          * @param array $options
          */
-        public function __construct($options = []){
-            $available_options = ['cache_dir', 'extension'];
-            foreach($available_options as $name){
-                if(isset($options[$name])){
-                    $this->$name = $options[$name];
-                }
+        public function __construct($cache_dir = null, $extension = '.dmn'){
+            if($cache_dir != null){
+                $this->cache_dir = $cache_dir;
             }
+            $this->extension = $extension;
         }
 
         /**
@@ -64,7 +62,7 @@
          *
          * @return bool
          */
-        public function delete($id){
+        public function remove($id){
             $this->getFileName($id);
             return unlink($this->file_name);
         }
@@ -78,7 +76,7 @@
          *
          * @return bool
          */
-        public function save($id, $data, $lifetime = 3600){
+        public function set($id, $data, $lifetime = 3600){
             $dir = $this->getCacheDirectory();
             if(!is_dir($dir)){
                 if(!mkdir($dir, 0755, true)){

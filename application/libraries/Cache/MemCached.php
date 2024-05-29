@@ -1,7 +1,7 @@
 <?php
     in_file();
 
-    class MemCachedCache
+    class MemCached
     {
         /**
          * The root cache directory.
@@ -11,6 +11,8 @@
         private $lifetime;
         private $cache_time = [];
         private $isMemcache = false;
+        private $IP;
+        private $PORT
 
         /**
          * Creates a FileCache object
@@ -18,17 +20,14 @@
          * @param array $options
          */
            
-        public function __construct($options = []){
+        public function __construct($ip, $port){
             $connected = false;
-            $available_options = ['IP', 'PORT'];
-            foreach($available_options as $name){
-                if(isset($options[$name])){
-                    $this->$name = $options[$name];
-                }
-            }
+            $this->IP = $ip;
+            $this->PORT = $port;
+
             if(class_exists('Memcache')){
                 $this->memcached = new Memcache;  
-                if($this->memcached->connect($this->IP, $this->PORT)){
+                if($this->memcached->connect($this->IP, (int)$this->PORT)){
                     $connected = true;
                     $this->isMemcache = true;
                 }
@@ -83,7 +82,7 @@
          *
          * @return bool
          */
-        public function delete($id){
+        public function remove($id){
             return $this->memcached->delete($id);
         }
 
@@ -97,7 +96,7 @@
          * @return bool
          */
            
-        public function save($id, $data, $lifetime = 3600){
+        public function set($id, $data, $lifetime = 3600){
             $this->lifetime = time() + $lifetime;
             $storeData = [$this->lifetime, $data];
             if($this->isMemcache){

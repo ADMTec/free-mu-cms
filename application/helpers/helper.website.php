@@ -627,9 +627,10 @@
 
         public function check_cache($file, $return, $time = false, $delete_old_cache = true){
             if($this->config->config_entry('main|cache_type') == 'file'){
-                $this->load->lib('cache', ['File', ['cache_dir' => APP_PATH . DS . 'data' . DS . 'cache']]);
-            } else{
-                $this->load->lib('cache', ['MemCached', ['ip' => $this->config->config_entry('main|mem_cached_ip'), 'port' => $this->config->config_entry('main|mem_cached_port')]]);
+                $this->load->lib('Cache/File as cache', [APP_PATH . DS . 'data' . DS . 'cache']);
+            } 
+			else{
+                $this->load->lib('Cache/MemCached as cache',[$this->config->config_entry('main|mem_cached_ip'), $this->config->config_entry('main|mem_cached_port')]);
             }
             $this->cached = true;
             $this->$return = $this->registry->cache->get($file, $delete_old_cache);
@@ -641,9 +642,10 @@
 
         public function set_cache($file, $content, $time = false){
             if($this->config->config_entry('main|cache_type') == 'file'){
-                $this->load->lib('cache', ['File', ['cache_dir' => APP_PATH . DS . 'data' . DS . 'cache']]);
-            } else{
-                $this->load->lib('cache', ['MemCached', ['ip' => $this->config->config_entry('main|mem_cached_ip'), 'port' => $this->config->config_entry('main|mem_cached_port')]]);
+                $this->load->lib('Cache/File as cache', [APP_PATH . DS . 'data' . DS . 'cache']);
+            } 
+			else{
+                $this->load->lib('Cache/MemCached as cache',[$this->config->config_entry('main|mem_cached_ip'), $this->config->config_entry('main|mem_cached_port')]);
             }
             $this->registry->cache->set($file, $content, $time);
         }
@@ -798,29 +800,20 @@
             switch($db){
                 case 'web':
 					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, WEB_DB]);
-					return $this->registry->{DRIVER};
                    break;
                 case 'account':
-					if($this->is_multiple_accounts() == true){
-						$db = $this->get_db_from_server($server, true);
-					}
-					else{
-						$db = $this->get_default_account_database();
-					}
-					
+					$db = ($this->is_multiple_accounts() == true) ? $this->get_db_from_server($server, true) : $this->get_default_account_database();
 					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
-					return $this->registry->{DRIVER};
                    break;
                 case 'game':
 					$db = $this->get_db_from_server($server);
 					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
-					return $this->registry->{DRIVER};
                    break;
                 default:
 					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
-					return $this->registry->{DRIVER};
                 break;
             }
+			return $this->registry->{DRIVER};
         }
         
         public function load_rss($url = '', $item_count = 5, $cache_time = 0, $rss_name = 'recent_on_forum'){
@@ -948,8 +941,7 @@
             return ($zens < 1000) ? (float)number_format($zen, 1, '.', '') : (float)number_format($zen, 1, '.', '') . " " . str_repeat("K", $i);
         }
 
-		public function ascii2hex($ascii) 
-		{
+		public function ascii2hex($ascii){
 			$hex = '';
 			for($i = 0; $i < strlen($ascii); $i++){
 				$byte = strtoupper(dechex(ord($ascii[$i])));
@@ -976,20 +968,27 @@
         }
 	
         public function get_guild_status($status){
-            $status_array = [0 => __('Member'), 32 => '<span style="color: green;">' . __('BattleMaster') . '</span>', 64 => '<span style="color: blue;">' . __('Assistant Guild Master') . '</span>', 128 => '<span style="color: red;font-weight: bold;">' . __('Guild Master') . '</span>'];
-            return str_replace(array_keys($status_array), array_values($status_array), $status);
+			return match((int)$status){
+				0 => __('Member'),
+				32 => '<span style="color: green;">' . __('BattleMaster') . '</span>',
+				64 => '<span style="color: blue;">' . __('Assistant Guild Master') . '</span>',
+				128 => '<span style="color: red;font-weight: bold;">' . __('Guild Master') . '</span>',
+			};
         }
 		
         public function get_gens_family($influence){
-            $family_array = [1 => __('Duprian'), 2 => __('Vanert')];
-            return str_replace(array_keys($family_array), array_values($family_array), $influence);
+			return match((int)$influence){
+				1 => __('Duprian'),
+				2 => __('Vanert')
+			};
         }
 		
         public function get_map_name($map_id, $list = false){
             $maps_array = $this->config->values('map_config');
             if($list){
                 return $maps_array['map_codes'];
-            } else{
+            } 
+			else{
                 return array_key_exists($map_id, $maps_array['map_codes']) ? __($maps_array['map_codes'][$map_id]) : __('Unknown');
             }
         }
@@ -1012,7 +1011,8 @@
             $level = [0 => __('*Hero*'), 1 => __('Hero lvl 2'), 2 => __('Hero lvl 1'), 3 => __('Commoner'), 4 => __('PK lvl 1'), 5 => __('PK lvl 1'), 6 => __('Murder'), 7 => __('*Phonoman*')];
             if($list){
                 return $level;
-            } else{
+            } 
+			else{
                 return array_key_exists($pklevel, $level) ? $level[$pklevel] : __('Unknown');
             }
         }
@@ -1035,9 +1035,12 @@
 
         public function seconds2days($seconds, $text = true){
             $days = intval(intval($seconds) / (3600 * 24));
-            if($days == 1)
-                return ($text) ? $days . ' ' . __('Day') : $days; else
+            if($days == 1){
+                return ($text) ? $days . ' ' . __('Day') : $days;
+			}
+			else{
                 return ($text) ? $days . ' ' . __('Days') : $days;
+			}
         }
 
         private function no_more_event($times, $now){
@@ -1045,7 +1048,8 @@
             $lastevent = strtotime('Today ' . end($times));
             if($lastevent < $now){
                 return false;
-            } else{
+            } 
+			else{
                 return true;
             }
         }
@@ -1145,7 +1149,7 @@
             $countryList = ['AF' => 'Afghanistan', 'AX' => 'Aland Islands', 'AL' => 'Albania', 'DZ' => 'Algeria', 'AS' => 'American Samoa', 'AD' => 'Andorra', 'AO' => 'Angola', 'AI' => 'Anguilla', 'AQ' => 'Antarctica', 'AG' => 'Antigua and Barbuda', 'AR' => 'Argentina', 'AM' => 'Armenia', 'AW' => 'Aruba', 'AU' => 'Australia', 'AT' => 'Austria', 'AZ' => 'Azerbaijan', 'BS' => 'Bahamas the', 'BH' => 'Bahrain', 'BD' => 'Bangladesh', 'BB' => 'Barbados', 'BY' => 'Belarus', 'BE' => 'Belgium', 'BZ' => 'Belize', 'BJ' => 'Benin', 'BM' => 'Bermuda', 'BT' => 'Bhutan', 'BO' => 'Bolivia', 'BA' => 'Bosnia and Herzegovina', 'BW' => 'Botswana', 'BV' => 'Bouvet Island (Bouvetoya)', 'BR' => 'Brazil', 'IO' => 'British Indian Ocean Territory (Chagos Archipelago)', 'VG' => 'British Virgin Islands', 'BN' => 'Brunei Darussalam', 'BG' => 'Bulgaria', 'BF' => 'Burkina Faso', 'BI' => 'Burundi', 'KH' => 'Cambodia', 'CM' => 'Cameroon', 'CA' => 'Canada', 'CV' => 'Cape Verde', 'KY' => 'Cayman Islands', 'CF' => 'Central African Republic', 'TD' => 'Chad', 'CL' => 'Chile', 'CN' => 'China', 'CX' => 'Christmas Island', 'CC' => 'Cocos (Keeling) Islands', 'CO' => 'Colombia', 'KM' => 'Comoros the', 'CD' => 'Congo', 'CG' => 'Congo the', 'CK' => 'Cook Islands', 'CR' => 'Costa Rica', 'CI' => 'Cote d\'Ivoire', 'HR' => 'Croatia', 'CU' => 'Cuba', 'CY' => 'Cyprus', 'CZ' => 'Czech Republic', 'DK' => 'Denmark', 'DJ' => 'Djibouti', 'DM' => 'Dominica', 'DO' => 'Dominican Republic', 'EC' => 'Ecuador', 'EG' => 'Egypt', 'SV' => 'El Salvador', 'GQ' => 'Equatorial Guinea', 'ER' => 'Eritrea', 'EE' => 'Estonia', 'ET' => 'Ethiopia', 'FO' => 'Faroe Islands', 'FK' => 'Falkland Islands (Malvinas)', 'FJ' => 'Fiji the Fiji Islands', 'FI' => 'Finland', 'FR' => 'France, French Republic', 'GF' => 'French Guiana', 'PF' => 'French Polynesia', 'TF' => 'French Southern Territories', 'GA' => 'Gabon', 'GM' => 'Gambia the', 'GE' => 'Georgia', 'DE' => 'Germany', 'GH' => 'Ghana', 'GI' => 'Gibraltar', 'GR' => 'Greece', 'GL' => 'Greenland', 'GD' => 'Grenada', 'GP' => 'Guadeloupe', 'GU' => 'Guam', 'GT' => 'Guatemala', 'GG' => 'Guernsey', 'GN' => 'Guinea', 'GW' => 'Guinea-Bissau', 'GY' => 'Guyana', 'HT' => 'Haiti', 'HM' => 'Heard Island and McDonald Islands', 'VA' => 'Holy See (Vatican City State)', 'HN' => 'Honduras', 'HK' => 'Hong Kong', 'HU' => 'Hungary', 'IS' => 'Iceland', 'IN' => 'India', 'ID' => 'Indonesia', 'IR' => 'Iran', 'IQ' => 'Iraq', 'IE' => 'Ireland', 'IM' => 'Isle of Man', 'IL' => 'Israel', 'IT' => 'Italy', 'JM' => 'Jamaica', 'JP' => 'Japan', 'JE' => 'Jersey', 'JO' => 'Jordan', 'KZ' => 'Kazakhstan', 'KE' => 'Kenya', 'KI' => 'Kiribati', 'KP' => 'Korea', 'KR' => 'Korea', 'KW' => 'Kuwait', 'KG' => 'Kyrgyz Republic', 'LA' => 'Lao', 'LV' => 'Latvia', 'LB' => 'Lebanon', 'LS' => 'Lesotho', 'LR' => 'Liberia', 'LY' => 'Libyan Arab Jamahiriya', 'LI' => 'Liechtenstein', 'LT' => 'Lithuania', 'LU' => 'Luxembourg', 'MO' => 'Macao', 'MK' => 'Macedonia', 'MG' => 'Madagascar', 'MW' => 'Malawi', 'MY' => 'Malaysia', 'MV' => 'Maldives', 'ML' => 'Mali', 'MT' => 'Malta', 'MH' => 'Marshall Islands', 'MQ' => 'Martinique', 'MR' => 'Mauritania', 'MU' => 'Mauritius', 'YT' => 'Mayotte', 'MX' => 'Mexico', 'FM' => 'Micronesia', 'MD' => 'Moldova', 'MC' => 'Monaco', 'MN' => 'Mongolia', 'ME' => 'Montenegro', 'MS' => 'Montserrat', 'MA' => 'Morocco', 'MZ' => 'Mozambique', 'MM' => 'Myanmar', 'NA' => 'Namibia', 'NR' => 'Nauru', 'NP' => 'Nepal', 'AN' => 'Netherlands Antilles', 'NL' => 'Netherlands the', 'NC' => 'New Caledonia', 'NZ' => 'New Zealand', 'NI' => 'Nicaragua', 'NE' => 'Niger', 'NG' => 'Nigeria', 'NU' => 'Niue', 'NF' => 'Norfolk Island', 'MP' => 'Northern Mariana Islands', 'NO' => 'Norway', 'OM' => 'Oman', 'PK' => 'Pakistan', 'PW' => 'Palau', 'PS' => 'Palestinian Territory', 'PA' => 'Panama', 'PG' => 'Papua New Guinea', 'PY' => 'Paraguay', 'PE' => 'Peru', 'PH' => 'Philippines', 'PN' => 'Pitcairn Islands', 'PL' => 'Poland', 'PT' => 'Portugal, Portuguese Republic', 'PR' => 'Puerto Rico', 'QA' => 'Qatar', 'RE' => 'Reunion', 'RO' => 'Romania', 'RU' => 'Russian Federation', 'RW' => 'Rwanda', 'BL' => 'Saint Barthelemy', 'SH' => 'Saint Helena', 'KN' => 'Saint Kitts and Nevis', 'LC' => 'Saint Lucia', 'MF' => 'Saint Martin', 'PM' => 'Saint Pierre and Miquelon', 'VC' => 'Saint Vincent and the Grenadines', 'WS' => 'Samoa', 'SM' => 'San Marino', 'ST' => 'Sao Tome and Principe', 'SA' => 'Saudi Arabia', 'SN' => 'Senegal', 'RS' => 'Serbia', 'SC' => 'Seychelles', 'SL' => 'Sierra Leone', 'SG' => 'Singapore', 'SK' => 'Slovakia (Slovak Republic)', 'SI' => 'Slovenia', 'SB' => 'Solomon Islands', 'SO' => 'Somalia, Somali Republic', 'ZA' => 'South Africa', 'GS' => 'South Georgia and the South Sandwich Islands', 'ES' => 'Spain', 'LK' => 'Sri Lanka', 'SD' => 'Sudan', 'SR' => 'Suriname', 'SJ' => 'Svalbard & Jan Mayen Islands', 'SZ' => 'Swaziland', 'SE' => 'Sweden', 'CH' => 'Switzerland, Swiss Confederation', 'SY' => 'Syrian Arab Republic', 'TW' => 'Taiwan', 'TJ' => 'Tajikistan', 'TZ' => 'Tanzania', 'TH' => 'Thailand', 'TL' => 'Timor-Leste', 'TG' => 'Togo', 'TK' => 'Tokelau', 'TO' => 'Tonga', 'TT' => 'Trinidad and Tobago', 'TN' => 'Tunisia', 'TR' => 'Turkey', 'TM' => 'Turkmenistan', 'TC' => 'Turks and Caicos Islands', 'TV' => 'Tuvalu', 'UG' => 'Uganda', 'UA' => 'Ukraine', 'AE' => 'United Arab Emirates', 'GB' => 'United Kingdom', 'US' => 'United States of America', 'UM' => 'United States Minor Outlying Islands', 'VI' => 'United States Virgin Islands', 'UY' => 'Uruguay, Eastern Republic of', 'UZ' => 'Uzbekistan', 'VU' => 'Vanuatu', 'VE' => 'Venezuela', 'VN' => 'Vietnam', 'WF' => 'Wallis and Futuna', 'EH' => 'Western Sahara', 'YE' => 'Yemen', 'ZM' => 'Zambia', 'ZW' => 'Zimbabwe'];
             if($list)
                 return $countryList;
-            return isset($countryList[$code]) ? $countryList[$code] : false;
+            return $countryList[$code] ?? false;
         }
 
 		public function iso_to_lang($iso, $full_code){
@@ -1195,8 +1199,7 @@
             return $name;
         }
 		
-		public function date_diff($start_date, $end_date)
-		{
+		public function date_diff($start_date, $end_date){
 			if(!is_numeric($start_date)){
 				$start_date = strtotime($start_date);
 			}
@@ -1256,7 +1259,6 @@
 		}
 
 		public function clean_hex($data){
-			
             if(!$this->is_hex($data)){
                 $data = bin2hex($data);
             }
@@ -1281,8 +1283,13 @@
 		}
 		
 		public function findTwitchStreamers(){
-            $this->load->lib('cache', ['File', ['cache_dir' => APP_PATH . DS . 'data' . DS . 'cache']]);
-            return $this->registry->cache->get('twitch_streamer_data', true);
+            if($this->config->config_entry('main|cache_type') == 'file'){
+                $this->load->lib('Cache/File as cache', [APP_PATH . DS . 'data' . DS . 'cache']);
+            } 
+			else{
+                $this->load->lib('Cache/MemCached as cache',[$this->config->config_entry('main|mem_cached_ip'), $this->config->config_entry('main|mem_cached_port')]);
+            }
+            return $this->registry->cache->get('twitch_streamer_data');
 		}
 		
 		public function authTwitch(){

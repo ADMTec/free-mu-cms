@@ -9,23 +9,22 @@
 
         public function __construct(){
 			$this->cachedir = APP_PATH . DS . 'data' . DS . 'shop';
-            if($this->config->config_entry('main|cache_type') == 'file'){
-                $this->load->lib('cache', ['File', ['cache_dir' => $this->cachedir]]);
-            } else{
-                $this->load->lib('cache', ['MemCached', ['ip' => $this->config->config_entry('main|mem_cached_ip'), 'port' => $this->config->config_entry('main|mem_cached_port')]]);
+
+			if($this->config->config_entry('main|cache_type') == 'file'){
+                $this->load->lib('Cache/File as scache', [APP_PATH . DS . 'data' . DS . 'shop']);
+            } 
+			else{
+                $this->load->lib('Cache/MemCached as scache',[$this->config->config_entry('main|mem_cached_ip'), $this->config->config_entry('main|mem_cached_port')]);
             }
+			
             $this->set_language();
         }
 
-        public function __isset($key){
-            return isset($this->info[$key]);
-        }
-
         public function get($key){
-            return isset($this->info[$key]) ? $this->info[$key] : false;
+            return $this->info[$key] ?? false;
         }
 
-        public function __set($key, $val){
+        public function set($key, $val){
             $this->info[$key] = $val;
         }
 		
@@ -37,9 +36,18 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_list[' . $size . '][' . $cat . ']#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
-            if($cached_data != false)
-                $this->items = $cached_data;
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
+            if($cached_data != false){
+                $this->set('items', $cached_data);
+			}
+			else{
+				$this->load->lib('parse_server_file');
+				$this->parse_server_file->parse_all();
+				$cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);	
+				if($cached_data != false){
+					$this->set('items', $cached_data);
+				}
+			}
             return $this;
         }
 
@@ -48,9 +56,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_tooltip#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->item_tooltip = $cached_data;
+				$this->set('item_tooltip', $cached_data);
             return $this;
         }
 
@@ -59,9 +67,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_tooltip_text#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->item_tooltip_text = $cached_data;
+				$this->set('item_tooltip_text', $cached_data);
             return $this;
         }
 
@@ -70,9 +78,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'jewel_of_harmony_option#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->jewel_of_harmony_option = $cached_data;
+				$this->set('jewel_of_harmony_option', $cached_data);
             return $this;
         }
 
@@ -81,9 +89,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'npc_name#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->npc_names = $cached_data;
+				$this->set('npc_names', $cached_data);
             return $this;
         }
 		
@@ -92,9 +100,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'mlist#en.dmn';
 			}
-			$cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+			$cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
 			if($cached_data != false)
-				$this->mlist = $cached_data;
+				$this->set('mlist', $cached_data);
 			return $this;
 		}
 		
@@ -104,9 +112,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'muun_info#en.dmn';
 			}
-			$cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+			$cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
 			if($cached_data != false)
-				$this->muun_info = $cached_data;
+				$this->set('muun_info', $cached_data);
 			return $this;
 		}
 		
@@ -115,9 +123,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'muun_option_info#en.dmn';
 			}
-			$cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+			$cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
 			if($cached_data != false)
-				$this->muun_option_info = $cached_data;
+				$this->set('muun_option_info', $cached_data);
 			return $this;
 		}
 		
@@ -126,9 +134,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'sockettype#en.dmn';
 			}
-			$cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+			$cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
 			if($cached_data != false)
-				$this->sockettype = $cached_data;
+				$this->set('sockettype', $cached_data);
 			return $this;
 		}
 
@@ -138,9 +146,9 @@
 				$file = 'pentagram_jewel_option_value#en.dmn';
 			}
 
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->pentagram_jewel_option_value = $cached_data;
+				$this->set('pentagram_jewel_option_value', $cached_data);
             return $this;
         }
 
@@ -149,9 +157,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'skill#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->skill = $cached_data;
+				$this->set('skill', $cached_data);
             return $this;
         }
 
@@ -162,9 +170,9 @@
 				$file = 'socket_item'.$v.'#en.dmn';
 			}
 
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->socket_item = $cached_data;
+				$this->set('socket_item', $cached_data);
             return $this;
         }
 
@@ -173,9 +181,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'exe_common#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->exe_common = $cached_data;
+				$this->set('exe_common', $cached_data);
             return $this;
         }
 
@@ -184,9 +192,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'exe_wing#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->exe_wing = $cached_data;
+				$this->set('exe_wing', $cached_data);
             return $this;
         }
 
@@ -195,9 +203,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_add_option#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->item_add_option = $cached_data;
+				$this->set('item_add_option', $cached_data);
         }
 
         public function item_level_tooltip(){
@@ -205,9 +213,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_level_tooltip#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->item_level_tooltip = $cached_data;
+				$this->set('item_level_tooltip', $cached_data);
             return $this;
         }
 
@@ -216,9 +224,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_set_option#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->item_set_option = $cached_data;
+				$this->set('item_set_option', $cached_data);
             return $this;
         }
 
@@ -227,9 +235,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_set_option_text#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->item_set_option_text = $cached_data;
+				$this->set('item_set_option_text', $cached_data);
             return $this;
         }
 
@@ -238,9 +246,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_set_type#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->item_set_type = $cached_data;
+				$this->set('item_set_type', $cached_data);
             return $this;
         }
 		
@@ -249,9 +257,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'item_grade_option#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->item_grade_option = $cached_data;
+				$this->set('item_grade_option', $cached_data);
             return $this;
         }
 		
@@ -261,9 +269,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'earringtype#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->earringtype = $cached_data;
+				$this->set('earringtype', $cached_data);
             return $this;
         }
 		
@@ -272,9 +280,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'earringoption#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->earringoption = $cached_data;
+				$this->set('earringoption', $cached_data);
             return $this;
         }
 		
@@ -283,9 +291,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'staticitems#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->staticitems = $cached_data;
+				$this->set('staticitems', $cached_data);
             return $this;
         }
 		
@@ -294,9 +302,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'staticoptioninfo#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->staticoptioninfo = $cached_data;
+				$this->set('staticoptioninfo', $cached_data);
             return $this;
         }
 		
@@ -305,9 +313,9 @@
 			if(!file_exists($this->cachedir . DS . $file)){
 				$file = 'earringoptionname#en.dmn';
 			}
-            $cached_data = $this->cache->get(str_replace('.dmn', '', $file), false);
+            $cached_data = $this->scache->get(str_replace('.dmn', '', $file), false);
             if($cached_data != false)
-                $this->earringoptionname = $cached_data;
+				$this->set('earringoptionname', $cached_data);
             return $this;
         }
 

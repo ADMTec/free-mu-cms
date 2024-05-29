@@ -88,11 +88,12 @@
 		
 		public function cached_query($name, $query, $data = [], $cache_time = 60){
             if($this->config->config_entry('main|cache_type') == 'file'){
-                $this->load->lib('cache', ['File', ['cache_dir' => APP_PATH . DS . 'data' . DS . 'cache']]);
-            } else{
-                $this->load->lib('cache', ['MemCached', ['ip' => $this->config->config_entry('main|mem_cached_ip'), 'port' => $this->config->config_entry('main|mem_cached_port')]]);
+                $this->load->lib('Cache/File as cache', [APP_PATH . DS . 'data' . DS . 'cache']);
+            } 
+			else{
+                $this->load->lib('Cache/MemCached as cache',[$this->config->config_entry('main|mem_cached_ip'), $this->config->config_entry('main|mem_cached_port')]);
             }
-            $cached_data = $this->cache->get($name, true);
+            $cached_data = $this->cache->get($name);
             if(!$cached_data){
                 $stmt = $this->prepare($query);
                 $stmt->execute($data);

@@ -21,22 +21,19 @@
 		private $staticitems = [];
 		private $staticoptioninfo = [];
 		private $monsters = [];
-        private $cache_days = 7;
         private $cache_time;
 		private $dom;
 		private $isMuEngine = false;
 
-        public function __construct($cache_time = ''){
+        public function __construct(){
             if($this->config->config_entry('main|cache_type') == 'file'){
-                $this->load->lib('cache', ['File', ['cache_dir' => APP_PATH . DS . 'data' . DS . 'shop']]);
-            } else{
-                $this->load->lib('cache', ['MemCached', ['ip' => $this->config->config_entry('main|mem_cached_ip'), 'port' => $this->config->config_entry('main|mem_cached_port')]]);
+                $this->load->lib('Cache/File as cache', [APP_PATH . DS . 'data' . DS . 'shop']);
+            } 
+			else{
+                $this->load->lib('Cache/MemCached as cache',[$this->config->config_entry('main|mem_cached_ip'), $this->config->config_entry('main|mem_cached_port')]);
             }
-            
-            if($cache_time != '')
-                $this->cache_time = $cache_time; 
-			else
-                $this->cache_time = (3600 * 24) * $this->cache_days;
+
+			$this->cache_time = (3600 * 24) * 100;
         }
 		
 		public function parse_txt($type = ''){

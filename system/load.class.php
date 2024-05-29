@@ -69,6 +69,13 @@
         
         public function lib($name, $params = [], $registry_name = null){
             $this->registry = controller::get_instance();
+            
+            if(str_contains($name, ' as ')){
+                $names = explode(' as ', $name);
+                $name = $names[0];
+                $registry_name = $names[1];
+            }
+         
             if(preg_match('/[\/]/', $name)){
                 $this->elements = explode("/", $name);
                 $lib_name = array_pop($this->elements);
@@ -89,10 +96,10 @@
                 if(class_exists($lib_name)){
                     if(!empty($params)){
                         if($registry_name != null){
-                            $this->registry->{$registry_name} = (new ReflectionClass($lib_name))->newInstanceArgs($params);
+                            $this->registry->{$registry_name} = (new $lib_name(...$params));
                         }
                         else{
-                            $this->registry->{$lib_name} = (new ReflectionClass($lib_name))->newInstanceArgs($params);
+                            $this->registry->{$lib_name} = (new $lib_name(...$params));
                         }
                     } 
                     else{

@@ -12,7 +12,7 @@
 
         public function execute(){
             $this->load->helper('website');
-            $this->load->lib('parse_server_file', [5]);
+            $this->load->lib('parse_server_file');
             $this->registry->parse_server_file->parse_all();
             return true;
         }
