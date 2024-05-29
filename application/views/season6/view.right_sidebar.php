@@ -149,7 +149,7 @@
                     if($this->session->userdata(['user' => 'logged_in'])):
                         $server = $this->session->userdata(['user' => 'server']);
                     else:
-                        $server = array_keys($this->website->server_list())[0];
+                        $server = array_key_first($this->website->server_list());
                     endif;
                 ?>
                 <script>

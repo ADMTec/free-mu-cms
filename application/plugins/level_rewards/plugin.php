@@ -200,7 +200,7 @@
 			$this->vars['level'] = $charDataArray[1];
 			$this->vars['mlevel'] = $charDataArray[2];
 			
-			$server = array_keys($this->pluginaizer->website->server_list())[0];
+			$server = array_key_first($this->website->server_list());
 			$this->session->register('user', [
 				'server' => $server, 
 			]);
@@ -344,7 +344,7 @@
 			//load website helper
 			$this->load->helper('website');
 
-			$server = array_keys($this->pluginaizer->website->server_list())[0];
+			$server = array_key_first($this->website->server_list());
 			$this->session->register('user', [
 				'server' => $server, 
 			]);

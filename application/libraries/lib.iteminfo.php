@@ -3267,7 +3267,7 @@
 			}
 			else{
 				if(!$this->server)
-					$this->server = array_keys($this->website->server_list())[0];
+					$this->server = array_key_first($this->website->server_list());
 				
 				if(strlen($this->hex) == 64 && $this->isExpirable){
 					$serial = hexdec(substr($this->hex, 32, 8));
@@ -3375,7 +3375,7 @@
 		private function getMuunExpireInfo(){
 			$data = [];
 			if(!$this->server)
-                $this->server = array_keys($this->website->server_list())[0];
+                $this->server = array_key_first($this->website->server_list());
 			if(strlen($this->hex) == 64){
 				$serial = hexdec(substr($this->hex, 32, 8));
 	

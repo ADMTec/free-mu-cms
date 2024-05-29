@@ -222,7 +222,7 @@
 				$this->vars['is_logged_in'] = $this->pluginaizer->session->is_user();
 				
 				if($this->vars['is_logged_in'] != true){
-					$server = array_keys($this->pluginaizer->website->server_list())[0];
+					$server = array_key_first($this->website->server_list());
 					$this->session->register('user', [
 						'server' => $server, 
 					]);

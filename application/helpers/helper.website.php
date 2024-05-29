@@ -132,7 +132,7 @@
                 }
                 return ['online' => $online, 'percentage' => floor(100 * $online / $max_online)];
             }
-             return ['online' =>0, 'percentage' => 0];
+            return ['online' => 0, 'percentage' => 0];
         }
 
 		public function online_by_server($server, $cached_query = 60){
@@ -253,8 +253,8 @@
         }
 
 		public function stats($server = '', $cached_query = 60){
-            if(!$server)
-                $server = array_keys($this->server_list($server))[0];
+            if(!$server || $server == '')
+                $server = array_key_first($this->server_list());
 			
 			$this->load->model('stats');
 			
@@ -263,7 +263,7 @@
 		
 		public function topByClass($amount, $class, $server = false, $cacheTime = 180, $huntLog = false){
 			if(!$server){
-                $server = array_keys($this->server_list())[0];
+                $server = array_key_first($this->server_list());
 			}
 			$this->load->model('rankings');
 			$this->load->model('character');
@@ -276,35 +276,35 @@
 
 		public function get_cs_info($server = false){
             if(!$server)
-                $server = array_keys($this->server_list())[0];
+                $server = array_key_first($this->server_list());
             $this->load->model('stats');
             return $this->registry->Mstats->get_cs_info($server);
         }
 
 		public function getArcaWinners($server = false){
 			if(!$server)
-               $server = array_keys($this->server_list())[0];
+               $server = array_key_first($this->server_list());
 		    $this->load->model('stats');
             return $this->registry->Mstats->get_arca_winner($server);
 		}
 
 		public function getIceWindWinners($server = false){
 			if(!$server)
-               $server = array_keys($this->server_list())[0];
+               $server = array_key_first($this->server_list());
 		    $this->load->model('stats');
             return $this->registry->Mstats->ice_wind_winner($server);
 		}
 
 		public function getTopPvp($server = false){
 			if(!$server)
-               $server = array_keys($this->server_list())[0];
+               $server = array_key_first($this->server_list());
 			return $this->db('game', $server)->query('SELECT TOP 1 COUNT(Victim) AS KillCount, Killer FROM C_PlayerKiller_Info GROUP BY Killer, Victim ORDER BY COUNT(Victim) DESC')->fetch();	
 		}
 				
 			
 		public function get_gens_info($server = false, $cache_time = 120, $amount = 1){
             if(!$server)
-                $server = array_keys($this->server_list())[0];
+                $server = array_key_first($this->server_list());
 			
 			$this->load->model('rankings');
 			
@@ -375,28 +375,28 @@
 
 		public function get_cs_guild_list($server = false){
             if(!$server)
-                $server = array_keys($this->server_list())[0];
+                $server = array_key_first($this->server_list());
             $this->load->model('stats');
             return $this->registry->Mstats->get_cs_guild_list($server);
         }
 
 		public function csGuildList($server = false, $cache_time = 180){
             if(!$server)
-                $server = array_keys($this->server_list())[0];
+                $server = array_key_first($this->server_list());
             $this->load->model('stats');
             return $this->registry->Mstats->get_cs_guild_list($server, $cache_time);
         }
 
 		public function arcaGuildList($server = false, $cache_time = 120){
             if(!$server)
-                $server = array_keys($this->server_list())[0];
+                $server = array_key_first($this->server_list());
             $this->load->model('stats');
             return $this->registry->Mstats->get_arca_guild_list($server, $cache_time);
         }
 
 		public function iceWindGuildList($server = false, $cache_time = 120){
             if(!$server)
-                $server = array_keys($this->server_list())[0];
+                $server = array_key_first($this->server_list());
             $this->load->model('stats');
             return $this->registry->Mstats->get_icewind_guild_list($server, $cache_time);
         }
@@ -549,24 +549,27 @@
             return false;
         }
 		
-        public function server_list($serv = '', $check_multi_acc = false){
-            $file = file_get_contents(APP_PATH . DS . 'data' . DS . 'serverlist.json');
-			$servers = json_decode($file, true);
-			if(is_array($servers)){
+        public function server_list($server = null, $check_multi_acc = false){
+			static $serverList = null;
+			
+			if($serverList == null){
+				$file = file_get_contents(APP_PATH . DS . 'data' . DS . 'serverlist.json');
+				$serverList = $this->config->from_json($file, 'server_list', true);
+			}
+
+			if(!empty($serverList)){
 				if($check_multi_acc == true){
-					return $servers['USE_MULTI_ACCOUNT_DB'];
-				} else{
-					unset($servers['USE_MULTI_ACCOUNT_DB']);
-					if($serv != ''){
-						if(array_key_exists($serv, $servers)){
-							return $servers[$serv];
-						} else{
-							return false;
-						}
+					return $serverList['USE_MULTI_ACCOUNT_DB'];
+				} 
+				else{
+					unset($serverList['USE_MULTI_ACCOUNT_DB']);
+					if($server != null){
+						return $serverList[$server] ?? false;
 					}
-					return $servers;
+					return $serverList;
 				}
-			} else{
+			} 
+			else{
 				throw new Exception('Unable to load server list. Please check configuration file.');
 			}
         }

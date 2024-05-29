@@ -740,7 +740,7 @@
                 $email = (new Symfony\Component\Mime\Email())->from($from)->to(...[$recipients])->subject($subject)->html($message);
                 $mailer->send($email); 
                 return true;
-            } catch (TransportExceptionInterface $e){
+            } catch(TransportExceptionInterface $e){
                 $this->error = $e->getMessage();	
                 return false;
             } catch(\Exception $e){
