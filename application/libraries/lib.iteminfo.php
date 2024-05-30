@@ -920,7 +920,7 @@
 							}
 							else{
 								if($option[5] == 100 && isset($this->item_data['lvldrop'])){
-									$option = preg_replace('/(%[d])/', '+' . $this->exeFormula($this->item_data['lvldrop'], $option[7]), preg_replace('/(%[d]%)/', $this->exeFormula($this->item_data['lvldrop'], $option[7]), $option[4]));
+									$option = preg_replace('/(%[d])/', '+' . $this->exeFormula((int)$this->item_data['lvldrop'], $option[7]), preg_replace('/(%[d]%)/', $this->exeFormula((int)$this->item_data['lvldrop'], $option[7]), $option[4]));
 								}
 								else{
 									$option = preg_replace('/(%[d])/', '+' . $option[7], preg_replace('/(%[d]%)/', $option[7], $option[4]));
@@ -2940,7 +2940,7 @@
                 $def = $this->item_data['def'];
                 $level = (int)substr($this->getLevel(), 1);
                 $exe = $this->exe;
-                $drop_level = $this->item_data['lvldrop'];
+                $drop_level = (int)$this->item_data['lvldrop'];
                 if($exe >= 64){
                     $exe -= 64;
                 }
@@ -2956,10 +2956,10 @@
                         }
                     } else{
                         if($this->ancient != 0 && $this->item_data['lvldrop'] != 0 && $drop_level != 0){
-                            $def += ((($def * 12) / $this->item_data['lvldrop']) + ($this->item_data['lvldrop'] / 5)) + 4;
+                            $def += ((($def * 12) / (int)$this->item_data['lvldrop']) + ((int)$this->item_data['lvldrop'] / 5)) + 4;
                             $def += ((($def * 3) / $drop_level) + ($drop_level / 30)) + 2;
                         } else if($exe != 0 && $this->item_data['lvldrop'] != 0){
-                            $def += ((($def * 12) / $this->item_data['lvldrop']) + ($this->item_data['lvldrop'] / 5)) + 4;
+                            $def += ((($def * 12) / (int)$this->item_data['lvldrop']) + ((int)$this->item_data['lvldrop'] / 5)) + 4;
                         }
                         if(($this->index >= $this->itemIndex(12, 3) && $this->index <= $this->itemIndex(12, 6)) || $this->index == $this->itemIndex(12, 42) || $this->index == $this->itemIndex(13, 4)){ // 2nd Wings,Dark Horse
                             $def += $level * 2;
@@ -3085,7 +3085,7 @@
         public function reqStr(){
             if(array_key_exists('strreq', $this->item_data)){
                 if($this->item_data['strreq'] > 0){
-                    return floor(((($this->item_data['strreq'] * (((int)substr($this->getLevel(), 1) * 3) + ($this->item_data['lvldrop'] + $this->additionalValue()))) * 3) / 100) + 20);
+                    return floor(((($this->item_data['strreq'] * (((int)substr($this->getLevel(), 1) * 3) + ((int)$this->item_data['lvldrop'] + $this->additionalValue()))) * 3) / 100) + 20);
                 }
             }
             return 0;
@@ -3094,7 +3094,7 @@
         public function reqAgi(){
             if(array_key_exists('agireq', $this->item_data)){
                 if($this->item_data['agireq'] > 0){
-                    return floor(((($this->item_data['agireq'] * (((int)substr($this->getLevel(), 1) * 3) + ($this->item_data['lvldrop'] + $this->additionalValue()))) * 3) / 100) + 20);
+                    return floor(((($this->item_data['agireq'] * (((int)substr($this->getLevel(), 1) * 3) + ((int)$this->item_data['lvldrop'] + $this->additionalValue()))) * 3) / 100) + 20);
                 }
             }
             return 0;
@@ -3103,7 +3103,7 @@
 		public function reqVit(){
             if(array_key_exists('vitreq', $this->item_data)){
                 if($this->item_data['vitreq'] > 0){
-                    return floor(((($this->item_data['vitreq'] * (((int)substr($this->getLevel(), 1) * 3) + ($this->item_data['lvldrop'] + $this->additionalValue()))) * 3) / 100) + 20);
+                    return floor(((($this->item_data['vitreq'] * (((int)substr($this->getLevel(), 1) * 3) + ((int)$this->item_data['lvldrop'] + $this->additionalValue()))) * 3) / 100) + 20);
                 }
             }
             return 0;
@@ -3113,7 +3113,7 @@
             if(array_key_exists('enereq', $this->item_data)){
                 if($this->item_data['enereq'] > 0){
                     $multiplier = ($this->type != 5 && $this->item_data['slot'] != 1) ? 4 : 3;
-                    return floor(((($this->item_data['enereq'] * (((int)substr($this->getLevel(), 1) * 3) + ($this->item_data['lvldrop'] + $this->additionalValue()))) * $multiplier) / 100) + 20);
+                    return floor(((($this->item_data['enereq'] * (((int)substr($this->getLevel(), 1) * 3) + ((int)$this->item_data['lvldrop'] + $this->additionalValue()))) * $multiplier) / 100) + 20);
                 }
             }
             return 0;
@@ -3125,7 +3125,7 @@
                     if($this->index == $this->itemIndex(13, 5)){
                         return 185 + (1 * 15);
                     }
-                    return floor(((($this->item_data['cmdreq'] * (((int)substr($this->getLevel(), 1) * 3) + ($this->item_data['lvldrop'] + $this->additionalValue()))) * 3) / 100) + 20);
+                    return floor(((($this->item_data['cmdreq'] * (((int)substr($this->getLevel(), 1) * 3) + ((int)$this->item_data['lvldrop'] + $this->additionalValue()))) * 3) / 100) + 20);
                 }
             }
             return 0;
