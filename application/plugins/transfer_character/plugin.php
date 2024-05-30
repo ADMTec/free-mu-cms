@@ -167,6 +167,7 @@
 												$this->{'M'.$this->pluginaizer->get_plugin_class()}->deleteChar($id, 'IGC_MuQuestInfo', 'character_id');
 												$this->{'M'.$this->pluginaizer->get_plugin_class()}->deleteChar($id, 'IGC_GuideQuestInfo', 'character_id');
 												$this->{'M'.$this->pluginaizer->get_plugin_class()}->deleteChar($char_data['Name'], 'OptionData', 'Name');
+												$this->{'M'.$this->pluginaizer->get_plugin_class()}->deleteChar($char_data['Name'], 'Achievements', 'Name');
 												$this->{'M'.$this->pluginaizer->get_plugin_class()}->deleteChar($char_data['Name'], 'T_QUEST_EXP_INFO', 'CHAR_NAME');
 												$this->{'M'.$this->pluginaizer->get_plugin_class()}->deleteChar($char_data['Name'], 'IGC_GremoryCase', 'Name');
 												$this->{'M'.$this->pluginaizer->get_plugin_class()}->deleteChar($char_data['Name'], 'IGC_PeriodBuffInfo', 'CharacterName');
