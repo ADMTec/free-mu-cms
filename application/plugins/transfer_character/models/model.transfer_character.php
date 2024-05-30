@@ -260,7 +260,7 @@
             }
             $char = $this->website->db('game', $this->session->userdata(['user' => 'server']))->query('SELECT ' . implode(',', $columns) . ' FROM Character WHERE AccountId = \'' . $from . '\' AND Name = \'' . $name . '\'')->fetch();
             foreach($char AS $k => $val){
-                if(strtolower($k) == 'inventory' || strtolower($k) == 'magiclist' || strtolower($k) == 'quest' || strtolower($k) == 'mubotdata' || strtolower($k) == 'muhelperdata' || strtolower($k) == 'effectlist' || strtolower($k) == 'muhelperplusdata'){
+                if(strtolower($k) == 'inventory' || strtolower($k) == 'magiclist' || strtolower($k) == 'quest' || strtolower($k) == 'mubotdata' || strtolower($k) == 'muhelperdata' || strtolower($k) == 'effectlist' || strtolower($k) == 'muhelperplusdata' || strtolower($k) == 'newslots'){
 					$unpack = unpack('H*', $val);
 					if(strtolower($k) == 'inventory' && $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'item_size') == 64 && $titems == 1){
 						$items_array = str_split($this->website->clean_hex($unpack[1]), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'item_size'));
@@ -296,7 +296,7 @@
                 if(strtolower($k) == 'name'){
                     $val = $new_name;
                 }
-                if(strtolower($k) != 'inventory' && strtolower($k) != 'magiclist' && strtolower($k) != 'quest' && strtolower($k) != 'mubotdata' && strtolower($k) != 'muhelperdata' && strtolower($k) != 'effectlist' && strtolower($k) != 'muhelperplusdata'){
+                if(strtolower($k) != 'inventory' && strtolower($k) != 'magiclist' && strtolower($k) != 'quest' && strtolower($k) != 'mubotdata' && strtolower($k) != 'muhelperdata' && strtolower($k) != 'effectlist' && strtolower($k) != 'muhelperplusdata' &&  strtolower($k) != 'newslots'){
                     $val = $this->website->db('game', $this->session->userdata(['user' => 'server']))->escape($val);
                 }
 				
