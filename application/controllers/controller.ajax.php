@@ -633,7 +633,7 @@
 					}
 					
 					unset($reset_config['allow_reset']);
-					if(isset($greset_config)){
+					if($greset_config != false && !empty($greset_config)){
 						unset($greset_config['allow_greset']);
 					}
 												 

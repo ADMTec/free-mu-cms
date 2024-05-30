@@ -562,11 +562,12 @@
 					return $serverList['USE_MULTI_ACCOUNT_DB'];
 				} 
 				else{
-					unset($serverList['USE_MULTI_ACCOUNT_DB']);
+					$serverListCopy = $serverList;
+					unset($serverListCopy['USE_MULTI_ACCOUNT_DB']);
 					if($server != null){
-						return $serverList[$server] ?? false;
+						return $serverListCopy[$server] ?? false;
 					}
-					return $serverList;
+					return $serverListCopy;
 				}
 			} 
 			else{

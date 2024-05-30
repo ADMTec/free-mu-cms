@@ -238,7 +238,7 @@
                 $this->clear_magic_list($user, $server);
             }
 			
-            $this->clear_inventory($this->char_info['res_info']);
+            $this->clear_inventory($user, $server, $this->char_info['res_info']);
 			
             if($this->char_info['res_info']['clear_stats'] != 0){
                 $this->clear_reset_stats($user, $server);
@@ -361,7 +361,7 @@
                 $this->clear_magic_list($user, $server);
             }
             if($this->char_info['gres_info']['clear_inventory'] != 0){
-                $this->clear_inventory($user, $server);
+                $this->clear_inventory($user, $server, $this->char_info['gres_info']);
             }
             if($this->char_info['gres_info']['clear_stats'] != 0){
                 $this->clear_greset_stats($user, $server);
