@@ -2957,27 +2957,27 @@
         }
 
         public function check_memb_info($db){
-            return $this->$db->query('SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N\'MEMB_INFO\'')->fetch();
+            return $this->website->db($db)->query('SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N\'MEMB_INFO\'')->fetch();
         }
 
         public function check_character($db){
-            return $this->$db->query('SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N\'Character\'')->fetch();
+            return $this->website->db($db)->query('SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N\'Character\'')->fetch();
         }
 
         public function get_wh_size($db){
-            return $this->$db->query('SELECT character_maximum_length as length FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = \'Warehouse\' AND column_name = \'Items\'')->fetch();
+            return $this->website->db($db)->query('SELECT character_maximum_length as length FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = \'Warehouse\' AND column_name = \'Items\'')->fetch();
         }
 
         public function get_inv_size($db){
-            return $this->$db->query('SELECT character_maximum_length as length FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = \'Character\' AND column_name = \'Inventory\'')->fetch();
+            return $this->website->db($db)->query('SELECT character_maximum_length as length FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = \'Character\' AND column_name = \'Inventory\'')->fetch();
         }
 
         public function check_if_column_exists($column, $table, $db){
-            return $this->$db->query('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'' . $table . '\'  AND COLUMN_NAME = \'' . $column . '\'')->fetch();
+            return $this->website->db($db)->query('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'' . $table . '\'  AND COLUMN_NAME = \'' . $column . '\'')->fetch();
         }
 		
 		public function get_identity_column($table, $db){
-            return $this->$db->query('SELECT name FROM syscolumns WHERE id = Object_ID(\'' . $table . '\') AND colstat & 1 = 1')->fetch();
+            return $this->website->db($db)->query('SELECT name FROM syscolumns WHERE id = Object_ID(\'' . $table . '\') AND colstat & 1 = 1')->fetch();
         }
 
 		public function add_column($column, $table, $info, $db){
@@ -2992,19 +2992,19 @@
             if($info['default'] != ''){
                 $query .= ' DEFAULT ' . $info['default'] . '';
             }
-            return $this->$db->query($query);
+            return $this->website->db($db)->query($query);
         }
 
 				
 		public function drop_column($col, $table, $db){
             $this->check_constraints_column($col, $table, $db);
             $this->check_default_constraints($col, $table, $db);
-            return $this->$db->query('ALTER TABLE ' . $table . ' DROP COLUMN ' . $col . '');
+            return $this->website->db($db)->query('ALTER TABLE ' . $table . ' DROP COLUMN ' . $col . '');
         }
 
 				
 		private function check_constraints_column($col, $table, $db){
-            $constraints = $this->$db->query('SELECT cu.CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE cu WHERE EXISTS (SELECT tc.* FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc WHERE tc.TABLE_NAME = \'' . $table . '\' AND cu.COLUMN_NAME = \'' . $col . '\' AND tc.CONSTRAINT_NAME = cu.CONSTRAINT_NAME)')->fetch_all();
+            $constraints = $this->website->db($db)->query('SELECT cu.CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE cu WHERE EXISTS (SELECT tc.* FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc WHERE tc.TABLE_NAME = \'' . $table . '\' AND cu.COLUMN_NAME = \'' . $col . '\' AND tc.CONSTRAINT_NAME = cu.CONSTRAINT_NAME)')->fetch_all();
             if(!empty($constraints)){
                 foreach($constraints AS $const){
                     $this->drop_constraint($const['CONSTRAINT_NAME'], $table, $db);
@@ -3013,7 +3013,7 @@
         }
 
 		private function check_default_constraints($col, $table, $db){
-            $constraints = $this->$db->query('SELECT NAME FROM SYS.DEFAULT_CONSTRAINTS WHERE OBJECT_NAME(PARENT_OBJECT_ID) = \'' . $table . '\' AND COL_NAME (PARENT_OBJECT_ID, PARENT_COLUMN_ID) = \'' . $col . '\'')->fetch_all();
+            $constraints = $this->website->db($db)->query('SELECT NAME FROM SYS.DEFAULT_CONSTRAINTS WHERE OBJECT_NAME(PARENT_OBJECT_ID) = \'' . $table . '\' AND COL_NAME (PARENT_OBJECT_ID, PARENT_COLUMN_ID) = \'' . $col . '\'')->fetch_all();
             if(!empty($constraints)){
                 foreach($constraints AS $const){
                     $this->drop_constraint($const['NAME'], $table, $db);
@@ -3022,32 +3022,32 @@
         }
 		
 		private function drop_constraint($name, $table, $db){
-            $this->$db->query('ALTER TABLE ' . $table . ' DROP CONSTRAINT ' . $name . '');
+            $this->website->db($db)->query('ALTER TABLE ' . $table . ' DROP CONSTRAINT ' . $name . '');
         }
 
         public function check_procedure($proc, $db){
-            return $this->$db->query('SELECT * FROM sysobjects WHERE type = \'P\' AND name = \'' . $proc . '\'')->fetch();
+            return $this->website->db($db)->query('SELECT * FROM sysobjects WHERE type = \'P\' AND name = \'' . $proc . '\'')->fetch();
         }
 
         public function drop_procedure($proc, $db){
-            return $this->$db->query('DROP PROCEDURE ' . $proc . '');
+            return $this->website->db($db)->query('DROP PROCEDURE ' . $proc . '');
         }
 
         public function insert_sql_data($sql, $db){
-            $query = $this->$db->query($sql);
+            $query = $this->website->db($db)->query($sql);
             $query->close_cursor();
             return $query;
         }
 
 				
 		public function dropTriggerPKCount($db){
-			$this->$db->query('IF EXISTS (SELECT * FROM sys.triggers WHERE object_id = OBJECT_ID(N\'[dbo].[DmN_Update_Killer_Ranking]\'))
+			$this->website->db($db)->query('IF EXISTS (SELECT * FROM sys.triggers WHERE object_id = OBJECT_ID(N\'[dbo].[DmN_Update_Killer_Ranking]\'))
 				DROP TRIGGER [dbo].[DmN_Update_Killer_Ranking]');
 		}
 
 				
 		public function createTriggerPKCount($db){
-			$this->$db->query('CREATE TRIGGER [dbo].[DmN_Update_Killer_Ranking] ON [dbo].[Character]
+			$this->website->db($db)->query('CREATE TRIGGER [dbo].[DmN_Update_Killer_Ranking] ON [dbo].[Character]
 						   AFTER UPDATE
 						AS 
 						BEGIN

@@ -7338,14 +7338,12 @@
                                         if($char_db == '')
                                             $this->vars['error'] = 'Please select character database'; 
                                         else{
-                                            $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $char_db], $char_db);
                                             if(!$this->Madmin->check_character($char_db))
                                                 $this->vars['error'] = 'Char database does not contain any character table.'; 
                                             else{
                                                 if($account_db == '')
                                                     $this->vars['error'] = 'Please select account database'; 
                                                 else{
-                                                    $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $account_db], $account_db);
                                                     if(!$this->Madmin->check_memb_info($account_db))
                                                         $this->vars['error'] = 'Account database does not contain any account table.'; 
                                                     else{
@@ -7386,7 +7384,7 @@
                                                             }
                                                             if($this->Madmin->check_if_column_exists('HWID', 'MEMB_STAT', $account_db) != false){
                                                                 $this->Madmin->insert_sql_data(str_replace('dmncms', '[' . WEB_DB . ']', $procedures_info['account']['WZ_CONNECT_MEMB_MUDEVS']), $account_db);
-                                                                $this->Msetup->insert_sql_data(str_replace('dmncms', '[' . WEB_DB . ']', $procedures_info['account']['WZ_DISCONNECT_MEMB_MUDEVS']), $account_db);
+                                                                $this->Madmin->insert_sql_data(str_replace('dmncms', '[' . WEB_DB . ']', $procedures_info['account']['WZ_DISCONNECT_MEMB_MUDEVS']), $account_db);
                                                             }
                                                             else{
                                                                 $this->Madmin->insert_sql_data(str_replace('dmncms', '[' . WEB_DB . ']', $procedures_info['account']['WZ_CONNECT_MEMB']), $account_db);
@@ -7562,14 +7560,12 @@
                                 if($char_db == '')
                                     $this->vars['error'] = 'Please select character database'; 
 								else{
-                                    $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $char_db], $char_db);
                                     if(!$this->Madmin->check_character($char_db))
                                         $this->vars['error'] = 'Char database does not contain any character table.'; 
 									else{
                                         if($account_db == '')
                                             $this->vars['error'] = 'Please select account database'; 
 										else{
-                                            $this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $account_db], $account_db);
                                             if(!$this->Madmin->check_memb_info($account_db))
                                                 $this->vars['error'] = 'Account database does not contain any account table.'; 
 											else{
@@ -7611,7 +7607,7 @@
                                                     }
                                                     if($this->Madmin->check_if_column_exists('HWID', 'MEMB_STAT', $account_db) != false){
                                                         $this->Madmin->insert_sql_data(str_replace('dmncms', '[' . WEB_DB . ']', $procedures_info['account']['WZ_CONNECT_MEMB_MUDEVS']), $account_db);
-                                                        $this->Msetup->insert_sql_data(str_replace('dmncms', '[' . WEB_DB . ']', $procedures_info['account']['WZ_DISCONNECT_MEMB_MUDEVS']), $account_db);
+                                                        $this->Madmin->insert_sql_data(str_replace('dmncms', '[' . WEB_DB . ']', $procedures_info['account']['WZ_DISCONNECT_MEMB_MUDEVS']), $account_db);
                                                     }
                                                     else{
                                                         $this->Madmin->insert_sql_data(str_replace('dmncms', '[' . WEB_DB . ']', $procedures_info['account']['WZ_CONNECT_MEMB']), $account_db);
