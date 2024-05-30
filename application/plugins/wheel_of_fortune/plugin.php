@@ -1145,8 +1145,8 @@
 							}
 						}
 						if(!isset($this->vars['error'])){
-							$this->vars['success'] = 'Rewards successfully updated.';
 							$this->config->save_config_data($this->vars['reward_list'], 'wheel_of_fortune_rewards');
+							$this->vars['success'] = 'Rewards successfully updated.';
 						}
 					}
 				}

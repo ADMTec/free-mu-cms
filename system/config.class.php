@@ -375,6 +375,7 @@
                 fwrite($fp, $data);
                 fclose($fp);
                 $this->values($file, false, '.json', true);
+                header('Content-Type: text/html');
                 return true;
             } catch(\Exception $e){
                 throw new \Exception($e->getMessage());

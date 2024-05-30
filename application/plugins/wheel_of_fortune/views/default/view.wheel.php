@@ -31,7 +31,7 @@
 			<div id="item" class="items">
 				<div id="count"><?php echo $id;?></div>
 				<?php if(!in_array($data['type'], [0, 7])){ ?>
-				<div id="image"><img src="<?php echo $this->config->base_url; ?>assets/plugins/images/wheel_of_fortune/currency.png"></div>
+				<div id="image"><img style="width:30px;" src="<?php echo $this->config->base_url; ?>assets/plugins/images/wheel_of_fortune/currency.png"></div>
 				<?php } ?>
 				<?php if($data['amount'] != false){ ?>
 				<div id="title">

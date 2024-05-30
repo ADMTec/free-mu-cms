@@ -11,6 +11,10 @@
 	text-align:right;
 }
 
+#content {
+    width: 1000px;
+    margin: 0 auto;
+}
 
 #left_side {
     float: left;
@@ -270,7 +274,7 @@ td.pw3
 .item_ancient_background{
 	background-color: #0000FF;
 }
-/*
+
 .luckyDraw {
 	position: relative;
 	box-sizing: border-box;
@@ -280,32 +284,26 @@ td.pw3
 	margin-top: 50px;
 	background: url(../images/wheel_of_fortune/2/lucky_draw_bg.png) top center no-repeat;
 	background-size: cover;
-}*/
-.luckyDraw {
-	position: relative;
-	box-sizing: border-box;
-	width: 620px;
-	height: 512px;
-	/* margin: auto; */
-	/* margin-top: 50px; */
-	background: url(../images/wheel_of_fortune/2/lucky_draw_bg.png) top center no-repeat;
-	background-size: contain;
 }
+
 .record {
 	position: absolute;
-	/*width: 60px;*/
+	width: 60px;
 	height: 23px;
-	top: 35px;
-	left: 80px;
+	line-height: 22px;
+	top: 30px;
+	left: 180px;
 	text-align: left;
 	font-size: 13px;
 	color: #d89e23;
 }
 .record_money{
 	position: absolute;
+	width: 107px;
 	height: 23px;
-	top: 35px;
-	left: 180px;
+	line-height: 22px;
+	top: 30px;
+	left: 244px;
 	text-align: left;
 	font-size: 13px;
 	color: #d89e23;
@@ -316,8 +314,8 @@ td.pw3
 	height: 24px;
 	line-height: 22px;
 	padding-left: 75px;
-	top: 31px;
-	left: 75px;
+	top: 30px;
+	left: 175px;
 	text-align: left;
 	font-size: 13px;
 	color: #e6e2d4;
@@ -329,11 +327,11 @@ td.pw3
 	position: absolute;
 	width: 180px;
 	height: 24px;
-	line-height: 29px;
+	line-height: 22px;
 	padding-left: 40px;
 	padding-right: 3px;
-	top: 31px;
-	left: 360px;
+	top: 30px;
+	left: 463px;
 	text-align: left;
 	font-size: 13px;
 	color: #d89e23;
@@ -366,18 +364,16 @@ td.pw3
 }
 
 #lottery li {
-	width: 110px;
-	height: 110px;
+	width: 120px;
+	height: 100px;
 	box-sizing: border-box;
 	text-align: center;
-	line-height: 110px;
+	line-height: 115px;
 	position: absolute;
 	background: url(../images/wheel_of_fortune/2/lucky_draw_item_list.png) top center no-repeat;
-	background-size: contain;
+	background-size: cover;
 }
-#lottery li img{
-	padding-top:30px;
-}
+
 #lottery li:nth-of-type(1) {
 	left: 0;
 	top: 0;
@@ -385,7 +381,7 @@ td.pw3
 
 #lottery li:nth-of-type(1) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #d89e23;
@@ -394,13 +390,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(2) {
-	left: 110px;
+	left: 120px;
 	top: 0;
 }
 
 #lottery li:nth-of-type(2) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -409,13 +405,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(3) {
-	left: 220px;
+	left: 240px;
 	top: 0;
 }
 
 #lottery li:nth-of-type(3) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -424,13 +420,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(4) {
-	left: 330px;
+	left: 360px;
 	top: 0;
 }
 
 #lottery li:nth-of-type(4) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -439,13 +435,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(5) {
-	left: 440px;
+	left: 480px;
 	top: 0;
 }
 
 #lottery li:nth-of-type(5) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -454,13 +450,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(6) {
-	left: 440px;
-	top: 90px;
+	left: 480px;
+	top: 100px;
 }
 
 #lottery li:nth-of-type(6) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -469,13 +465,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(7) {
-	left: 440px;
-	top: 180px;
+	left: 480px;
+	top: 200px;
 }
 
 #lottery li:nth-of-type(7) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -484,13 +480,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(8) {
-	left: 440px;
-	top: 270px;
+	left: 480px;
+	top: 300px;
 }
 
 #lottery li:nth-of-type(8) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -499,13 +495,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(9) {
-	left: 330px;
-	top: 270px;
+	left: 360px;
+	top: 300px;
 }
 
 #lottery li:nth-of-type(9) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -514,13 +510,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(10) {
-	left: 220px;
-	top: 270px;
+	left: 240px;
+	top: 300px;
 }
 
 #lottery li:nth-of-type(10) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -529,13 +525,13 @@ td.pw3
 }
 
 #lottery li:nth-of-type(11) {
-	left: 110px;
-	top: 270px;
+	left: 120px;
+	top: 300px;
 }
 
 #lottery li:nth-of-type(11) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -545,12 +541,12 @@ td.pw3
 
 #lottery li:nth-of-type(12) {
 	left: 0;
-	top: 270px;
+	top: 300px;
 }
 
 #lottery li:nth-of-type(12) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -560,12 +556,12 @@ td.pw3
 
 #lottery li:nth-of-type(13) {
 	left: 0;
-	top: 180px;
+	top: 200px;
 }
 
 #lottery li:nth-of-type(13) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	top: 0;
 	left: 0;
 	line-height: 25px;
@@ -576,12 +572,12 @@ td.pw3
 
 #lottery li:nth-of-type(14) {
 	left: 0;
-	top: 90px;
+	top: 100px;
 }
 
 #lottery li:nth-of-type(14) span {
 	position: absolute;
-	width: 110px;
+	width: 120px;
 	left: 0;
 	line-height: 25px;
 	color: #e6e2d4;
@@ -590,8 +586,8 @@ td.pw3
 }
 
 #lottery li:nth-of-type(15) {
-	left: 215px;
-	top: 160px;
+	left: 235px;
+	top: 190px;
 	width: 119px;
 	height: 39px;
 	cursor: pointer;
@@ -653,8 +649,8 @@ td.pw3
 	top: 0;
 	left: 0;
 	content: "";
-	width: 105px;
-	height: 85px;
+	width: 100%;
+	height: 100%;
 	border: 2px solid #ff2c2c;
 	border-radius: 2px;
 }
