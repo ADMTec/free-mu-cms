@@ -827,7 +827,31 @@
 			}
             return true;
         }
-
+		
+		public function Achievements($from, $to, $server, $name, $new_name){
+            $columns = $this->get_columns('Achievements', $this->website->db('game', $this->session->userdata(['user' => 'server'])));
+            if(!empty($columns)){
+				$chars = $this->website->db('game', $this->session->userdata(['user' => 'server']))->query('SELECT ' . implode(',', $columns) . ' FROM Achievements WHERE Name = \'' . $name . '\'')->fetch_all();
+				$s = [];
+				foreach($chars AS $key => $char_data){
+					foreach($char_data AS $k => $val){
+						if(strtolower($k) == 'name'){
+							$val = $new_name;
+						}
+		   
+						$val = $this->website->db('game', $this->session->userdata(['user' => 'server']))->escape($val);
+						$chars[$key][$k] = $val;
+					}
+				}
+				foreach($chars AS $c){
+					$s[] = implode(',', $c);
+				}
+				foreach($s AS $vals){
+					$this->website->db($this->website->get_db_from_server($server))->query('INSERT INTO Achievements (' . implode(',', $columns) . ') VALUES (' . $vals . ')');
+				}
+			}
+            return true;
+        }
 				
 		public function check_if_transfered($id, $server){
 			$stmt = $this->website->db('web')->prepare('SELECT id FROM DmN_CharacterTransferServerLogs WHERE mu_id = :id AND server = :server');

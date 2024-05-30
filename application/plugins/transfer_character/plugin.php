@@ -131,6 +131,7 @@
 											$this->{'M'.$this->pluginaizer->get_plugin_class()}->OptionData($this->pluginaizer->session->userdata(['user' => 'username']), $this->pluginaizer->session->userdata(['user' => 'username']), $this->vars['plugin_config']['to'], $char_data['Name'], $new_name);
 											$this->{'M'.$this->pluginaizer->get_plugin_class()}->T_CGuid($this->pluginaizer->session->userdata(['user' => 'username']), $this->pluginaizer->session->userdata(['user' => 'username']), $this->vars['plugin_config']['to'], $new_name);
 											$this->{'M'.$this->pluginaizer->get_plugin_class()}->CustomQuest($this->pluginaizer->session->userdata(['user' => 'username']), $this->pluginaizer->session->userdata(['user' => 'username']), $this->vars['plugin_config']['to'], $char_data['Name'], $new_name);
+											$this->{'M'.$this->pluginaizer->get_plugin_class()}->Achievements($this->pluginaizer->session->userdata(['user' => 'username']), $this->pluginaizer->session->userdata(['user' => 'username']), $this->vars['plugin_config']['to'], $char_data['Name'], $new_name);
 											
 											$newId = $this->{'M'.$this->pluginaizer->get_plugin_class()}->check_if_chars_exists_on_second_server($new_name, $this->vars['plugin_config']['to']);
 											
