@@ -1,7 +1,7 @@
 <?php
     require(SYSTEM_PATH . DS . 'Scheduler' . DS . 'Contracts' . DS . 'Session.php');
 
-    class File extends ArrayObject implements Session
+    class SFile extends ArrayObject implements Session
     {
         /**
          * Session filename.

@@ -23,7 +23,7 @@
             $this->jobsPath = $settings['jobs']['path'];
             switch($settings['session']['driver']){
                 case 'file':
-                    $this->session = File::load($settings['session']['path'] . '/scheduler.json');
+                    $this->session = SFile::load($settings['session']['path'] . '/scheduler.json');
                     break;
             }
         }
