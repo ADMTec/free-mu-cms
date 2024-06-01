@@ -295,7 +295,7 @@
 		
 		public function load_found_chars($name, $server){
             $status = $this->join_memb_stat(1, 'c.AccountId', ', m.IP,  m.ConnectStat', $server);
-            $query = $this->website->db('game', $server)->query('SELECT c.Name, c.AccountId ' . $status[0] . ' FROM Character AS c ' . $status[1] . ' WHERE c.Name LIKE \'%' . $this->website->db('game', $server)->escape($name) . '%\'');
+            $query = $this->website->db('game', $server)->query('SELECT c.Name, c.AccountId ' . $status[0] . ' FROM Character AS c ' . $status[1] . ' WHERE c.Name LIKE \'%' . $this->website->db('game', $server)->sanitize_var($name) . '%\'');
             if($query){
                 $i = 0;
                 while($row = $query->fetch()){
@@ -311,7 +311,7 @@
         }
 		
 		public function load_found_guilds($name, $server){
-            $query = $this->website->db('game', $server)->query('SELECT G_Name FROM Guild WHERE G_Name LIKE \'%' . $this->website->db('game', $server)->escape($name) . '%\'');
+            $query = $this->website->db('game', $server)->query('SELECT G_Name FROM Guild WHERE G_Name LIKE \'%' . $this->website->db('game', $server)->sanitize_var($name) . '%\'');
             if($query){
                 $i = 0;
                 while($row = $query->fetch()){
