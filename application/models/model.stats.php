@@ -197,12 +197,16 @@
 			return $this->arca_table;
 		}
 		
-		public function get_arca_winner($server){
+		public function get_arca_winner($server, $group = null){
 			$table = $this->arca_table($server);
-			if($table == 'ArcaBattleWinner'){
-				return $this->website->db('game', $server)->query('SELECT a.GuildName AS G_Name, a.ObelistClass AS OuccupyObelisk, g.G_Mark, g.G_Master FROM '.$table.' AS a LEFT JOIN Guild AS g ON (a.GuildName COLLATE Database_Default = g.G_Name COLLATE Database_Default)')->fetch_all();  
+			$where = '';
+			if($group != null){
+				$where = 'WHERE a.ObeliskGroup = '.$this->website->db('game', $server)->escape($group).'';
 			}
-			return $this->website->db('game', $server)->query('SELECT a.G_Name, a.OuccupyObelisk, g.G_Mark, g.G_Master FROM '.$table.' AS a LEFT JOIN Guild AS g ON (a.G_Name COLLATE Database_Default = g.G_Name COLLATE Database_Default)')->fetch_all();           
+			if($table == 'ArcaBattleWinner'){
+				return $this->website->db('game', $server)->query('SELECT a.GuildName AS G_Name, a.ObelistClass AS OuccupyObelisk, g.G_Mark, g.G_Master FROM '.$table.' AS a LEFT JOIN Guild AS g ON (a.GuildName COLLATE Database_Default = g.G_Name COLLATE Database_Default) '.$where.'')->fetch;  
+			}
+			return $this->website->db('game', $server)->query('SELECT a.G_Name, a.OuccupyObelisk, g.G_Mark, g.G_Master FROM '.$table.' AS a LEFT JOIN Guild AS g ON (a.G_Name COLLATE Database_Default = g.G_Name COLLATE Database_Default) '.$where.'')->fetch();           
 		}
 		
 		public function get_arca_guild_list($server, $cache_time){

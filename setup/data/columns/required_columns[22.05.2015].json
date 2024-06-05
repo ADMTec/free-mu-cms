@@ -37,7 +37,7 @@
         "default": ""
       },
       "link_url": {
-        "type": "varchar(100)",
+        "type": "varchar(500)",
         "is_primary_key": 0,
         "null": 1,
         "identity": 0,

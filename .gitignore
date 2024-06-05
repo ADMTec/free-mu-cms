@@ -42,3 +42,5 @@ application/config/level_rewards.json
 application/config/level_rewards_list.json
 application/config/gift_code.json
 application/config/votereward_config.json
+/assets/realv2
+/application/views/realv2

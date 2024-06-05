@@ -281,11 +281,11 @@
             return $this->registry->Mstats->get_cs_info($server);
         }
 
-		public function getArcaWinners($server = false){
+		public function getArcaWinners($server = false, $group = null){
 			if(!$server)
                $server = array_key_first($this->server_list());
 		    $this->load->model('stats');
-            return $this->registry->Mstats->get_arca_winner($server);
+            return $this->registry->Mstats->get_arca_winner($server, $group);
 		}
 
 		public function getIceWindWinners($server = false){
