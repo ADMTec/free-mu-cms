@@ -269,7 +269,7 @@
         }
 
 		public function load_search_items($name, $server){
-            $items = $this->website->db('web')->query('SELECT id, cat, item, price_type, price, seller, add_date, active_till, highlighted, char, price_jewel, jewel_type FROM DmN_Market WHERE item_name LIKE \'%' . $this->website->db('web')->escape($name) . '%\' AND active_till > GETDATE() AND add_date <= dateadd(minute,-1,getdate()) AND active = 1 AND sold != 1 AND removed != 1 AND server = '.$this->website->db('web')->escape($server).' ORDER BY id DESC');
+            $items = $this->website->db('web')->query('SELECT id, cat, item, price_type, price, seller, add_date, active_till, highlighted, char, price_jewel, jewel_type FROM DmN_Market WHERE item_name LIKE \'%' . $this->website->db('web')->sanitize_var($name) . '%\' AND active_till > GETDATE() AND add_date <= dateadd(minute,-1,getdate()) AND active = 1 AND sold != 1 AND removed != 1 AND server = '.$this->website->db('web')->escape($server).' ORDER BY id DESC');
             $pos = 1;
             foreach($items->fetch_all() as $value){
                 $this->iteminfo->itemData($value['item']);
