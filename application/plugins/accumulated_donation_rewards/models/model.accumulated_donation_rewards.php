@@ -58,7 +58,7 @@
 			]);
 			
 			$stmt2 = $this->website->db('web')->prepare('UPDATE DmN_Total_Recharge SET points = :points WHERE id = (SELECT MAX(id) FROM DmN_Total_Recharge WHERE account = :account AND server = :server)');
-			$stmt->execute([
+			$stmt2->execute([
 				':points' => $total - $decrease,
 				':account' => $user,
 				':server' => $server
