@@ -430,7 +430,7 @@
 
 		public function add_server_vip($viptime, $viptype, $connect_member_load, $query_config, $user, $server){
             if($viptype != null){
-                if(substr_count($viptype, '|') > 0){
+                if(str_contains($viptype, '|')){
                     $vip = explode('|', $viptype);
                     $package = $vip[0];
                     $paycode = $query_config['quearies'][$package]['vip_codes'][$vip[1]]['code'];

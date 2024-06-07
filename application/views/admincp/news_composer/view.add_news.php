@@ -254,7 +254,7 @@
 
 							$languages = '';
 
-							if(substr_count($value['lang'], ',') > 0){
+							if(str_contains($value['lang'], ',')){
 
 								$langs = explode(',', $value['lang']);
 

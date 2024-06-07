@@ -20,7 +20,7 @@
                         $this->registry->Maccount->remove_vip($vipdata['viptype'], $vipdata['memb___id'], $vipdata['server']);
                         $this->vars['vip_package_info'] = $this->registry->Maccount->load_vip_package_info($vipdata['viptype'], $vipdata['server']);
                         if($this->vars['vip_package_info'] != false){
-                            if(substr_count($this->vars['vip_package_info']['server_vip_package'], '|') > 0){
+                            if($this->vars['vip_package_info']['server_vip_package'] != null && str_contains($this->vars['vip_package_info']['server_vip_package'], '|')){
                                 $vip = explode('|', $this->vars['vip_package_info']['server_vip_package']);
                                 if($vip[0] == 'xteam'){
                                     $stmt = $this->registry->website->db('account', $vipdata['server'])->prepare('UPDATE MEMB_INFO SET AccountLevel = 0 WHERE memb___id = :account');

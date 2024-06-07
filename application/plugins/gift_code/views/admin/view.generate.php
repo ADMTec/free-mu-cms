@@ -398,7 +398,7 @@ $this->load->view('admincp' . DS . 'view.sidebar');
 						  <tbody>';
                         foreach($codes as $key => $value){
 							$servers = '';
-							if(substr_count($value['server'], ',') > 0){
+							if(str_contains($value['server'], ',')){
 								$server = explode(',', $value['server']);
 								foreach($server AS $srv){
 									$servers .= $this->website->get_value_from_server($srv, 'title').', ';

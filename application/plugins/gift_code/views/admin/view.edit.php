@@ -64,7 +64,7 @@ $this->load->view('admincp' . DS . 'view.sidebar');
 											foreach($server_list AS $key => $server){
 												if($server['visible'] == 1){
 													$selected = '';
-													if(substr_count($code_info['server'], ',') > 0){
+													if(str_contains($code_info['server'], ',')){
 														$servers = explode(',', $code_info['server']);
 														if(in_array($key, $servers)){
 															$selected = 'selected="selected"';
@@ -420,7 +420,7 @@ $this->load->view('admincp' . DS . 'view.sidebar');
 						  <tbody>';
                         foreach($codes as $key => $value){
 							$servers = '';
-							if(substr_count($value['server'], ',') > 0){
+							if(str_contains($value['server'], ',')){
 								$server = explode(',', $value['server']);
 								foreach($server AS $srv){
 									$servers .= $this->website->get_value_from_server($srv, 'title').', ';

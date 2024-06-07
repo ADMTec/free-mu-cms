@@ -23,7 +23,7 @@
                     
                     if(!empty($list)){
                         foreach($list AS $vipdata){
-                            if(substr_count($vipdata['server_vip_package'], '|') > 0){
+                            if($vipdata['server_vip_package'] != null && str_contains($vipdata['server_vip_package'], '|')){
                                 $vip = explode('|', $vipdata['server_vip_package']);
                                 $select = $this->vars['query_config']['quearies'][$vip[0]]['check'];
                                 $vip_code = $this->vars['query_config']['quearies'][$vip[0]]['vip_codes'][$vip[1]]['code'];

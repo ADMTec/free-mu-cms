@@ -34,8 +34,8 @@
                         krsort($json);
 						$pp = ($is_per_page == false) ? (int)$this->config->config_entry('news|news_per_page') : $is_per_page;
                         $per_page = ($page <= 1) ? 0 : $pp * ((int)$page - 1);
-                        foreach($json AS $k => $v){
-							if(substr_count($v['lang'], ',') > 0){
+                        foreach($json AS $k => $v){	
+							if(str_contains($v['lang'], ',')){
 								$langs = explode(',', $v['lang']);
 								if(!in_array($this->config->language(), $langs)){
 									unset($json[$k]);

@@ -247,7 +247,7 @@
 				
 		private function black_list($blacklist = '', $cat, $id){
 			if($blacklist != ''){
-				if(substr_count($blacklist, ',') > 0){
+				if(str_contains($blacklist, ',')){
 					$blist = explode(',', $blacklist);
 					foreach($blist AS $key => $val){
 						$itemList = explode('#', $val);

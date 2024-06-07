@@ -1268,7 +1268,7 @@
             if(!$this->is_hex($data)){
                 $data = bin2hex($data);
             }
-            if(substr_count($data, "\0")){
+            if(substr_count($data, "\0") > 0){
                 $data = str_replace("\0", '', $data);
             }
             return strtoupper($data);

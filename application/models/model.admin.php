@@ -1731,7 +1731,7 @@
             $stmt->execute([':id' => $id, ':cat' => $cat]);
             $info = $stmt->fetch();
             if($info){
-                if(substr_count($info['price'], "\0")){
+                if(substr_count($info['price'], "\0") > 0){
                     $info['price'] = strtoupper(str_replace("\0", '', $info['price']));
                 }
                 return unserialize($info['price']);

@@ -558,7 +558,7 @@
 		  
         private function check_black_list_cat($blacklist = '', $cat){
 			if($blacklist != ''){
-				if(substr_count($blacklist, ',') > 0){
+				if(str_contains($blacklist, ',')){
 					$blist = explode(',', $blacklist);
 					if(in_array($cat, $blist))
 						return false;

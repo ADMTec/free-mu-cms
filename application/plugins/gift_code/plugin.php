@@ -89,7 +89,7 @@
 										$this->vars['error'] = __('Coupon has reached max uses.'); 
 									}
 									else{
-										if(substr_count($this->vars['coupon_data']['server'], ',') > 0){
+										if(str_contains($this->vars['coupon_data']['server'], ',')){
 											$servers = explode(',', $this->vars['coupon_data']['server']);
 											$check = in_array($this->pluginaizer->session->userdata(['user' => 'server']), $servers);
 										}

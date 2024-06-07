@@ -1096,8 +1096,8 @@
                     } else{
                         if($this->vars['vip_data'] = $this->Mshop->check_vip($id, $this->session->userdata(['user' => 'server']))){
                             if($this->vars['vip_data']['server_vip_package'] != null){
-                                if(substr_count($this->vars['vip_data']['server_vip_package'], '|') > 0){
-                                    $vip = explode('|', $this->vars['vip_data']['server_vip_package']);
+                                if($this->vars['vip_data']['server_vip_package'] != null && str_contains($this->vars['vip_data']['server_vip_package'], '|')){
+									$vip = explode('|', $this->vars['vip_data']['server_vip_package']);
                                     $this->vars['vip_title'] = $vip_query_config['quearies'][$vip[0]]['vip_codes'][$vip[1]]['title'];
                                 }
                             }

@@ -116,7 +116,7 @@
 
                                                 foreach($languages as $language => $flag):
 
-													if(substr_count($news['lang'], ',') > 0){
+													if(str_contains($news['lang'], ',')){
 
 														$langs = explode(',', $news['lang']);
 
