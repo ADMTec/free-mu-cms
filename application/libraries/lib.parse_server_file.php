@@ -825,150 +825,96 @@
 					];
 				   
 					foreach($file_list_txt AS $type){
-						$cache_data = $this->cache->get($type . '#' . $this->lang);
-						if(!$cache_data){
-							if($this->parse_txt($type) != false){
-								$this->cache->set($type . '#' . $this->lang, $this->info, $this->cache_time);
-								$this->info = [];
-							}
+						if($this->parse_txt($type) != false){
+							$this->cache->set($type . '#' . $this->lang, $this->info, $this->cache_time);
+							$this->info = [];
 						}
 					}
 					$item_xml = $this->parse_xml([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20], 1);
 					for($i = 0; $i <= 20; $i++){
 						if($item_xml != false){
-							$cache_data = $this->cache->get('item_list[64][' . $i . ']#' . $this->lang);
-							if(!$cache_data){
-								if(isset($this->info[$i])){
-									$this->cache->set('item_list[64][' . $i . ']' . '#' . $this->lang, $this->info[$i], $this->cache_time);
-								}
-							}
+							if(isset($this->info[$i])){
+								$this->cache->set('item_list[64][' . $i . ']' . '#' . $this->lang, $this->info[$i], $this->cache_time);
+							}	
 						}
 					}
 					$item_xml_mudevs = $this->parse_xml([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20], 2);
 					for($i = 0; $i <= 20; $i++){
 						if($item_xml_mudevs != false){
-							$cache_data = $this->cache->get('item_list[50][' . $i . ']#' . $this->lang);
-							if(!$cache_data){
-								if(isset($this->info[$i])){
-									$this->cache->set('item_list[50][' . $i . ']' . '#' . $this->lang, $this->info[$i], $this->cache_time);
-								}
+							if(isset($this->info[$i])){
+								$this->cache->set('item_list[50][' . $i . ']' . '#' . $this->lang, $this->info[$i], $this->cache_time);
 							}
 						}
 					}
 					$item_txt = $this->parse_item_txt();
 					$cats = (MU_VERSION >= 11) ? 20 : 15;
 					$size = ($this->isMuEngine == true) ? 58: 32;
+					
 					for($i = 0; $i <= $cats; $i++){
 						if($item_txt != false){
-							$cache_data = $this->cache->get('item_list['.$size.'][' . $i . ']#' . $this->lang);
-							if(!$cache_data){
-								if(isset($this->info[$i])){
-									$this->cache->set('item_list['.$size.'][' . $i . ']' . '#' . $this->lang, $this->info[$i], $this->cache_time);
-								}
+							if(isset($this->info[$i])){
+								$this->cache->set('item_list['.$size.'][' . $i . ']' . '#' . $this->lang, $this->info[$i], $this->cache_time);
 							}
 						}
 					}
 					
 					$item_anc_type = $this->parse_xml_set_type();
 					if($item_anc_type != false){
-						$cache_data = $this->cache->get('item_set_type#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('item_set_type#' . $this->lang, $this->anctype, $this->cache_time);
-						}
+						$this->cache->set('item_set_type#' . $this->lang, $this->anctype, $this->cache_time);
 					}
 					
 					$item_anc_opt = $this->parse_xml_set_options();
 					if($item_anc_opt != false){
-						$cache_data = $this->cache->get('item_set_option#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('item_set_option#' . $this->lang, $this->ancinfo, $this->cache_time);
-						}
+						$this->cache->set('item_set_option#' . $this->lang, $this->ancinfo, $this->cache_time);
 					}
 					
 					$item_grade_opt = $this->parse_xml_item_grade();
 					if($item_grade_opt != false){
-						$cache_data = $this->cache->get('item_grade_option#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('item_grade_option#' . $this->lang, $this->gradeinfo, $this->cache_time);
-						}
+						$this->cache->set('item_grade_option#' . $this->lang, $this->gradeinfo, $this->cache_time);
 					}
 					
 					$item_muun_info = $this->parse_xml_muun_info();
 					if($item_muun_info != false){
-						$cache_data = $this->cache->get('muun_info#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('muun_info#' . $this->lang, $this->muuninfo, $this->cache_time);
-						}
+						$this->cache->set('muun_info#' . $this->lang, $this->muuninfo, $this->cache_time);
 					}
 					
 					$item_muun_option_info = $this->parse_xml_muun_option();
 					if($item_muun_option_info != false){
-						$cache_data = $this->cache->get('muun_option_info#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('muun_option_info#' . $this->lang, $this->muunoptioninfo, $this->cache_time);
-						}
+						$this->cache->set('muun_option_info#' . $this->lang, $this->muunoptioninfo, $this->cache_time);
 					}
 					
 					$sockets = $this->parse_xml_socket_item_type();
 					if($sockets != false){
-						$cache_data = $this->cache->get('sockettype#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('sockettype#' . $this->lang, $this->sockettype, $this->cache_time);
-						}
+						$this->cache->set('sockettype#' . $this->lang, $this->sockettype, $this->cache_time);
 					}
 					
 					$earring = $this->parse_xml_earring_attribute();
 					if($earring != false){
-						$cache_data = $this->cache->get('earringtype#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('earringtype#' . $this->lang, $this->earringtype, $this->cache_time);
-						}
-						$cache_data2 = $this->cache->get('earringoption#' . $this->lang);
-						if(!$cache_data2){
-							$this->cache->set('earringoption#' . $this->lang, $this->earringoption, $this->cache_time);
-						}
-						$cache_data3 = $this->cache->get('earringoptionname#' . $this->lang);
-						if(!$cache_data3){
-							$this->cache->set('earringoptionname#' . $this->lang, $this->earringoptionname, $this->cache_time);
-						}
+						$this->cache->set('earringtype#' . $this->lang, $this->earringtype, $this->cache_time);
+						$this->cache->set('earringoption#' . $this->lang, $this->earringoption, $this->cache_time);
+						$this->cache->set('earringoptionname#' . $this->lang, $this->earringoptionname, $this->cache_time);
 					}
 
 					$staticOptions = $this->parse_xml_static_option_system();
 					if($staticOptions != false){
-						$cache_data = $this->cache->get('staticitems#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('staticitems#' . $this->lang, $this->staticitems, $this->cache_time);
-						}
-						$cache_data2 = $this->cache->get('staticoptioninfo#' . $this->lang);
-						if(!$cache_data2){
-							$this->cache->set('staticoptioninfo#' . $this->lang, $this->staticoptioninfo, $this->cache_time);
-						}
+						$this->cache->set('staticitems#' . $this->lang, $this->staticitems, $this->cache_time);
+						$this->cache->set('staticoptioninfo#' . $this->lang, $this->staticoptioninfo, $this->cache_time);
 					}
 					
 					$poption = $this->parse_xml_pentagram_jewel_option_value();
 					if($poption != false){
-						$cache_data = $this->cache->get('pentagram_jewel_option_value#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('pentagram_jewel_option_value#' . $this->lang, $this->penta_option_value, $this->cache_time);
-						}
+						$this->cache->set('pentagram_jewel_option_value#' . $this->lang, $this->penta_option_value, $this->cache_time);
 					}
 					
 					$skill = $this->parse_xml_skill();
 					if($skill != false){
-						$cache_data = $this->cache->get('skill#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('skill#' . $this->lang, $this->skill_data, $this->cache_time);
-						}
+						$this->cache->set('skill#' . $this->lang, $this->skill_data, $this->cache_time);
 					}
 					
 					$monster_list = $this->parse_xml_monster_list();
 					if($monster_list != false){
-						$cache_data = $this->cache->get('mlist#' . $this->lang);
-						if(!$cache_data){
-							$this->cache->set('mlist#' . $this->lang, $this->monsters, $this->cache_time);
-						}
+						$this->cache->set('mlist#' . $this->lang, $this->monsters, $this->cache_time);
 					}
-
 				}
 			}
         }
