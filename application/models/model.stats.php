@@ -204,7 +204,7 @@
 				$where = 'WHERE a.ObeliskGroup = '.$this->website->db('game', $server)->escape($group).'';
 			}
 			if($table == 'ArcaBattleWinner'){
-				return $this->website->db('game', $server)->query('SELECT a.GuildName AS G_Name, a.ObelistClass AS OuccupyObelisk, g.G_Mark, g.G_Master FROM '.$table.' AS a LEFT JOIN Guild AS g ON (a.GuildName COLLATE Database_Default = g.G_Name COLLATE Database_Default) '.$where.'')->fetch;  
+				return $this->website->db('game', $server)->query('SELECT a.GuildName AS G_Name, a.ObeliskClass AS OuccupyObelisk, g.G_Mark, g.G_Master FROM '.$table.' AS a LEFT JOIN Guild AS g ON (a.GuildName COLLATE Database_Default = g.G_Name COLLATE Database_Default) '.$where.'')->fetch;  
 			}
 			return $this->website->db('game', $server)->query('SELECT a.G_Name, a.OuccupyObelisk, g.G_Mark, g.G_Master FROM '.$table.' AS a LEFT JOIN Guild AS g ON (a.G_Name COLLATE Database_Default = g.G_Name COLLATE Database_Default) '.$where.'')->fetch();           
 		}
