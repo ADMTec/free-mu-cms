@@ -1029,11 +1029,11 @@
         }
 
         public function search_char_inventory($serial, $server){
-            return $this->website->db('game', $server)->query('SELECT Name FROM Character WHERE (charindex (0x' . $this->website->db('game', $server)->escape($serial) . ', Inventory) %16=4)')->fetch();
+            return $this->website->db('game', $server)->query('SELECT Name FROM Character WHERE (charindex (0x' . $this->website->db('game', $server)->sanitize_var($serial) . ', Inventory) %16=4)')->fetch();
         }
 
-        public function search_warehouse($serial){
-            return $this->website->db('game', $server)->query('SELECT AccountId FROM Warehouse WHERE (charindex (0x' . $this->website->db('game', $server)->escape($serial) . ', Items) %16=4)')->fetch();
+        public function search_warehouse($serial, $server){
+            return $this->website->db('game', $server)->query('SELECT AccountId FROM Warehouse WHERE (charindex (0x' . $this->website->db('game', $server)->sanitize_var($serial) . ', Items) %16=4)')->fetch();
         }
 
         public function get_vault_content($user, $server){

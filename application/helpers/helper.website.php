@@ -803,23 +803,32 @@
         }
       
         public function db($db, $server = ''){
+			static $connections = [];
             switch($db){
                 case 'web':
-					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, WEB_DB]);
+					$driver = 'webDB'; 
+					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, WEB_DB], $driver);
                    break;
                 case 'account':
+					$driver = 'accountDB'.$server; 
 					$db = ($this->is_multiple_accounts() == true) ? $this->get_db_from_server($server, true) : $this->get_default_account_database();
-					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
+					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db], $driver);
                    break;
                 case 'game':
+					$driver = 'gameDB'.$server; 
 					$db = $this->get_db_from_server($server);
-					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
+					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db], $driver);
                    break;
                 default:
-					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db]);
+					$driver = 'otherDB'; 
+					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db], $driver);
                 break;
             }
-			return $this->registry->{DRIVER};
+			
+			if(!isset($connections[$driver])){
+				$connections[$driver] = $this->registry->$driver;
+			}
+			return $connections[$driver];
         }
         
         public function load_rss($url = '', $item_count = 5, $cache_time = 0, $rss_name = 'recent_on_forum'){
