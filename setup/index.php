@@ -15,10 +15,6 @@
 	
 	Debugger::enable(Debugger::PRODUCTION, BASEDIR . 'application' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'Tracy');
 	
-	set_exception_handler(function($e){
-        print_exception($e);
-    });
-	
     if(!version_compare(PHP_VER_MIN, PHP_VERSION, '<')){
         throw new Exception('You must be using PHP ' . PHP_VER_MIN . ' or better. You are currently using: ' . PHP_VERSION);
     }
