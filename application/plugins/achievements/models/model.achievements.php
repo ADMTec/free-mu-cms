@@ -217,7 +217,7 @@
 			}
 		}
 
-        private function reset_column($server = ''){
+        private function reset_column($server){
             $resets = $this->config->values('table_config', [$server, 'resets', 'column']);
             if($resets && $resets != ''){
                 return $resets . ' AS resets,';
@@ -225,7 +225,7 @@
             return '0 AS resets,';
         }
 
-        private function greset_column($server = ''){
+        private function greset_column($server){
             $grand_resets = $this->config->values('table_config', [$server, 'grand_resets', 'column']);
             if($grand_resets && $grand_resets != ''){
                 return $grand_resets . ' AS grand_resets,';
@@ -881,7 +881,7 @@
 		}
 		
 		
-		public function check_space_inventory($items, $item_x, $item_y, $multiplier = 64, $size = 32, $hor = 8, $ver = 8, $add_to_slot = false, $iteminfo, $takenSlots = []){
+		public function check_space_inventory($items, $item_x, $item_y, $multiplier = 64, $size = 32, $hor = 8, $ver = 8, $add_to_slot = false, $iteminfo = null, $takenSlots = []){
             $spots = str_repeat('0', $multiplier);
 			
 			if(!empty($takenSlots)){
@@ -982,7 +982,7 @@
             return true;
         }
 
-        public function get_guid($user = '', $server){
+        public function get_guid($user, $server){
             $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :user');
             $stmt->execute([':user' => $user]);
             $info = $stmt->fetch();

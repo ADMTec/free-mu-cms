@@ -498,7 +498,7 @@ class _plugin_binance extends controller implements pluginInterface{
                             if($reward == '')
                                echo  $this->pluginaizer->jsone(['error' => 'Invalid package reward']);
                             else{
-                                if($id = $this->pluginaizer->{'M'.$this->pluginaizer->get_plugin_class()}->add_package($title, $price, $currency, $reward, $server)) {
+								if($id = $this->pluginaizer->{'M'.$this->pluginaizer->get_plugin_class()}->add_package($title, $price, $currency, $reward, $server)){
                                     echo $this->pluginaizer->jsone(['success' => 'Package successfully added', 'id' => $id, 'server' => $server, 'servers' => $this->pluginaizer->website->server_list()]);
                                 } 
 								else{

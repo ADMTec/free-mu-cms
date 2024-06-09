@@ -26,7 +26,7 @@
         }
 
 				
-		public function generate_serial($server = ''){
+		public function generate_serial($server){
 			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial');
             $data = $query->fetch();
             $query->close_cursor();
@@ -99,7 +99,7 @@
 			}
 		}
 		
-		private function reset_column($server = ''){
+		private function reset_column($server){
             $resets = $this->config->values('table_config', [$server, 'resets', 'column']);
             if($resets && $resets != ''){
                 return $resets . ' AS resets,';
@@ -107,7 +107,7 @@
             return '0 AS resets,';
         }
 
-        private function greset_column($server = ''){
+        private function greset_column($server){
             $grand_resets = $this->config->values('table_config', [$server, 'grand_resets', 'column']);
             if($grand_resets && $grand_resets != ''){
                 return $grand_resets . ' AS grand_resets,';
@@ -281,7 +281,7 @@
 			}
 		}
 		
-		public function generate_serial_gremorycase($server = ''){
+		public function generate_serial_gremorycase($server){
 			$query = $this->website->db('game', $server)->query('EXEC IGC_GetGremoryCaseSerial 1');
             $data = $query->fetch();
             $query->close_cursor();
@@ -289,12 +289,12 @@
         }
 		
 		public function add_item_cash_shop($user, $server, $item){
-			$this->website->db('game', $server)->query('EXEC WZ_IBS_AddItem '.$this->website->db('web')->escape($user).', 673, '.$item['cguid'].', '.$item['cid'].', 1, \'BattlePass\'');
+			$this->website->db('game', $server)->query('EXEC WZ_IBS_AddItem '.$this->website->db('web')->escape($user).', 673, '.$item['cguid'].', '.$item['cid'].', 1, \'LevelRewards\'');
 			return;
 		}
 
 				
-		public function check_space_inventory($items, $item_x, $item_y, $multiplier = 64, $size = 32, $hor = 8, $ver = 8, $add_to_slot = false, $iteminfo, $takenSlots = []){
+		public function check_space_inventory($items, $item_x, $item_y, $multiplier = 64, $size = 32, $hor = 8, $ver = 8, $add_to_slot = false, $iteminfo = null, $takenSlots = []){
             $spots = str_repeat('0', $multiplier);
 			
 			if(!empty($takenSlots)){
@@ -361,7 +361,7 @@
             }
         }
 		
-		public function get_guid($user = '', $server){
+		public function get_guid($user, $server){
             $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :user');
             $stmt->execute([':user' => $user]);
             $info = $stmt->fetch();

@@ -223,13 +223,11 @@
 			}
 		}
 		
-		
 		public function checkFreeSpins($user, $server){
 			$stmt = $this->website->db('web')->prepare('SELECT id FROM DmN_Wheel_Of_Fortune_FreeSpins WHERE memb___id = :memb___id AND server = :server');
 			$stmt->execute([':memb___id' => $user, ':server' => $server]);
 			return $stmt->fetch();
 		}
-		
 		
 		public function check_votes($user, $guid, $server){
 			$votes = [];
@@ -260,8 +258,7 @@
 			}
 			return array_sum($votes);
 		}
-		
-		
+				
 		public function check_votes_specific($user, $guid, $server, $type){
 			$votes = [];
 			$beginOfDay = strtotime("today", time());
@@ -304,8 +301,7 @@
 			
 			return array_sum($votes);
 		}
-
-		
+	
 		public function check_donations($user, $guid, $server){
 			$transactions = [];
 			$beginOfDay = strtotime("today", time());
@@ -361,8 +357,7 @@
 			}
 			return array_sum($transactions);
 		}
-		
-		
+				
 		public function check_event_entry_count($user, $guid, $server, $type){
 			$beginOfDay = strtotime("today", time());
 			$endOfDay   = strtotime("tomorrow", $beginOfDay) - 1;
@@ -405,8 +400,7 @@
 		public function check_online_time($user, $guid, $server){ 
 			return $this->website->db('web')->query('SELECT SUM(TotalTime) AS OnlineMinutes FROM DmN_OnlineCheck WHERE memb___id = '.$this->website->db('web')->escape($user).' ' . $this->website->server_code($this->website->get_servercode($server)) . ' AND date = \''.date('Y-m-d', time()).'\'')->fetch()['OnlineMinutes'];
 		}
-		
-		
+			
 		public function check_monsters($user, $guid, $server, $monster = -1){
 			$characters = $this->load_char_list($user, $server);
 			if($characters != false){
@@ -587,8 +581,7 @@
 			}
 			return 0;
 		}
-		
-		
+				
 		public function check_kills($user, $guid, $server, $unique = 0, $minRes = 0){
 			$characters = $this->load_char_list($user, $server);
 			if($characters != false){
@@ -669,8 +662,7 @@
 			}
 			return false;
         }
-		
-		
+			
 		public function inventory2($char, $server){
 			$stmt = $this->website->db('game', $server)->prepare('SELECT CONVERT(IMAGE, Inventory) AS Inventory FROM Character WHERE '.$this->website->get_char_id_col($server).' = :char');
 			$stmt->execute([':char' => $char]);
@@ -689,8 +681,7 @@
 			}
 			return $items;	
 		}	
-		
-		
+				
 		public function updateInventorySlots($slots, $server, $inv = false){
 			$this->char_info['Inventory'] = ($inv == false) ? $this->char_info['Inventory'] : $inv;
 			$items_array = str_split($this->char_info['Inventory'], $this->website->get_value_from_server($server, 'item_size'));
@@ -701,8 +692,7 @@
 			}
 			return $items_array;
 		}
-		
-		
+				
 		public function addItemsToInventory($items, $server, $inv = false){
 			$this->char_info['Inventory'] = ($inv == false) ? $this->char_info['Inventory'] : $inv;
 			$items_array = str_split($this->char_info['Inventory'], $this->website->get_value_from_server($server, 'item_size'));
@@ -740,9 +730,8 @@
 				return;
 			}
 		}
-		
-		
-		public function check_space_inventory($items, $item_x, $item_y, $multiplier = 64, $size = 32, $hor = 8, $ver = 8, $add_to_slot = false, $iteminfo, $takenSlots = []){
+				
+		public function check_space_inventory($items, $item_x, $item_y, $multiplier = 64, $size = 32, $hor = 8, $ver = 8, $add_to_slot = false, $iteminfo = null, $takenSlots = []){
             $spots = str_repeat('0', $multiplier);
 			
 			if(!empty($takenSlots)){
@@ -787,8 +776,7 @@
             $this->errors[] = __('Please free up space in your inventory.');
             return null;
         }
-		
-		
+			
 		public function search($x, $y, $item_w, $item_h, &$spots, $vault_w){
             for($yy = 0; $yy < $item_h; $yy++){
                 for($xx = 0; $xx < $item_w; $xx++){
@@ -820,9 +808,8 @@
 		public function get_vip_package_title($vip_type = 1){
 			return $this->website->db('web')->query('SELECT package_title, vip_time FROM DmN_Vip_Packages WHERE id = '.$this->website->db('web')->escape($vip_type).'')->fetch();
         }
-		
-		
-		public function generate_serial($server = ''){
+			
+		public function generate_serial($server){
 			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial');
             $data = $query->fetch();
             $query->close_cursor();
@@ -858,7 +845,7 @@
             return true;
         }
 
-        public function get_guid($user = '', $server){
+        public function get_guid($user, $server){
             $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :user');
             $stmt->execute([':user' => $user]);
             $info = $stmt->fetch();

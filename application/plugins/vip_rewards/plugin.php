@@ -53,8 +53,7 @@
          */
 		 
         private function user_module(){
-			$this->checkLicenseMethod('vip_rewards', 'exception');
-            //check if visitor has user privilleges
+			//check if visitor has user privilleges
             if($this->pluginaizer->session->is_user()){
                 //load website helper
                 $this->load->helper('website');
@@ -198,7 +197,6 @@
 		
 		
 		public function claim($type, $viptype){
-			$this->checkLicenseMethod('vip_rewards', 'exception');
 			//check if visitor has user privilleges
             if($this->pluginaizer->session->is_user()){
                 //load website helper
@@ -972,51 +970,4 @@
                 echo $this->pluginaizer->jsone(['error' => 'Please login first!']);
             }
         }
-		
-		
-		private function checkLicenseMethod($plugin, $return = 'exception'){
-			$file =  APP_PATH . DS . 'plugins' . DS . $this->pluginaizer->get_plugin_class() . DS . 'about.json';
-			$fileModified = filemtime($file);
-			$diff = time() - $fileModified;                            
-			$time = round($diff/3600);
-			//print_r($time);die();
-			if($time > 24){
-				$this->pluginaizer->license->check_local_license();
-				$lData = $this->pluginaizer->license->get_local_license_data();
-				if(isset($lData[1]) && filter_var($lData[1], FILTER_VALIDATE_EMAIL) == true){
-					$pluginData = $this->getPluginsData();
-					if($pluginData != false){
-						$pluginData = json_decode($pluginData, true);
-						
-						if(isset($pluginData[$lData[1]])){
-							if(isset($pluginData[$lData[1]][$plugin])){
-								if($pluginData[$lData[1]][$plugin] == 1){
-									if(!is_writable($file)){
-										if(!chmod($file, 0777)){
-											if($return != 'exception'){
-												echo $this->pluginaizer->jsone(['error' => 'File '. APP_PATH . DS . 'plugins' . DS . $this->pluginaizer->get_plugin_class() . DS . 'about.json not writable please chmod to 0777']);
-												exit;
-											}
-											else{
-												throw new Exception('File '. APP_PATH . DS . 'plugins' . DS . $this->pluginaizer->get_plugin_class() . DS . 'about.json not writable please chmod to 0777');
-											}
-										}
-									}
-									touch($file);
-									return true;
-								}
-							}
-						}
-					}
-				}
-				if($return != 'exception'){
-					echo $this->pluginaizer->jsone(['error' => 'Invalid License']);
-					exit;
-				}
-				else{
-					throw new Exception('Invalid License');
-				}
-			}
-		}
-		
     }

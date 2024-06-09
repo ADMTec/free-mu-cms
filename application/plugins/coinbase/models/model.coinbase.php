@@ -250,8 +250,7 @@
 				$this->insert_recharge($account, $server, $credits);
 			}
 		}
-		
-		
+				
 		private function insert_recharge($account, $server, $credits){
             $stmt = $this->website->db('web')->prepare('INSERT INTO DmN_Total_Recharge (account, server, points, date) VALUES (:account, :server, :points, GETDATE())');
             $stmt->execute([':account' => $account, ':server' => $server, ':points' => $credits]);
