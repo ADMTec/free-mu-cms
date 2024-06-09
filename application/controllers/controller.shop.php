@@ -1105,7 +1105,7 @@
                                 $this->csrf->verifyToken('post', 'exception', 3600, false);
 																								
                                 $status = $this->Maccount->get_amount_of_credits($this->session->userdata(['user' => 'username']), $this->vars['vip_data']['payment_type'], $this->session->userdata(['user' => 'server']), $this->session->userdata(['user' => 'id']));
-                                if($status < $this->vars['vip_data']['price']){
+								if($status < $this->vars['vip_data']['price']){
                                     $this->vars['error'] = sprintf(__('You have insufficient amount of %s'), $this->website->translate_credits($this->vars['vip_data']['payment_type'], $this->session->userdata(['user' => 'server'])));
                                 } else{
                                     if($this->vars['existing'] = $this->Mshop->check_existing_vip_package($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']))){
@@ -1146,6 +1146,7 @@
 												$this->Mshop->add_server_vip($viptime, $this->vars['vip_data']['server_vip_package'], $this->vars['vip_data']['connect_member_load'], $vip_query_config, $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
 												$this->Maccount->set_vip_session($viptime, $this->vars['vip_data']);
 												$this->website->charge_credits($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $this->vars['vip_data']['price'], $this->vars['vip_data']['payment_type']);
+												
 												if($this->vars['vip_data']['wcoins'] > 0 && $table_config['wcoins']['table'] != '' && $table_config['wcoins']['column'] != ''){
 													$this->Mcharacter->add_wcoins($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $this->session->userdata(['user' => 'id']), $this->vars['vip_data']['wcoins'], $table_config['wcoins']);
 												}
@@ -1158,12 +1159,12 @@
                                         }
                                     } else{
                                         $viptime = time() + $this->vars['vip_data']['vip_time'];
-                                        $this->Mshop->insert_vip_package($id, $viptime, $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
+										$this->Mshop->insert_vip_package($id, $viptime, $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
                                         $this->Mshop->add_server_vip($viptime, $this->vars['vip_data']['server_vip_package'], $this->vars['vip_data']['connect_member_load'], $vip_query_config, $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
-                                        $this->Maccount->set_vip_session($viptime, $this->vars['vip_data']);
-                                        $this->website->charge_credits($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $this->session->userdata(['user' => 'id']), $this->vars['vip_data']['price'], $this->vars['vip_data']['payment_type']);
-                                        if($this->vars['vip_data']['wcoins'] > 0 && $table_config['wcoins']['table'] != '' && $table_config['wcoins']['column'] != ''){
-											$this->Mcharacter->add_wcoins($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $this->vars['vip_data']['wcoins'], $table_config['wcoins']);
+                                        $this->Maccount->set_vip_session($viptime, $this->vars['vip_data']);                                 
+										$this->website->charge_credits($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $this->vars['vip_data']['price'], $this->vars['vip_data']['payment_type']);
+										if($this->vars['vip_data']['wcoins'] > 0 && $table_config['wcoins']['table'] != '' && $table_config['wcoins']['column'] != ''){
+											$this->Mcharacter->add_wcoins($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $this->session->userdata(['user' => 'id']), $this->vars['vip_data']['wcoins'], $table_config['wcoins']);
 										}
 										$this->Maccount->add_account_log('Purchased vip ' . $this->vars['vip_data']['package_title'] . ' package for ' . $this->website->translate_credits($this->vars['vip_data']['payment_type'], $this->session->userdata(['user' => 'server'])) . '', -$this->vars['vip_data']['price'], $this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
                                         if($this->config->values('email_config', 'vip_purchase_email') == 1){
