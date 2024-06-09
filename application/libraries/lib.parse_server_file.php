@@ -846,6 +846,7 @@
 							}
 						}
 					}
+					
 					$item_txt = $this->parse_item_txt();
 					$cats = (MU_VERSION >= 11) ? 20 : 15;
 					$size = ($this->isMuEngine == true) ? 58: 32;

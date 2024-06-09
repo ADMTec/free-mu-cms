@@ -33,7 +33,6 @@
             $stmt->execute([':user' => $account, ':char' => $char]);
             return $stmt->fetch();
         }
-
 		 		
 		public function checkCurrencyPoints($user, $server){
 			$stmt = $this->website->db('web')->prepare('SELECT points FROM DmN_Item_Exchange_Points WHERE memb___id = :account AND server = :server');
@@ -47,8 +46,7 @@
 			}
 			return false;
 		}
-
-		 		
+	 		
 		public function decreaseCurrencyPoints($user, $server, $points){
 			$stmt = $this->website->db('web')->prepare('UPDATE DmN_Item_Exchange_Points SET points = points - :points WHERE memb___id = :account AND server = :server');
 			$stmt->execute([
@@ -57,7 +55,6 @@
 				':server' => $server
 			]);
 		}
-
 		 		
 		public function increaseCurrencyPoints($user, $server, $points){
 			if($this->checkCurrencyPoints($user, $server) !== false){
@@ -67,8 +64,7 @@
 				$this->insertCurrencyPoints($user, $server, $points);
 			}
 		}
-
-		 		
+	 		
 		public function updateCurrencyPoints($user, $server, $points){
 			$stmt = $this->website->db('web')->prepare('UPDATE DmN_Item_Exchange_Points SET points = points + :points WHERE memb___id = :account AND server = :server');
 			$stmt->execute([
@@ -77,7 +73,6 @@
 				':server' => $server
 			]);
 		}
-
 		 		
 		public function insertCurrencyPoints($user, $server, $points){
 			$stmt = $this->website->db('web')->prepare('INSERT INTO DmN_Item_Exchange_Points (memb___id, server, points) VALUES (:account, :server, :points)');
@@ -93,15 +88,14 @@
         }
 
 		 		
-		public function generate_serial($server = ''){
+		public function generate_serial($server){
 			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial');
             $data = $query->fetch();
             $query->close_cursor();
             return $data;
         }
-
-		 		
-		public function log_reward($rid, $cid = '', $user, $server){
+	 		
+		public function log_reward($rid, $cid, $user, $server){
 			$stmt = $this->website->db('web')->prepare('INSERT INTO DmN_Item_Exchange_Log (exchange_key, memb___id, server, char_id, claim_date) VALUES (:rid, :memb___id, :server, :cid, :claim_date)');
 			$stmt->execute([
 				':rid' => $rid,
@@ -233,8 +227,7 @@
 			} 
 			return false;
         }
-
-		 		
+	 		
 		public function inventory($char, $server){
 			$stmt = $this->website->db('game', $server)->prepare('SELECT CONVERT(IMAGE, Inventory) AS Inventory FROM Character WHERE '.$this->website->get_char_id_col($server).' = :char');
 			$stmt->execute([':char' => $char]);
@@ -243,7 +236,6 @@
 				$this->char_info['Inventory'] = $this->website->clean_hex($unpack[1]);
 			}  
         }
-
 		 		
 		public function getVaultContents($server){	
 			$items = [];
@@ -254,7 +246,6 @@
 			}
 			return $items;	
 		}	
-
 		 		
 		public function getInventoryContents($server){	
 			$items = [];
@@ -265,7 +256,6 @@
 			}
 			return $items;	
 		}	
-
 		 		
 		public function updateVaultSlots($slots, $server){
 			$items_array = str_split($this->vars['vault_items'], $this->website->get_value_from_server($server, 'item_size'));
@@ -276,7 +266,6 @@
 			}
 			return $items_array;
 		}
-
 		 		
 		public function updateInventorySlots($slots, $server){
 			$items_array = str_split($this->char_info['Inventory'], $this->website->get_value_from_server($server, 'item_size'));
@@ -287,7 +276,6 @@
 			}
 			return $items_array;
 		}
-
 		 		
 		public function addItemsToInventory($items, $server){
 			$items_array = str_split($this->char_info['Inventory'], $this->website->get_value_from_server($server, 'item_size'));
@@ -298,19 +286,16 @@
 			}
 			return $items_array;
 		}
-
 		 		
 		public function updateInventory($char, $server, $items){
 			$stmt = $this->website->db('game', $server)->prepare('UPDATE Character SET Inventory = 0x' . implode('', $items) . ' WHERE '.$this->website->get_char_id_col($server).' = :char');
             $stmt->execute([':char' => $char]);
 		}
-
 		 		
 		public function updateVault($user, $server, $items){
 			$stmt = $this->website->db('game', $server)->prepare('UPDATE Warehouse SET Items = 0x' . implode('', $items) . ' WHERE AccountId = :user');
             $stmt->execute([':user' => $user]);
-		}
-		
+		}	
 		
 		public function addExpirableItem($guid, $server, $name, $index, $time, $serial, $currTime, $effectType = 0, $effect1 = 0, $effect2 = 0, $itemType = 2){
 			if($this->website->db('game', $server)->check_if_table_exists('T_PeriodItemInfo')){
@@ -334,7 +319,7 @@
 		}
 
 		 		
-		public function check_space_inventory($items, $item_x, $item_y, $multiplier = 64, $size = 32, $hor = 8, $ver = 8, $add_to_slot = false, $iteminfo, $takenSlots = []){
+		public function check_space_inventory($items, $item_x, $item_y, $multiplier = 64, $size = 32, $hor = 8, $ver = 8, $add_to_slot = false, $iteminfo = null, $takenSlots = []){
             $spots = str_repeat('0', $multiplier);
 			
 			if(!empty($takenSlots)){
@@ -401,7 +386,7 @@
             }
         }
 		
-		public function get_guid($user = '', $server){
+		public function get_guid($user, $server){
             $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :user');
             $stmt->execute([':user' => $user]);
             $info = $stmt->fetch();

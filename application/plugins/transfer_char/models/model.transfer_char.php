@@ -40,7 +40,7 @@
             }
         }
 
-		private function reset_column($server = ''){
+		private function reset_column($server){
             $resets = $this->config->values('table_config', [$server, 'resets', 'column']);
             if($resets && $resets != ''){
                 return $resets . ' AS resets,';
@@ -48,7 +48,7 @@
             return '0 AS resets,';
         }
 
-        private function greset_column($server = ''){
+        private function greset_column($server){
             $grand_resets = $this->config->values('table_config', [$server, 'grand_resets', 'column']);
             if($grand_resets && $grand_resets != ''){
                 return $grand_resets . ' AS grand_resets,';
@@ -335,7 +335,7 @@
             return $stmt->fetch();
         }
 
-		public function update_character($id, $account = '', $server){
+		public function update_character($id, $account, $server){
             $stmt = $this->website->db('game', $server)->prepare('UPDATE Character SET AccountId = :account WHERE '.$this->website->get_char_id_col($server).' = :id');
             return $stmt->execute([':account' => $account, ':id' => $id]);
         }
@@ -367,7 +367,7 @@
 		}
 
 				
-        public function update_IGC_PeriodExpiredItemInfo($guid = '', $server){
+        public function update_IGC_PeriodExpiredItemInfo($guid, $server){
             if($this->website->db('game', $server)->check_if_table_exists('IGC_PeriodExpiredItemInfo')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE IGC_PeriodExpiredItemInfo SET UserGUID = ' . $guid . ' WHERE CharacterName = :name');
                 return $stmt->execute([':name' => $this->vars['character']]);
@@ -375,7 +375,7 @@
             return true;
         }
 
-        public function update_IGC_PeriodItemInfo($guid = '', $server){
+        public function update_IGC_PeriodItemInfo($guid, $server){
             if($this->website->db('game', $server)->check_if_table_exists('IGC_PeriodItemInfo')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE IGC_PeriodItemInfo SET UserGUID = ' . $guid . ' WHERE CharacterName = :name');
                 return $stmt->execute([':name' => $this->vars['character']]);
@@ -384,16 +384,16 @@
         }
 
 				
-		public function update_IGC_PentagramInfo($guid = '', $account = '', $server){
+		public function update_IGC_PentagramInfo($guid, $account, $server){
             if($this->website->db('game', $server)->check_if_table_exists('IGC_PentagramInfo')){
-                $stmt = $this->game_db->prepare('UPDATE IGC_PentagramInfo SET UserGuid = ' . $guid . ', AccountID = \''.$account.'\' WHERE Name = :name');
+                $stmt = this->website->db('game', $server)->prepare('UPDATE IGC_PentagramInfo SET UserGuid = ' . $guid . ', AccountID = \''.$account.'\' WHERE Name = :name');
                 return $stmt->execute([':name' => $this->vars['character']]);
             } else{
                 return;
             }
         }
 
-        public function update_T_LUCKY_ITEM_INFO($guid = '', $server){
+        public function update_T_LUCKY_ITEM_INFO($guid, $server){
             if($this->website->db('game', $server)->check_if_table_exists('T_LUCKY_ITEM_INFO')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE T_LUCKY_ITEM_INFO SET UserGUID = ' . $guid . ' WHERE CharName = :name');
                 return $stmt->execute([':name' => $this->vars['character']]);
@@ -401,7 +401,7 @@
             return true;
         }
 
-        public function update_T_MuRummy($user = false, $account = '', $server){
+        public function update_T_MuRummy($user = false, $account = '', $server = null){
             if($this->website->db('game', $server)->check_if_table_exists('T_MuRummy')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE T_MuRummy SET AccountID = :market_account WHERE Name = :name');
                 $user = ($user != false) ? $account : 'dmnmark987';
@@ -410,7 +410,7 @@
             return true;
         }
 
-        public function update_T_MuRummyInfo($user = false, $account = '', $server){
+        public function update_T_MuRummyInfo($user = false, $account = '', $server = null){
             if($this->website->db('game', $server)->check_if_table_exists('T_MuRummyInfo')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE T_MuRummyInfo SET AccountID = :market_account WHERE Name = :name');
                 $user = ($user != false) ? $account : 'dmnmark987';
@@ -419,7 +419,7 @@
             return true;
         }
 
-        public function update_T_MuRummyLog($user = false, $account = '', $server){
+        public function update_T_MuRummyLog($user = false, $account = '', $server = null){
             if($this->website->db('game', $server)->check_if_table_exists('T_MuRummyLog')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE T_MuRummyLog SET AccountID = :market_account WHERE Name = :name');
                 $user = ($user != false) ? $account : 'dmnmark987';
@@ -428,7 +428,7 @@
             return true;
         }
 
-		public function update_T_PentagramInfo($user = false, $account = '', $server){
+		public function update_T_PentagramInfo($user = false, $account = '', $server = null){
             if($this->website->db('game', $server)->check_if_table_exists('T_PentagramInfo')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE T_PentagramInfo SET AccountID = :market_account WHERE Name = :name');
                 $user = ($user != false) ? $account : 'dmnmark987';
@@ -437,7 +437,7 @@
             return true;
         }
 
-        public function update_T_PSHOP_ITEMVALUE_INFO($user = false, $account = '', $server){
+        public function update_T_PSHOP_ITEMVALUE_INFO($user = false, $account = '', $server = null){
             if($this->website->db('game', $server)->check_if_table_exists('T_PSHOP_ITEMVALUE_INFO')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE T_PSHOP_ITEMVALUE_INFO SET AccountID = :market_account WHERE Name = :name');
                 $user = ($user != false) ? $account : 'dmnmark987';
@@ -446,7 +446,7 @@
             return true;
         }
 
-		public function update_PetWarehouse($user = false, $account = '', $server){
+		public function update_PetWarehouse($user = false, $account = '', $server = null){
             if($this->website->db('game', $server)->check_if_table_exists('PetWarehouse')){
                 $stmt = $this->website->db('game', $server)->prepare('UPDATE PetWarehouse SET AccountID = :market_account WHERE Name = :name');
                 $user = ($user != false) ? $account : 'dmnmark987';
@@ -456,7 +456,7 @@
         }
 
 				
-		public function update_DmN_User_Achievements($user = false, $account = '', $server, $id){
+		public function update_DmN_User_Achievements($user = false, $account = '', $server = null, $id = null){
             if($this->website->db('web')->check_if_table_exists('DmN_User_Achievements')){
                 $stmt = $this->website->db('web')->prepare('UPDATE DmN_User_Achievements SET memb___id = :market_account WHERE char_id = :id AND server = :server');
                 $user = ($user != false) ? $account : 'dmnmark987';
@@ -581,7 +581,7 @@
             return true;
         }
 
-        public function get_guid($user = '', $server){
+        public function get_guid($user, $server){
             $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :user');
             $stmt->execute([':user' => $user]);
             $info = $stmt->fetch();

@@ -804,23 +804,32 @@
       
         public function db($db, $server = ''){
 			static $connections = [];
+			
+			$driverString = '';
+			
+			if(str_contains($db, '/')){
+                $data = explode('/', $db);
+                $db = $data[0];
+                $driverString = $data[1];
+            }
+			
             switch($db){
                 case 'web':
-					$driver = 'webDB'; 
+					$driver = 'webDB' . $driverString; 
 					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, WEB_DB], $driver);
                    break;
                 case 'account':
-					$driver = 'accountDB'.$server; 
+					$driver = 'accountDB' . $server . $driverString; 
 					$db = ($this->is_multiple_accounts() == true) ? $this->get_db_from_server($server, true) : $this->get_default_account_database();
 					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db], $driver);
                    break;
                 case 'game':
-					$driver = 'gameDB'.$server; 
+					$driver = 'gameDB' . $server . $driverString; 
 					$db = $this->get_db_from_server($server);
 					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db], $driver);
                    break;
                 default:
-					$driver = 'otherDB'; 
+					$driver = 'otherDB' . $driverString; 
 					$this->load->lib('DBEngines/' . DRIVER, [HOST, USER, PASS, $db], $driver);
                 break;
             }
