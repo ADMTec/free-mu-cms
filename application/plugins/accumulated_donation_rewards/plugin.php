@@ -399,7 +399,7 @@
 								if(!empty($rewardData['items2'])){
 									foreach($rewardData['items2'] AS $ritemHex){
 										$this->iteminfo->itemData($ritemHex['hex']);
-										$serial = array_values($this->pluginaizer->{'M'.$this->pluginaizer->get_plugin_class()}->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+										$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 										if($this->pluginaizer->website->get_value_from_server($this->pluginaizer->session->userdata(['user' => 'server']), 'item_size') == 64){
 											$ritemHex['hex'] = substr_replace($ritemHex['hex'], sprintf("%08X", 0, 00000000), 6, 8);
 											$ritemHex['hex'] = substr_replace($ritemHex['hex'], sprintf("%08X", $serial, 00000000), 32, 8);
