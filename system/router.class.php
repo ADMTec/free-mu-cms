@@ -18,6 +18,18 @@
             $this->args = $request->get_args();
 			if($this->ctrl == 'assets')
 				return;
+			
+			if(defined('ACPURL')){
+				if($this->ctrl == 'admincp' && ACPURL != 'admincp'){
+					throw new Exception('Controller ' . $this->ctrl . ' not found.');
+				}
+				if($this->ctrl == ACPURL)
+					$this->ctrl = 'admincp';
+			}
+			else{
+				define('ACPURL', 'admincp');
+			}
+			
             $this->path = (in_array($this->ctrl, ['setup', 'upgrade'])) ? BASEDIR . 'setup' . DS . 'application' . DS : APP_PATH . DS;
             $this->controller_file = $this->path . 'controllers' . DS . 'controller.' . $this->ctrl . '.php';
             if($this->ctrl == 'market' AND $this->method != 'index'){
