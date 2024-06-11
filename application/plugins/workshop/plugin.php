@@ -466,6 +466,10 @@
 													if($this->pluginaizer->Mworkshop->items_array[$slot] != $this->pluginaizer->iteminfo->hex){
 														$this->Mworkshop->setPriceForUpgrade($shop_data['upgrade_price']);
 													}
+													else{
+														echo $this->pluginaizer->jsone(['error' => sprintf(__('No options selected for upgrade'), $this->pluginaizer->website->translate_credits($this->vars['plugin_config']['payment_method'], $this->session->userdata(['user' => 'server'])))]);
+														exit;
+													}
 
 													$status = $this->Maccount->get_amount_of_credits($this->session->userdata(['user' => 'username']), $this->vars['plugin_config']['payment_method'], $this->session->userdata(['user' => 'server']), $this->session->userdata(['user' => 'id']));
 													if($status < $this->pluginaizer->Mworkshop->price){
@@ -537,7 +541,7 @@
 
 		  
         private function check_serial($serial){
-            if(strpos($serial, '-') !== false){
+			if(str_contains($serial, '-')){
                 $serials = explode('-', $serial);
                 $blocked1 = '00000000';
                 $blocked2 = 'FFFFFFFF';
@@ -545,7 +549,8 @@
                     if(($serials[0] === $blocked1 || $serials[0] === $blocked2) && ($serials[1] === $blocked1 || $serials[1] === $blocked2)){
                         return false;
                     }
-                } else{
+                } 
+				else{
                     if($serials[0] === $blocked1 || $serials[0] === $blocked2){
                         return false;
                     }
@@ -556,7 +561,7 @@
         }
 		
 		  
-        private function check_black_list_cat($blacklist = '', $cat){
+        private function check_black_list_cat($blacklist = '', $cat = null){
 			if($blacklist != ''){
 				if(str_contains($blacklist, ',')){
 					$blist = explode(',', $blacklist);

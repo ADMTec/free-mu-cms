@@ -89,7 +89,7 @@
         }
         
           
-        public function load_equipment($server = ''){
+        public function load_equipment($server){
             $items_array = array_chunk(str_split($this->char_info['Inventory'], $this->website->get_value_from_server($server, 'item_size')), 12);
             $equipment = [];
             foreach($items_array[0] as $key => $item){
@@ -176,7 +176,7 @@
             return $found_item;
         }
 
-        public function get_item_shop_info($id = '', $cat = '', $check_socket_part){
+        public function get_item_shop_info($id = '', $cat = '', $check_socket_part = 1){
             if($id === '' || $cat === '')
                 return false;
             $stmt = $this->website->db('web')->prepare('SELECT TOP 1 id, item_id, item_cat, exetype, name, luck, price, max_item_lvl, max_item_opt, use_sockets, use_harmony, use_refinary, stick_level, allow_upgrade, upgrade_price FROM DmN_Shopp WHERE item_id = :id AND original_item_cat = :cat');
@@ -188,7 +188,7 @@
             return false;
         }
 
-        public function socket_list($use_sockets = 1, $check_part = 1, $cat){
+        public function socket_list($use_sockets = 1, $check_part = 1, $cat = null){
             $exe_type = ($cat <= 5) ? 1 : 0;
             if($use_sockets == 1){
                 if($check_part == 1){
@@ -259,7 +259,7 @@
             return true;
         }
 
-        public function get_guid($user = '', $server){
+        public function get_guid($user, $server){
             $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :user');
             $stmt->execute([':user' => $user]);
             $info = $stmt->fetch();
