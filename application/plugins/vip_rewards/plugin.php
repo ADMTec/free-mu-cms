@@ -219,7 +219,7 @@
                         $this->vars['module_disabled'] = __('This module has been disabled.');
                     } else{
 						$this->load->model('application/plugins/' . $this->pluginaizer->get_plugin_class() . '/models/' . $this->pluginaizer->get_plugin_class());     
-						
+						$this->load->model('shop');
 						$this->vars['vip_package'] = $this->pluginaizer->Mvip_rewards->check_existing_vip_package($this->pluginaizer->session->userdata(['user' => 'username']), $this->pluginaizer->session->userdata(['user' => 'server']), $this->vars['plugin_config']['vip_type']);
 						if($this->vars['vip_package'] == false){
 							$this->vars['module_disabled'] = __('Your not a vip user.');
@@ -281,7 +281,7 @@
 															if(isset($ritem['dur']) && $ritem['dur'] != ''){
 																$this->pluginaizer->createitem->dur($ritem['dur']);
 															}
-															$serial = array_values($this->pluginaizer->Mvip_rewards->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+															$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 															
 															$this->pluginaizer->createitem->serial($serial);
 															if($this->pluginaizer->website->get_value_from_server($this->pluginaizer->session->userdata(['user' => 'server']), 'item_size') == 64){

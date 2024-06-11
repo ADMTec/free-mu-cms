@@ -75,6 +75,7 @@
                         $this->vars['module_disabled'] = __('This module has been disabled.');
                     } else{
 						$this->load->model('application/plugins/' . $this->pluginaizer->get_plugin_class() . '/models/' . $this->pluginaizer->get_plugin_class());     
+						$this->load->model('shop');
 						$this->vars['exchange_list'] = $this->config->values('item_exchange_list', $this->pluginaizer->session->userdata(['user' => 'server']));
 						$this->vars['reward_list'] = $this->config->values('item_exchange_reward_list', $this->pluginaizer->session->userdata(['user' => 'server']));
 
@@ -319,7 +320,8 @@
 						try{
 							$this->load->helper('website');
 							$this->load->model('application/plugins/'.$this->pluginaizer->get_plugin_class().'/models/'.$this->pluginaizer->get_plugin_class().'');
-	
+							$this->load->model('shop');
+							
 							$this->vars['reward_list'] = $this->config->values('item_exchange_reward_list', $this->pluginaizer->session->userdata(['user' => 'server']));
 
 							$rewardData = $this->vars['reward_list'][$id];
@@ -404,7 +406,7 @@
 											}
 											
 											if($isBuff == true){
-												$serial = array_values($this->pluginaizer->{'M'.$this->pluginaizer->get_plugin_class()}->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+												$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 													
 												$this->vars['reward_buffs'][] = [
 													'serial' => $serial,
@@ -429,7 +431,7 @@
 											if(isset($ritem['dur']) && $ritem['dur'] != ''){
 												$this->pluginaizer->createitem->dur($ritem['dur']);
 											}
-											$serial = array_values($this->pluginaizer->{'M'.$this->pluginaizer->get_plugin_class()}->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+											$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 											
 											$this->pluginaizer->createitem->serial($serial);
 											if($this->pluginaizer->website->get_value_from_server($this->pluginaizer->session->userdata(['user' => 'server']), 'item_size') == 64){
@@ -502,7 +504,7 @@
 								if(!empty($rewardData['items2'])){
 									foreach($rewardData['items2'] AS $ritemHex){
 										$this->iteminfo->itemData($ritemHex['hex']);
-										$serial = array_values($this->pluginaizer->{'M'.$this->pluginaizer->get_plugin_class()}->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+										$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 										if($this->pluginaizer->website->get_value_from_server($this->pluginaizer->session->userdata(['user' => 'server']), 'item_size') == 64){
 											$ritemHex['hex'] = substr_replace($ritemHex['hex'], sprintf("%08X", 0, 00000000), 6, 8);
 											$ritemHex['hex'] = substr_replace($ritemHex['hex'], sprintf("%08X", $serial, 00000000), 32, 8);
@@ -571,7 +573,6 @@
 								$vip_config = $this->pluginaizer->config->values('vip_config');
 								$vip_query_config = $this->pluginaizer->config->values('vip_query_config');
 								$table_config = $this->pluginaizer->config->values('table_config', $this->pluginaizer->session->userdata(['user' => 'server']));
-								$this->load->model('shop');
 								$this->load->model('account');
 								
 								$this->vars['vip_data'] = $this->pluginaizer->Mshop->check_vip($rewardData['vip_type'], $this->pluginaizer->session->userdata(['user' => 'server']));
@@ -652,7 +653,8 @@
 						try{
 							$this->load->helper('website');
 							$this->load->model('application/plugins/'.$this->pluginaizer->get_plugin_class().'/models/'.$this->pluginaizer->get_plugin_class().'');
-	
+							$this->load->model('shop');
+							
 							$this->vars['exchange_list'] = $this->config->values('item_exchange_list', $this->pluginaizer->session->userdata(['user' => 'server']));
 							$this->vars['achKey'] = $id;
 							

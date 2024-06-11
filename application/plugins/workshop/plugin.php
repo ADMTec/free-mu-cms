@@ -467,7 +467,7 @@
 														$this->Mworkshop->setPriceForUpgrade($shop_data['upgrade_price']);
 													}
 													else{
-														echo $this->pluginaizer->jsone(['error' => sprintf(__('No options selected for upgrade'), $this->pluginaizer->website->translate_credits($this->vars['plugin_config']['payment_method'], $this->session->userdata(['user' => 'server'])))]);
+														echo $this->pluginaizer->jsone(['error' => __('No options selected for upgrade')]);
 														exit;
 													}
 

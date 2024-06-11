@@ -699,7 +699,7 @@
 													}
 												}
 												else{
-													$serial = array_values($this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+													$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 												}
 												
 												$this->pluginaizer->createitem->serial($serial);

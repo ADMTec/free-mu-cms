@@ -79,15 +79,6 @@
 		public function get_vip_package_title($vip_type = 1){
 			return $this->website->db('web')->query('SELECT package_title, vip_time FROM DmN_Vip_Packages WHERE id = '.$this->website->db('web')->escape($vip_type).'')->fetch();
         }
-
-				
-		public function generate_serial($server = ''){
-			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial');
-            $data = $query->fetch();
-            $query->close_cursor();
-            return $data;
-        }
-
 				
 		public function log_reward($rid, $cid, $user, $server){
 			$stmt = $this->website->db('web')->prepare('INSERT INTO DmN_Donation_Accumulated_Rewards_Log (reward_key, memb___id, server, char_id, claim_date) VALUES (:rid, :memb___id, :server, :cid, :claim_date)');

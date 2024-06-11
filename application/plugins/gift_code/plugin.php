@@ -238,7 +238,7 @@
 																										if(isset($ritem['dur']) && $ritem['dur'] != ''){
 																											$this->pluginaizer->createitem->dur($ritem['dur']);
 																										}
-																										$serial = array_values($this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+																										$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 																										
 																										$this->pluginaizer->createitem->serial($serial);
 																										if($this->pluginaizer->website->get_value_from_server($this->pluginaizer->session->userdata(['user' => 'server']), 'item_size') == 64){
@@ -405,7 +405,7 @@
 													
 																								foreach($itemData AS $ritem){
 																									$this->iteminfo->itemData($ritem['hex']);
-																									$serial = array_values($this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+																									$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 																									if($this->pluginaizer->website->get_value_from_server($this->pluginaizer->session->userdata(['user' => 'server']), 'item_size') == 64){
 																										$ritem['hex'] = substr_replace($ritem['hex'], sprintf("%08X", 0, 00000000), 6, 8);
 																										$ritem['hex'] = substr_replace($ritem['hex'], sprintf("%08X", $serial, 00000000), 32, 8);
@@ -488,7 +488,7 @@
 																										}
 																										
 																										if($isBuff == true){
-																											$serial = array_values($this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+																											$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 																												
 																											$this->vars['reward_buffs'][] = [
 																												'serial' => $serial,
@@ -618,7 +618,7 @@
 																			if(isset($ritem['dur']) && $ritem['dur'] != ''){
 																				$this->pluginaizer->createitem->dur($ritem['dur']);
 																			}
-																			$serial = array_values($this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server'])))[0];
+																			$serial = $this->pluginaizer->Mshop->generate_serial($this->pluginaizer->session->userdata(['user' => 'server']));
 																			
 																			$this->pluginaizer->createitem->serial($serial);
 																			if($this->pluginaizer->website->get_value_from_server($this->pluginaizer->session->userdata(['user' => 'server']), 'item_size') == 64){

@@ -116,15 +116,6 @@
             return $stmt->fetch();
         }
 		
-		
-		public function generate_serial($server){
-			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial');
-            $data = $query->fetch();
-            $query->close_cursor();
-            return $data;
-        }
-		
-		
 		public function logReward($type, $vip_type, $user, $server){
 			if($type == 1){
 				$stmt = $this->website->db('web')->prepare('INSERT INTO DmN_Vip_Claimed_Rewards (reward_type, vip_type, day, week, month, year, memb___id, server, claim_date) VALUES (:reward_type, :vip_type, :day, :week, :month, :year, :memb___id, :server, :claim_date)');
