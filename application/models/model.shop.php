@@ -167,19 +167,37 @@
         public function is_socket_item($id, $cat){
             return $this->website->db('web')->snumrows('SELECT COUNT(id) AS count FROM DmN_Shopp WHERE item_id = ' . $this->website->db('web')->escape($id) . ' AND original_item_cat = ' . $this->website->db('web')->escape($cat) . ' AND use_sockets = 1');
         }
+        
+        public function get_game_item_count($server){
+            return $this->website->db('game', $server)->query('SELECT ItemCount FROM GameServerInfo')->fetch();
+        }
 
 		public function generate_serial($server){
-			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial');
-            $data = $query->fetch();
-            $query->close_cursor();
-            return $data;
+            $itemCount = $this->get_game_item_count($server);
+            if($itemCount == false){
+                $itemCount = 0;
+            }
+            else{
+                $itemCount = $itemCount['ItemCount'];
+            }
+            
+			$this->website->db('game', $server)->query('UPDATE GameServerInfo SET ItemCount = ItemCount + 1');
+            
+            return $itemCount + 1;
         }
 
 		public function generate_serial2($count, $server){
-			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial2 ' . $this->website->db('game', $server)->escape($count) . '');
-            $data = $query->fetch();
-            $query->close_cursor();
-            return $data;
+            $itemCount = $this->get_game_item_count($server);
+            if($itemCount == false){
+                $itemCount = 0;
+            }
+            else{
+                $itemCount = $itemCount['ItemCount'];
+            }
+            
+			$this->website->db('game', $server)->query('UPDATE GameServerInfo SET ItemCount = ItemCount + ' . $this->website->db('game', $server)->escape((int)$count) . '');
+            
+            return $itemCount + $count;
         }
 
         public function discount($price, $server){

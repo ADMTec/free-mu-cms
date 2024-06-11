@@ -27,22 +27,25 @@
                 if($server == ''){
                     if($this->session->userdata(['user' => 'logged_in'])){
                         $this->vars['def_server'] = $this->session->userdata(['user' => 'server']);
-                    } else{
-                        $server = array_keys($this->website->server_list());
-                        $this->vars['def_server'] = $server[0];
+                    } 
+					else{
+                        $this->vars['def_server'] = array_key_first($this->website->server_list());
                     }
-                } else{
+                } 
+				else{
                     $this->serv = $this->website->server_list();
                     if(!array_key_exists($server, $this->serv)){
-                        throw new exception('Invalid server selected');
+                        throw new Exception('Invalid server selected');
                     }
                     $this->vars['def_server'] = $server;
                 }
+				
                 $this->vars['item_title_list'] = $this->Mmarket->load_all_items_names($this->vars['def_server']);
+				
                 if(isset($_POST['search_item'])){
                     $this->vars['items'] = $this->Mmarket->load_search_items($_POST['item'], $this->vars['def_server']);
-                    $this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.items_search', $this->vars);
-                } else{
+                } 
+				else{
                     if(count($_POST) > 0){
                         foreach($_POST as $key => $value){
                             $this->Mmarket->$key = $value;
@@ -54,8 +57,8 @@
                     $this->pagination->initialize($page, $this->config->config_entry('market|items_per_page'), $this->Mmarket->total_items, $this->config->base_url . 'market/index/%s/' . $this->vars['def_server']);
                     $this->vars['items'] = $this->Mmarket->load_items($page, $this->vars['def_server']);
                     $this->vars['pagination'] = $this->pagination->create_links();
-                    $this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.items', $this->vars);
                 }
+				$this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.items', $this->vars);
             }
         }
 		
@@ -76,37 +79,41 @@
 						}
 					}
 					$this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.buyslots', $this->vars);
-				} else{
+				} 
+				else{
                     $this->login();
                 }
             }
 		}
 		
-		public function load_market_items($cat = 'all', $id = 'all', $class = 'all', $server = '')
-		{
+		public function load_market_items($cat = 'all', $id = 'all', $class = 'all', $server = ''){
 			if(!$this->website->module_disabled('market')){
 				if($server == ''){
 					if($this->session->userdata(['user' => 'logged_in'])){
 						$this->vars['def_server'] = $this->session->userdata(['user' => 'server']);
-					} else{
-						$server = array_keys($this->website->server_list());
-						$this->vars['def_server'] = $server[0];
+					} 
+					else{
+						$this->vars['def_server'] = array_key_first($this->website->server_list());
 					}
-				} else{
+				} 
+				else{
 					$this->serv = $this->website->server_list();
 					if(!array_key_exists($server, $this->serv)){
-						throw new exception('Invalid server selected');
+						throw new Exception('Invalid server selected');
 					}
 					$this->vars['def_server'] = $server;
 				}
+				
 				$this->vars['item_title_list'] = $this->Mmarket->load_all_items_names($this->vars['def_server']);
+				
 				if(isset($_POST['item'])){
 					$this->vars['items'] = $this->Mmarket->load_search_items($_POST['item'], $this->vars['def_server']);
-					$this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.items', $this->vars);
-				} else{
+				} 
+				else{
 					$this->vars['items'] = $this->Mmarket->load_filtered_items($cat, $id, $class, $this->vars['def_server']);
-					$this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.items', $this->vars);
 				}
+				
+				$this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.items', $this->vars);
 			}
 		}
 
@@ -193,14 +200,14 @@
 															} else{
 																$this->load->lib("createitem", [MU_VERSION, SOCKET_LIBRARY]);
 																$jewel = $this->Mmarket->get_jewel_by_type($this->Mmarket->item_info['jewel_type']);																					
-																$last_serial = array_values($this->Mshop->generate_serial2($this->Mmarket->item_info['price_jewel'], $this->session->userdata(['user' => 'server'])));
+																$last_serial = $this->Mshop->generate_serial2($this->Mmarket->item_info['price_jewel'], $this->session->userdata(['user' => 'server']));
 																$serial2 = false;
 																if($this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'item_size') == 64){
 																	$serial2 = true;
 																}
 																for($i = 0; $i < $this->Mmarket->item_info['price_jewel']; $i++){
-																	$new_jewels[] = $this->createitem->make($jewel[1], $jewel[0], false, [], 1, $last_serial[0], $serial2)->to_hex();
-																	$last_serial[0] -= 1;
+																	$new_jewels[] = $this->createitem->make($jewel[1], $jewel[0], false, [], 1, $last_serial, $serial2)->to_hex();
+																	$last_serial -= 1;
 																}
 																$this->Mmarket->add_jewels_to_web_wh($new_jewels, $this->Mmarket->item_info['seller'], $this->Mmarket->item_info['server']);
 															}
@@ -231,7 +238,8 @@
                         }
                     }
                     $this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.buyitem', $this->vars);
-                } else{
+                } 
+				else{
                     $this->login();
                 }
             }
@@ -242,7 +250,8 @@
                 if($this->session->userdata(['user' => 'logged_in'])){
                     $this->vars['success'] = __('You have bought new item successfully.');
                     $this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.success', $this->vars);
-                } else{
+                } 
+				else{
                     $this->login();
                 }
             }
@@ -250,13 +259,20 @@
 
         public function history($page = 1){
             if(!$this->website->module_disabled('market')){
+				if($this->session->userdata(['user' => 'logged_in'])){
+					$this->vars['def_server'] = $this->session->userdata(['user' => 'server']);
+				} 
+				else{
+					$this->vars['def_server'] = array_key_first($this->website->server_list());
+				}
                 if($this->session->userdata(['user' => 'logged_in'])){
                     $this->Mmarket->count_total_history_items($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
                     $this->pagination->initialize($page, $this->config->config_entry('market|items_per_page'), $this->Mmarket->total_items, $this->config->base_url . 'market/history/%s');
                     $this->vars['items'] = $this->Mmarket->load_history_items($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $page);
                     $this->vars['pagination'] = $this->pagination->create_links();
                     $this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.history', $this->vars);
-                } else{
+                } 
+				else{
                     $this->login();
                 }
             }
@@ -265,75 +281,65 @@
         public function remove($id = ''){
             if(!$this->website->module_disabled('market')){
                 if($this->session->userdata(['user' => 'logged_in'])){
-					$this->load->model('account');
+					try{
+						if($id == ''){
+							throw new Exception(__('Invalid item.'));
+						}
+						
+						$this->load->model('account');
+						
+						if(!$this->Maccount->check_connect_stat($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']))){
+                            throw new Exception(__('Please logout from game.'));
+                        } 
 
-                    if($id == ''){
-                        $this->vars['error'] = __('Invalid item.');
-                    } else{
-                        if(!$this->Maccount->check_connect_stat($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']))){
-                            $this->vars['error'] = __('Please logout from game.');
-                        } else{
-							$this->website->db('web')->beginTransaction();
-							if(!$this->Mmarket->load_item_from_market_for_history($id, $this->session->userdata(['user' => 'server']))){
-								$this->website->db('web')->rollback();
-								$this->vars['error'] = __('Item not found in our database.');
-							} 
-							else{
-								if($vault = $this->Mshop->get_vault_content($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']))){
-									$this->iteminfo->itemData($this->Mmarket->item_info['item']);
-									$space = $this->Mshop->check_space($vault['Items'], $this->iteminfo->getX(), $this->iteminfo->getY(), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'wh_multiplier'), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'item_size'), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'wh_hor_size'), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'wh_ver_size'));
-									if($space === null){
-										$this->website->db('web')->rollback();
-										$this->vars['error'] = $this->Mshop->errors[0];
-									} else{
-										if($this->Mmarket->item_info['sold'] == 1){
-											$this->website->db('web')->rollback();
-											$this->vars['error'] = __('This item is already sold.');
-										}
-										else{
-											if($this->Mmarket->item_info['removed'] == 1){
-												$this->website->db('web')->rollback();
-												$this->vars['error'] = __('This item is already removed.');
-											} 
-											else{
-												if($this->Mmarket->item_info['seller'] != $this->session->userdata(['user' => 'username'])){
-													$this->website->db('web')->rollback();
-													$this->vars['error'] = __('This item doesn\'t belong to you.');
-												} 
-												else{
-													if($this->config->config_entry('market|allow_remove_only_when_expired') == 1 && (strtotime($this->Mmarket->item_info['active_till']) > time() + (10 * 60))){
-														$this->website->db('web')->rollback();
-														$this->vars['error'] = __('You will be allowed to remove this item after it will expire.');
-													}
-													else{
-														if(defined('MARKET_CUSTOM_DELAY_FOR_RESTORE')){
-															$addDate = strtotime($this->Mmarket->item_info['add_date']);
-															$timeOnMarket = floor((time() - $addDate) / 60);
-															if($timeOnMarket < MARKET_CUSTOM_DELAY_FOR_RESTORE){
-																$availableOn = floor((MARKET_CUSTOM_DELAY_FOR_RESTORE - $timeOnMarket) * 60);
-																$this->vars['error'] = sprintf(__('Item will be available for restore on %s'), date(DATETIME_FORMAT, strtotime($this->Mmarket->item_info['add_date']) + $availableOn));
-															}
-														}	
-														if(!isset($this->vars['error'])){
-															$this->Mmarket->change_item_status($id);
-															$this->Mshop->generate_new_items($this->Mmarket->item_info['item'], $space, $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'wh_multiplier'), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'item_size'));
-															$this->Mshop->update_warehouse($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
-															$this->website->db('web')->commit();										
-															$this->vars['success'] = __('Item has been successfully removed from market.');
-														}
-													}
-												}
-											}
-										}	
-									}
-								} else{
-									$this->vars['error'] = __('Please open your warehouse in game first.');
-								}
+						if(!$this->Mmarket->load_item_from_market_for_history($id, $this->session->userdata(['user' => 'server']))){
+							throw new Exception(__('Item not found in our database.'));
+						} 
+						
+						$vault = $this->Mshop->get_vault_content($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));
+						
+						if($vault == false){
+							throw new Exception(__('Please open your warehouse in game first.'));
+						}
+						
+						if($this->Mmarket->item_info['sold'] == 1){
+							throw new Exception(__('This item is already sold.'));
+						}
+						
+						if($this->Mmarket->item_info['removed'] == 1){
+							throw new Exception(__('This item is already removed.'));
+						} 
+						
+						if($this->config->config_entry('market|allow_remove_only_when_expired') == 1 && (strtotime($this->Mmarket->item_info['active_till']) > time() + (10 * 60))){
+							throw new Exception(__('You will be allowed to remove this item after it will expire.'));
+						}
+						
+						if(defined('MARKET_CUSTOM_DELAY_FOR_RESTORE')){
+							$addDate = strtotime($this->Mmarket->item_info['add_date']);
+							$timeOnMarket = floor((time() - $addDate) / 60);
+							if($timeOnMarket < MARKET_CUSTOM_DELAY_FOR_RESTORE){
+								$availableOn = floor((MARKET_CUSTOM_DELAY_FOR_RESTORE - $timeOnMarket) * 60);
+								throw new Exception(sprintf(__('Item will be available for restore on %s'), date(DATETIME_FORMAT, strtotime($this->Mmarket->item_info['add_date']) + $availableOn)));
 							}
-                        }
-                    }
+						}
+						
+						$this->iteminfo->itemData($this->Mmarket->item_info['item']);
+						$space = $this->Mshop->check_space($vault['Items'], $this->iteminfo->getX(), $this->iteminfo->getY(), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'wh_multiplier'), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'item_size'), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'wh_hor_size'), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'wh_ver_size'));
+						
+						if($space === null){
+							throw new Exception($this->Mshop->errors[0]);
+						}
+						
+						$this->Mmarket->change_item_status($id);
+						$this->Mshop->generate_new_items($this->Mmarket->item_info['item'], $space, $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'wh_multiplier'), $this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'item_size'));
+						$this->Mshop->update_warehouse($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']));									
+						$this->vars['success'] = __('Item has been successfully removed from market.');
+					} catch(Exception $e){
+						$this->vars['error'] = $e->getMessage();
+					}
                     $this->load->view($this->config->config_entry('main|template') . DS . 'market' . DS . 'view.history_remove', $this->vars);
-                } else{
+                } 
+				else{
                     $this->login();
                 }
             }
@@ -350,7 +356,8 @@
                     $text_limit = 20;
                 if(!array_key_exists($server, $this->website->server_list())){
                     json(['items' => false]);
-                } else{
+                } 
+				else{
                     json(['items' => $this->Mmarket->get_lattest_items($server), 'base_url' => $this->config->base_url]);
                 }
             }

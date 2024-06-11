@@ -922,7 +922,7 @@
                 $this->createitem->cat($this->item_info['original_item_cat']);
                 $this->createitem->refinery($this->ref);
                 $this->createitem->harmony($this->harmony);
-                $this->createitem->serial(array_values($this->Mshop->generate_serial($this->session->userdata(['user' => 'server'])))[0]);
+                $this->createitem->serial($this->Mshop->generate_serial($this->session->userdata(['user' => 'server'])));
                 if($this->website->get_value_from_server($this->session->userdata(['user' => 'server']), 'item_size') == 64){
                     $this->createitem->serial2(true);
                 }

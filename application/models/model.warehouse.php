@@ -322,10 +322,10 @@
         }
 		
 		public function checkAdditionalSlots($user, $server){
-			$check = $this->website->db('web')->query('SELECT slots FROM DmN_Market_Slots WHERE memb___id = '.$this->website->db('web')->escape($user).' AND server = '.$this->website->db('web')->escape($server).'')->fetch()['slots'];
+			$check = $this->website->db('web')->query('SELECT slots FROM DmN_Market_Slots WHERE memb___id = '.$this->website->db('web')->escape($user).' AND server = '.$this->website->db('web')->escape($server).'')->fetch();
 			if($check == false){
 				return 0;
 			}
-			return $check;
+			return $check['slots'];
 		}
     }
