@@ -5,7 +5,7 @@
 	
 	use Tracy\Debugger;
 
-    Debugger::enable((ENVIRONMENT == 'development') ? Debugger::DEVELOPMENT : Debugger::PRODUCTION, APP_PATH . DS . 'logs' . DS . 'Tracy', 'salvis1989@gmail.com');
+    Debugger::enable((ENVIRONMENT == 'development') ? Debugger::DEVELOPMENT : Debugger::PRODUCTION, APP_PATH . DS . 'logs' . DS . 'Tracy');
 	
     $security = load_class('security');
 
