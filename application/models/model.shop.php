@@ -176,7 +176,7 @@
         }
 
 		public function generate_serial2($count, $server){
-			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial2 ' . this->website->db('game', $server)->escape($count) . '');
+			$query = $this->website->db('game', $server)->query('EXEC WZ_GetItemSerial2 ' . $this->website->db('game', $server)->escape($count) . '');
             $data = $query->fetch();
             $query->close_cursor();
             return $data;
