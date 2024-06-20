@@ -2313,7 +2313,7 @@
 																	$this->Mcharacter->update_C_Monster_KillCount($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
 																	$this->Mcharacter->update_Gens_Left($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
 																	$this->Mcharacter->update_Gens_Rank($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
-																	$this->Mcharacter->update_Gens_Reward($old_name, $this->Mcharacter->vars['new_name']);
+																	$this->Mcharacter->update_Gens_Reward($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
 																	$this->Mcharacter->update_EnhanceSkillTree($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
 																	$this->Mcharacter->update_EventEntryCount($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
 																	$this->Mcharacter->update_EventEntryLimit($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
