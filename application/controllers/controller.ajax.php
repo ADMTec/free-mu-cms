@@ -2300,7 +2300,10 @@
 																	$this->Mcharacter->update_IGC_BlessingBox_Character($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));																					   
 																	$this->Mcharacter->update_IGC_HuntPoint($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));																					   
 																	$this->Mcharacter->update_IGC_StatsSystem($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));																					   
-																															
+																	$this->Mcharacter->update_IGC_AbilityCardInfo($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));																					   
+																	$this->Mcharacter->update_IGC_WingCoreInfo($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));																					   
+																	
+																	
 																	$this->Mcharacter->update_T_3rd_Quest_Info($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
                                                                     $this->Mcharacter->update_T_GMSystem($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
                                                                     $this->Mcharacter->update_T_LUCKY_ITEM_INFO($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']));
@@ -2343,7 +2346,7 @@
 																	
 																	$this->vars['table_config'] = $this->config->values('table_config', $this->session->userdata(['user' => 'server']));
 																	
-																	if(isset($this->vars['table_config']['bc'])){
+																	if(isset($this->vars['table_config']['bc']) && $this->vars['table_config']['bc']['db'] != ''){
 																		$this->Mcharacter->update_EVENT_INFO($old_name, $this->Mcharacter->vars['new_name'], $this->vars['table_config']['bc'], $this->session->userdata(['user' => 'server']));
 																		$this->Mcharacter->update_EVENT_INFO_BC_5TH($old_name, $this->Mcharacter->vars['new_name'], $this->vars['table_config']['bc'], $this->session->userdata(['user' => 'server']));
 																		$this->Mcharacter->update_EVENT_INFO_CC($old_name, $this->Mcharacter->vars['new_name'], $this->vars['table_config']['bc'], $this->session->userdata(['user' => 'server']));

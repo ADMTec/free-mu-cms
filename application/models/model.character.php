@@ -1818,7 +1818,7 @@
         }
 		
 		public function check_IGC_PersonalStore_ChangeName($id, $server){
-			if($this->website->db('game', $server)->check_if_table_exists('IGC_PersonalStore_ChangeName') > 0){
+			if($this->website->db('game', $server)->check_if_table_exists('IGC_PersonalStore_ChangeName')){
 				$stmt = $this->website->db('game', $server)->prepare('SELECT id FROM IGC_PersonalStore_ChangeName WHERE character_id = :id');
 				$stmt->execute([':id' => $id]); 
 				return $stmt->fetch();
@@ -1836,6 +1836,27 @@
                 return;
             }
         }
+		
+		public function update_IGC_AbilityCardInfo($old, $new, $server)
+        {
+            if($this->website->db('game', $server)->check_if_table_exists('IGC_AbilityCardInfo')){
+                $stmt = $this->website->db('game', $server)->prepare('UPDATE IGC_AbilityCardInfo SET Name = :name WHERE Name = :old_name');
+                return $stmt->execute([':name' => $new, ':old_name' => $old]);
+            } else{
+                return;
+            }
+        }
+		
+		public function update_IGC_WingCoreInfo($old, $new, $server)
+        {
+            if($this->website->db('game', $server)->check_if_table_exists('IGC_WingCoreInfo')){
+                $stmt = $this->website->db('game', $server)->prepare('UPDATE IGC_WingCoreInfo SET Name = :name WHERE Name = :old_name');
+                return $stmt->execute([':name' => $new, ':old_name' => $old]);
+            } else{
+                return;
+            }
+        }
+		
 		
         public function update_T_3rd_Quest_Info($old, $new, $server){
             if($this->website->db('game', $server)->check_if_table_exists('T_3rd_Quest_Info')){
