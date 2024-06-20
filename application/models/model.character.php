@@ -1507,17 +1507,17 @@
 			$old = $this->website->db('game', $server)->escape($old);
 			$new = $this->website->db('game', $server)->escape($new);
 			$data = 'UPDATE AccountCharacter SET 
-					GameIDC = CASE WHEN (GameIDC = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameIDC END,
-					GameId1 = CASE WHEN (GameId1 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId1 END,
-					GameId2 = CASE WHEN (GameId2 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId2 END,
-					GameId3 = CASE WHEN (GameId3 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId3 END,
-					GameId4 = CASE WHEN (GameId4 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId4 END,
-					GameId5 = CASE WHEN (GameId5 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId5 END';
+					GameIDC = CASE WHEN (GameIDC = ' . $old . ') THEN ' . $new . ' ELSE GameIDC END,
+					GameId1 = CASE WHEN (GameId1 = ' . $old . ') THEN ' . $new . ' ELSE GameId1 END,
+					GameId2 = CASE WHEN (GameId2 = ' . $old . ') THEN ' . $new . ' ELSE GameId2 END,
+					GameId3 = CASE WHEN (GameId3 = ' . $old . ') THEN ' . $new . ' ELSE GameId3 END,
+					GameId4 = CASE WHEN (GameId4 = ' . $old . ') THEN ' . $new . ' ELSE GameId4 END,
+					GameId5 = CASE WHEN (GameId5 = ' . $old . ') THEN ' . $new . ' ELSE GameId5 END';
 			if(MU_VERSION >= 9){
-				$data .= ', GameId6 = CASE WHEN (GameId6 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId6 END, GameId7 = CASE WHEN (GameId7 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId7 END, GameId8 = CASE WHEN (GameId8 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId8 END';
+				$data .= ', GameId6 = CASE WHEN (GameId6 = ' . $old . ') THEN ' . $new . ' ELSE GameId6 END, GameId7 = CASE WHEN (GameId7 = ' . $old . ') THEN ' . $new . ' ELSE GameId7 END, GameId8 = CASE WHEN (GameId8 = ' . $old . ') THEN ' . $new . ' ELSE GameId8 END';
 			}	
 			if(MU_VERSION >= 10){
-				$data .= ', GameId9 = CASE WHEN (GameId9 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId9 END, GameId10 = CASE WHEN (GameId10 = \'' . $old . '\') THEN \'' . $new . '\' ELSE GameId10 END';
+				$data .= ', GameId9 = CASE WHEN (GameId9 = ' . $old . ') THEN ' . $new . ' ELSE GameId9 END, GameId10 = CASE WHEN (GameId10 = ' . $old . ') THEN ' . $new . ' ELSE GameId10 END';
 			}				
             return $this->website->db('game', $server)->query($data);
         }
