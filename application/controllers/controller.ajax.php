@@ -2210,8 +2210,7 @@
                         if(!isset($this->Mcharacter->vars['new_name']) || $this->Mcharacter->vars['new_name'] == ''){
                             json(['error' => __('New name can not be empty.')]);
                         } else{
-							//if(!preg_match('/^[\p{L}]+$/u', $this->Mcharacter->vars['new_name'])){
-                            if(!preg_match('/^[' . str_replace('/', '\/', $this->config->config_entry('changename|allowed_pattern')) . ']+$/u', $this->Mcharacter->vars['new_name'])){
+                            if(!preg_match('/^[' . str_replace('/', '\/', quotemeta($this->config->config_entry('changename|allowed_pattern'))) . ']+$/u', $this->Mcharacter->vars['new_name'])){
                                 json(['error' => __('You are using forbidden chars in your new name.')]);
                             } else{
                                 if(mb_strlen($this->Mcharacter->vars['new_name']) < 4 || mb_strlen($this->Mcharacter->vars['new_name']) > $this->config->config_entry('changename|max_length')){
