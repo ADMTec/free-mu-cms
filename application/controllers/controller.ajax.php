@@ -2252,6 +2252,10 @@
                                                             if($status < $price){
                                                                 json(['error' => sprintf(__('You have insufficient amount of %s'), $this->website->translate_credits($this->config->config_entry('changename|price_type'), $this->session->userdata(['user' => 'server'])))]);
                                                             } else{
+																if($this->Mcharacter->check_IGC_PersonalStore_ChangeName($old_char_data['id'], $this->session->userdata(['user' => 'server'])) != false){
+																	echo json_encode(['error' => __('Please login into game with this character and logout before next change')]);
+																	exit;
+																}
                                                                 $this->website->charge_credits($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'server']), $price, $this->config->config_entry('changename|price_type'));
 																if($this->Mcharacter->update_account_character($old_name, $this->Mcharacter->vars['new_name'], $this->session->userdata(['user' => 'server']))){
                                                                     if($this->config->config_entry('changename|check_guild') == 0){

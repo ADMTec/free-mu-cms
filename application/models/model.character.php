@@ -1817,6 +1817,17 @@
             }
         }
 		
+		public function check_IGC_PersonalStore_ChangeName($id, $server){
+			if($this->website->db('game', $server)->check_if_table_exists('IGC_PersonalStore_ChangeName') > 0){
+				$stmt = $this->website->db('game', $server)->prepare('SELECT id FROM IGC_PersonalStore_ChangeName WHERE character_id = :id');
+				$stmt->execute([':id' => $id]); 
+				return $stmt->fetch();
+			}
+			else{
+				return false;
+			}
+		}
+		
 		public function insert_IGC_PersonalStore_ChangeName($old, $new, $id, $server){
             if($this->website->db('game', $server)->check_if_table_exists('IGC_PersonalStore_ChangeName')){
                 $stmt = $this->website->db('game', $server)->prepare('INSERT INTO IGC_PersonalStore_ChangeName (old_name, new_name, character_id) VALUES (:old_name, :new_name, :character_id)');
