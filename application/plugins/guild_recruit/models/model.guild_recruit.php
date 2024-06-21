@@ -45,19 +45,6 @@
             }
         }
         
-        public function createRequest($amount, $reward, $payment_method, $payment_account, $user, $server){
-            $stmt = $this->website->db('web')->prepare('INSERT INTO DmN_WithdrawRequests (amount, reward_amount, memb___id, server, withdraw_account, withdraw_type, request_date) VALUES (:amount, :reward_amount, :memb___id, :server, :withdraw_account, :withdraw_type, :request_date)');
-            $stmt->execute([
-                ':amount' => $amount,
-                ':reward_amount' => $reward,
-                ':memb___id' => $user,
-                ':server' => $server,
-                ':withdraw_account' => $payment_account,
-                ':withdraw_type' => $payment_method,
-                ':request_date' => time()
-            ]);
-        }
-        
         public function get_guid($user = '', $server)
         {
             $stmt = $this->website->db('account', $server)->prepare('SELECT memb_guid FROM MEMB_INFO WHERE memb___id = :user');

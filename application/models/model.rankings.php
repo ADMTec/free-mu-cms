@@ -418,7 +418,13 @@
 				}
 				
                 $query = $this->website->db('game', $server)->query('SELECT TOP ' . (int)$this->top . ' g.G_Name, g.G_Mark, g.G_Score, g.G_Master, COUNT(gm.Name) AS membercount ' . $sum_gresets . $sum_resets . $sum_mlevel . $sum_level .  $sum_total .' FROM Guild AS g FULL JOIN GuildMember AS gm ON (g.G_Name Collate Database_Default = gm.G_Name Collate Database_Default) ' . $join . $joinServer . ' ' . $exclude_list . $serverCode. ' GROUP BY g.G_Name, g.G_Mark, g.G_Score, g.G_Master, g.G_Notice ORDER BY ' . $order . ' g.G_Score DESC, g.G_Name ASC');
-                if($query){
+                
+				$is_guild_recruit_module = false;
+				if($this->config->is_plugin_installed('guild_recruit')){
+					$is_guild_recruit_module = true;
+				}
+				
+				if($query){
                     $i = 0;
 					$max_gr = defined('MAX_GR') ? MAX_GR : 70;
                     while($row = $query->fetch()){
@@ -436,7 +442,8 @@
 							'clevel' => number_format($row['clevel']), 	
 							'totallvl' => number_format($row['totallvl']), 							
 							'points' => defined('MAX_GR') ? ($row['grand_resets']*$max_gr)+$row['resets'] : 0,	
-							'server' => $server
+							'server' => $server,
+							'recruit_data' => ($is_guild_recruit_module == true) ? $this->recruitData($row['G_Name'], $server) : false
 						];
                        $i++;
                     }
@@ -455,6 +462,10 @@
             }
             return $this->website->guilds;
         }
+		
+		private function guild_recruit_data($gname, $server){
+			return $this->website->db('web')->query('SELECT TOP 1 id, discord_link, gname FROM DmN_GuildRecruit WHERE gname = '.$this->website->db('web')->escape($gname).' AND server = '.$this->website->db('web')->escape($server).'')->fetch();
+		}
 		
 		private function load_killers_rankings($server, $config, $table_config, $top){
             if(!isset($config['killer']) || $table_config == false)
