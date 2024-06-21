@@ -443,7 +443,7 @@
 							'totallvl' => number_format($row['totallvl']), 							
 							'points' => defined('MAX_GR') ? ($row['grand_resets']*$max_gr)+$row['resets'] : 0,	
 							'server' => $server,
-							'recruit_data' => ($is_guild_recruit_module == true) ? $this->recruitData($row['G_Name'], $server) : false
+							'recruit_data' => ($is_guild_recruit_module == true) ? $this->guild_recruit_data($row['G_Name'], $server) : false
 						];
                        $i++;
                     }
