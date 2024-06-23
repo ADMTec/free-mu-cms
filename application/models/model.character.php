@@ -385,7 +385,7 @@
             }
             if($this->char_info['gres_info']['bonus_gcredits'] != 0){
                 $this->add_account_log('Reward ' . $this->website->translate_credits(2, $server) . ' for grand reset: ' . $this->vars['character'] . '', $this->char_info['gres_info']['bonus_gcredits'], $user, $server);
-				$this->website->add_credits($user, $server, $this->char_info['gres_info']['bonus_gcredits'], 1);
+				$this->website->add_credits($user, $server, $this->char_info['gres_info']['bonus_gcredits'], 2);
             }
 			if(isset($this->char_info['gres_info']['bonus_ruud']) && $this->char_info['gres_info']['bonus_ruud'] > 0){
 				$this->add_ruud($this->char_info['gres_info']['bonus_ruud'], $this->char_info['id'], $user, $server);
