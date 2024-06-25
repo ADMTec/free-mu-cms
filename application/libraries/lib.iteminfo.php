@@ -57,6 +57,7 @@
         private $index;
 		private $name_from_tooltip = false;
 		private $isSocketItem = false;
+		private $is_socket_exe = false;
 		private $isExpirable = false;
 		private $hasTooltipLvl = false;
 		private $server = false;
