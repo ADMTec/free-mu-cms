@@ -4448,12 +4448,10 @@
                                         $this->vars['error'] = 'Please select action.'; 
 									else{
                                         if($acc_info = $this->Madmin->acc_exists($this->vars['acc'], $server)){
-											$plugins = $this->config->plugins();
-											
                                             if($_POST['act'] == 1){
                                                 $this->website->add_credits($this->vars['acc'], $server, $amount, $type, false, $acc_info['memb_guid']);
                                                 $this->Madmin->add_account_log('Added ' . $this->website->translate_credits($type, $server) . ' by system', $amount, $this->vars['acc'], $server);
-												if(array_key_exists('accumulated_donation_rewards', $plugins)){
+												if($this->config->is_plugin_installed('accumulated_donation_rewards')){
 													if($this->config->values('accumulated_donation_rewards', [$server, 'active']) == 1){
 														$this->Madmin->add_total_recharge($this->vars['acc'], $server, $amount);
 													}
