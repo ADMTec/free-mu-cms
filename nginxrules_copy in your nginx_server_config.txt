@@ -1,0 +1,92 @@
+location /news {
+  rewrite ^/news/(.*)/([0-9]+)\/?$ /home/read-news/$1/$2 last;
+}
+
+location /character/ {
+  rewrite ^/character/(.*)/(.*)\/?$ /info/character/$1/$2 last;
+}
+
+location /guild {
+  rewrite ^/guild/(.*)/(.*)\/?$ /info/guild/$1/$2 last;
+}
+
+location /vote-reward {
+  rewrite ^/vote-reward\/?$ /account-panel/vote-reward last;
+}
+
+location /account-logs {
+  rewrite ^/account-logs\/?$ /account-panel/logs last;
+}
+
+location /settings {
+  rewrite ^/settings\/?$ /account-panel/settings last;
+}
+
+location /logout {
+  rewrite ^/logout\/?$ /account-panel/logout last;
+}
+
+location /login {
+  rewrite ^/login\/?$ /account-panel/login last;
+}
+
+location /reset-character {
+  rewrite ^/reset-character\/?$ /account-panel/reset last;
+}
+
+location /grand-reset-character {
+  rewrite ^/grand-reset-character\/?$ /account-panel/grand-reset last;
+}
+
+location /add-stats {
+  rewrite ^/add-stats\/?$ /account-panel/add-stats last;
+}
+
+location /hide-character-info {
+  rewrite ^/hide-character-info\/?$ /account-panel/hide-info last;
+}
+
+location /exchange-wcoins {
+  rewrite ^/exchange-wcoins\/?$ /account-panel/exchange-wcoins last;
+}
+
+location /warp-char {
+  rewrite ^/warp-char\/?$ /account-panel/warp-char last;
+}
+
+location /pk-clear {
+  rewrite ^/pk-clear\/?$ /account-panel/pk-clear last;
+}
+
+location /clear-inventory {
+  rewrite ^/clear-inventory\/?$ /account-panel/clear-inventory last;
+}
+
+location /clear-skilltree {
+  rewrite ^/clear-skilltree\/?$ /account-panel/clear-skilltree last;
+}
+
+location /zen-wallet {
+  rewrite ^/zen-wallet\/?$ /account-panel/zen-wallet last;
+}
+
+location /logs {
+  rewrite ^/logs\/?$ /account-panel/logs last;
+}
+
+location ~ (assets) { 
+	# empty
+}
+
+location ~ (launcher) { 
+	# empty
+}
+
+location / {
+	rewrite ^/(.*)$ /index.php?action=$1 last;
+}
+
+# Deny access to .htaccess apache files
+location ~ /\.ht {
+	deny all;
+}
