@@ -788,7 +788,7 @@
             $this->vars['table_config'] = $this->config->values('table_config', $server);
             if(isset($this->vars['table_config']['wcoins'])){
                 $this->load->model('character');
-                return $this->registry->Mcharacter->get_wcoins($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'id']), $this->vars['table_config']['wcoins'], $server);
+                return $this->registry->Mcharacter->get_wcoins($this->registry->session->userdata(['user' => 'username']), $this->registry->session->userdata(['user' => 'id']), $this->vars['table_config']['wcoins'], $server);
             }
             return 0;
         }
@@ -797,7 +797,7 @@
             $this->vars['table_config'] = $this->config->values('table_config', $server);
             if(isset($this->vars['table_config']['goblinpoint'])){
                 $this->load->model('character');
-                return $this->registry->Mcharacter->get_wcoins($this->session->userdata(['user' => 'username']), $this->session->userdata(['user' => 'id']), $this->vars['table_config']['goblinpoint'], $server);
+                return $this->registry->Mcharacter->get_wcoins($this->registry->session->userdata(['user' => 'username']), $this->registry->session->userdata(['user' => 'id']), $this->vars['table_config']['goblinpoint'], $server);
             }
             return 0;
         }
