@@ -139,7 +139,7 @@
             $this->activation_code = strtoupper(sha1(microtime()));
             if($this->activation == 1){
                 if($this->send_activation_email($server)){
-                    return $this->create_account($req_email, $req_secret, $serverCode);
+                    return $this->create_account($server, $req_email, $req_secret, $serverCode);
                 }
             } else{
                 if($this->create_account($server, $req_email, $req_secret, $serverCode)){
@@ -176,10 +176,10 @@
             $data[] = ['field' => 'post_code', 'value' => '1234', 'type' => 's'];
             $data[] = ['field' => 'addr_info', 'value' => '11111', 'type' => 's'];
             $data[] = ['field' => 'addr_deta', 'value' => '12343', 'type' => 's'];
-            if($req_email){
+            if($req_email == 1){
                 $data[] = ['field' => 'mail_addr', 'value' => $this->vars['email'], 'type' => 's'];
             }
-            if($req_secret){
+            if($req_secret == 1){
                 $data[] = ['field' => 'fpas_ques', 'value' => $this->vars['fpas_ques'], 'type' => 's'];
                 $data[] = ['field' => 'fpas_answ', 'value' => $this->vars['fpas_answ'], 'type' => 's'];
             }
