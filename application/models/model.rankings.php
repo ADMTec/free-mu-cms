@@ -201,7 +201,7 @@
 								}
 							}
 						}
-						//$guild = $this->check_guild($row['Name'], $server);
+						$guild = $this->check_guild($row['Name'], $server);
                         $this->players[] = [
 							'name' => (!mb_detect_encoding($row['Name'], 'utf-8', true)) ? mb_convert_encoding($row['Name'], "UTF-8") : $row['Name'],
 							'name_hex' => bin2hex($row['Name']), 
@@ -220,8 +220,8 @@
 							'country_long' => $cntrLong,
 							'vip' => $this->check_vip($row['AccountId'], $server),
 							'custom' => $customTitle,
-							//'g_mark' => ($guild != false) ? $guild['logo'] : '',
-							//'g_name' => ($guild != false) ? $guild['name'] : ''
+							'g_mark' => ($guild != false) ? $guild['logo'] : '',
+							'g_name' => ($guild != false) ? $guild['name'] : ''
 						];
                         $i++;
                     }
@@ -239,7 +239,7 @@
 		
 		
 		public function check_guild($name, $server){
-            $stmt = $this->website->db('game', $server)->query('SELECT gm.G_Name, g.G_Mark FROM GuildMember AS gm INNER JOIN Guild AS g ON (gm.G_Name Collate Database_Default = g.G_Name Collate Database_Default) WHERE gm.Name = '.$this->website->db('game', $server)->escape($name).'');
+            $stmt = $this->website->db('game/newConnection', $server)->query('SELECT gm.G_Name, g.G_Mark FROM GuildMember AS gm INNER JOIN Guild AS g ON (gm.G_Name Collate Database_Default = g.G_Name Collate Database_Default) WHERE gm.Name = '.$this->website->db('game', $server)->escape($name).'');
 			$guild = $stmt->fetch();
             if($guild != false){
 				return [
@@ -744,7 +744,8 @@
 							'name' => $row[$table_config['bc']['identifier_column']], 
 							'name_hex' => bin2hex($row[$table_config['bc']['identifier_column']]), 
 							'score' => $row[$table_config['bc']['column']],
-							'class' => $this->website->get_char_class($row['Class']), 'class_small' => $this->website->get_char_class($row['Class'], true), 
+							'class' => $this->website->get_char_class($row['Class']), 
+							'class_small' => $this->website->get_char_class($row['Class'], true), 
 						];
                         $i++;
                     }
@@ -796,7 +797,8 @@
 							'name' => $row[$table_config['ds']['identifier_column']], 
 							'name_hex' => bin2hex($row[$table_config['ds']['identifier_column']]), 
 							'score' => $row[$table_config['ds']['column']],
-							'class' => $this->website->get_char_class($row['Class']), 'class_small' => $this->website->get_char_class($row['Class'], true), 
+							'class' => $this->website->get_char_class($row['Class']), 
+							'class_small' => $this->website->get_char_class($row['Class'], true), 
 						];
                         $i++;
                     }
@@ -845,7 +847,8 @@
 							'name' => $row[$table_config['cc']['identifier_column']], 
 							'name_hex' => bin2hex($row[$table_config['cc']['identifier_column']]), 
 							'score' => $row[$table_config['cc']['column']],
-							'class' => $this->website->get_char_class($row['Class']), 'class_small' => $this->website->get_char_class($row['Class'], true),
+							'class' => $this->website->get_char_class($row['Class']), 
+							'class_small' => $this->website->get_char_class($row['Class'], true),
 						];
                         if(isset($table_config['cc']['column2']) && $table_config['cc']['column2'] != ''){
                             $this->cc[$i]['pkillcount'] = $row[$table_config['cc']['column2']];
