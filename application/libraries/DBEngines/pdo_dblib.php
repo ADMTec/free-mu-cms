@@ -217,7 +217,7 @@
                         $this->values[] = $this->escape($curdata['value']);
                         break;
                     case 'v':
-                        $this->values[] = $this->escape($curdata['value']);
+                        $this->values[] = $this->sanitize_var($curdata['value']);
                         break;
                     case 'd':
                         $this->values[] = '\'' . date('Ymd H:i:s', $curdata['value']) . '\'';
