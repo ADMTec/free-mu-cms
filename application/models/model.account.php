@@ -158,7 +158,7 @@
                 $prepare->execute([':user' => $this->vars['user'], ':pass' => $this->vars['pass']]);
                 $pw = $prepare->fetch();
 				if($pw == false){
-					$prepare = $$this->website->db('account', $server)->prepare('EXEC DmN_Check_Acc_MD5 :user, :pass');
+					$prepare = $this->website->db('account', $server)->prepare('EXEC DmN_Check_Acc_MD5 :user, :pass');
 					$prepare->execute([':user' => $this->vars['user'], ':pass' => $this->vars['pass']]);
 					$pw = $prepare->fetch();
 				}
@@ -513,7 +513,7 @@
                 $check = $stmt->fetch();
                 $stmt->close_cursor();
 				if($check == false){
-					$stmt = $$this->website->db('account', $server)->prepare('EXEC DmN_Check_Acc_MD5 :user, :pass');
+					$stmt = $this->website->db('account', $server)->prepare('EXEC DmN_Check_Acc_MD5 :user, :pass');
 					$stmt->execute([':user' => $this->vars['username'], ':pass' => $this->vars['password']]);
 					$check = $stmt->fetch();
 					$stmt->close_cursor();
