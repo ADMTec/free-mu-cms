@@ -1064,7 +1064,7 @@
 		
 		private function exclude_list($list, $bound = 'c.Name', $quote = true, $stmt = 'NOT IN'){
             $data = implode(',', array_map(function($value) use ($quote){
-                return ($quote) ? "'" . $this->website->db('web')->escape($value) . "'" : $this->website->db('web')->escape($value);
+                return ($quote) ? "'" . $this->website->db('web')->sanitize_var($value) . "'" : $this->website->db('web')->sanitize_var($value);
             }, explode(',', $list)));
             return ($list != '') ? ' AND ' . $bound . ' ' . $stmt . ' (' . $data . ')' : '';
         }
