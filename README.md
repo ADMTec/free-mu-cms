@@ -10,6 +10,6 @@ I have enought knowledge to try to maintain this and even add new stuff for free
 
 PS: There is also issue tracker where you can add problems or errors you have met or request for new features. 
 
-Our Lattest MuOnline News / Guides https://muonline.news
+Our Latest MuOnline News / Guides https://muonline.news
 
 
