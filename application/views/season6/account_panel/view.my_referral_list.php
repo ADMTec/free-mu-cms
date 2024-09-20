@@ -88,7 +88,7 @@
                                                                     if($value['required_gres'] > 0){
                                                                         $reward .= '<p>' . __('Req GResets') . ': ' . $value['required_gres'] . '</p>';
                                                                     }
-                                                                    if($this->Maccount->check_claimed_referral_rewards($value['id'], $char['Name'], $value['server']) != false){
+                                                                    if($this->Maccount->check_claimed_referral_rewards($this->session->userdata(['user' => 'username']), $value['id'], $char['Name'], $value['server']) != false){
                                                                         $reward .= '<p>' . __('Already Claimed') . '</p>';
                                                                     } else{
                                                                         $reward .= '<p>' . __('Reward') . ': ' . $value['reward'] . ' ' . $this->website->translate_credits($value['reward_type'], $value['server']) . '</p>';
